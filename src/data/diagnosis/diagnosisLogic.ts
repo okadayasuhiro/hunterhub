@@ -1,0 +1,602 @@
+import type { Animal, PersonalityProfile, DiagnosisResult, FallbackResult } from '../../types/diagnosis';
+import { animals } from './animals';
+import { questions } from './questions';
+
+// 段階的選択システムのインターフェース
+interface AnimalMatch {
+    animal: Animal;
+    compatibility: number;
+}
+
+interface BalancingTiers {
+    high: AnimalMatch[];
+    medium: AnimalMatch[];
+    rare: AnimalMatch[];
+}
+
+// 新しい段階的バランシングクラス
+class AdvancedBalancer {
+    private recentResults = new Map<string, number>();
+    private readonly MAX_RECENT_RESULTS = 1000;
+
+    // レア動物追跡（出現頻度の低い動物）
+    private rareAnimals = new Set<string>();
+
+    // 段階的選択の設定
+    private readonly balancingConfig = {
+        tierWeights: [70, 25, 5],           // 高適合度、中適合度、レア動物の選択確率
+        compatibilityThresholds: [70, 50, 30], // 各段階の適合度閾値
+        rareAnimalBonus: 20,                // レア動物への追加ボーナス
+        maxRepeats: 3                       // 同一動物の連続出現制限
+    };
+
+    // 動物を適合度で段階分類
+    categorizeAnimalsByCompatibility(matches: AnimalMatch[]): BalancingTiers {
+        const high = matches.filter(m => m.compatibility >= this.balancingConfig.compatibilityThresholds[0]);
+        const medium = matches.filter(m =>
+            m.compatibility >= this.balancingConfig.compatibilityThresholds[1] &&
+            m.compatibility < this.balancingConfig.compatibilityThresholds[0]
+        );
+        const rare = matches.filter(m =>
+            m.compatibility >= this.balancingConfig.compatibilityThresholds[2] &&
+            m.compatibility < this.balancingConfig.compatibilityThresholds[1]
+        );
+
+        return { high, medium, rare };
+    }
+
+    // 回答パターンから一意のシード値を生成
+    private generateSeedFromAnswers(answers: Array<{ questionId: string; choice: 'A' | 'B' | 'C' | 'D' }>): number {
+        let seed = 0;
+        for (let i = 0; i < answers.length; i++) {
+            const choiceValue = ['A', 'B', 'C', 'D'].indexOf(answers[i].choice) + 1;
+            seed = (seed * 4 + choiceValue) % 2147483647;
+        }
+        return seed;
+    }
+
+    // シード値に基づく擬似乱数生成
+    private seededRandom(seed: number): number {
+        const x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+    }
+
+    // 段階的選択（決定的版）
+    selectAnimalWithBalancing(
+        matches: AnimalMatch[],
+        answers: Array<{ questionId: string; choice: 'A' | 'B' | 'C' | 'D' }>
+    ): AnimalMatch {
+        const seed = this.generateSeedFromAnswers(answers);
+        const pseudoRandom = this.seededRandom(seed);
+
+        // 動物を適合度で分類
+        const tiers = this.categorizeAnimalsByCompatibility(matches);
+
+        // レア動物にボーナス付与
+        this.applyRareAnimalBonus(tiers);
+
+        // シード値に基づく決定的な選択
+        const tierProbabilities = this.balancingConfig.tierWeights.map(w => w / 100);
+
+        if (pseudoRandom < tierProbabilities[0] && tiers.high.length > 0) {
+            return this.selectFromTier(tiers.high, seed);
+        } else if (pseudoRandom < tierProbabilities[0] + tierProbabilities[1] && tiers.medium.length > 0) {
+            return this.selectFromTier(tiers.medium, seed + 1);
+        } else if (tiers.rare.length > 0) {
+            return this.selectFromTier(tiers.rare, seed + 2);
+        } else {
+            // フォールバック: 最高適合度の動物
+            return matches[0];
+        }
+    }
+
+    // レア動物にボーナス付与
+    private applyRareAnimalBonus(tiers: BalancingTiers): void {
+        this.updateRareAnimalList();
+
+        // 各段階でレア動物の適合度を向上
+        [tiers.high, tiers.medium, tiers.rare].forEach(tier => {
+            tier.forEach(match => {
+                if (this.rareAnimals.has(match.animal.id)) {
+                    match.compatibility = Math.min(100, match.compatibility + this.balancingConfig.rareAnimalBonus);
+                }
+            });
+        });
+
+        // 適合度順にソート
+        tiers.high.sort((a, b) => b.compatibility - a.compatibility);
+        tiers.medium.sort((a, b) => b.compatibility - a.compatibility);
+        tiers.rare.sort((a, b) => b.compatibility - a.compatibility);
+    }
+
+    // 各段階内でもシード値に基づく決定的選択
+    private selectFromTier(tierAnimals: AnimalMatch[], seed: number): AnimalMatch {
+        const index = Math.floor(this.seededRandom(seed) * tierAnimals.length);
+        return tierAnimals[index];
+    }
+
+    // レア動物リストを動的更新
+    private updateRareAnimalList(): void {
+        this.rareAnimals.clear();
+
+        if (this.getTotalCount() < 100) return; // 十分なデータがない場合はスキップ
+
+        const totalCount = this.getTotalCount();
+        const expectedFrequency = totalCount / animals.length;
+
+        for (const [animalId, count] of this.recentResults) {
+            // 期待頻度の半分以下の動物をレア動物として扱う
+            if (count < expectedFrequency * 0.5) {
+                this.rareAnimals.add(animalId);
+            }
+        }
+
+        // 未出現動物もレア動物として追加
+        animals.forEach(animal => {
+            if (!this.recentResults.has(animal.id)) {
+                this.rareAnimals.add(animal.id);
+            }
+        });
+    }
+
+    adjustCompatibility(animal: Animal, baseCompatibility: number): number {
+        const recentCount = this.recentResults.get(animal.id) || 0;
+
+        // 頻出動物の適合度を微減、稀少動物の適合度を微増
+        const frequency = recentCount / this.MAX_RECENT_RESULTS;
+        const expectedFrequency = 1 / 46;
+        const bias = (frequency - expectedFrequency) * 3; // 調整係数を軽減
+
+        return Math.max(0, Math.min(100, baseCompatibility - bias));
+    }
+
+    recordResult(animalId: string): void {
+        const current = this.recentResults.get(animalId) || 0;
+        this.recentResults.set(animalId, current + 1);
+
+        // 古いデータを削除してメモリ使用量を制限
+        if (this.getTotalCount() > this.MAX_RECENT_RESULTS) {
+            this.pruneOldResults();
+        }
+    }
+
+    private getTotalCount(): number {
+        return Array.from(this.recentResults.values()).reduce((sum, count) => sum + count, 0);
+    }
+
+    private pruneOldResults(): void {
+        // 全体の10%を削除
+        const targetReduction = Math.floor(this.MAX_RECENT_RESULTS * 0.1);
+        let removed = 0;
+
+        for (const [animalId, count] of this.recentResults) {
+            if (removed >= targetReduction) break;
+
+            const newCount = Math.max(0, count - 1);
+            if (newCount === 0) {
+                this.recentResults.delete(animalId);
+            } else {
+                this.recentResults.set(animalId, newCount);
+            }
+            removed++;
+        }
+    }
+
+    // デバッグ用：現在の統計情報を取得
+    getBalancingStats() {
+        return {
+            totalResults: this.getTotalCount(),
+            rareAnimalsCount: this.rareAnimals.size,
+            rareAnimals: Array.from(this.rareAnimals),
+            config: this.balancingConfig
+        };
+    }
+}
+
+// グローバルバランサーインスタンス（新しいAdvancedBalancerを使用）
+const globalBalancer = new AdvancedBalancer();
+
+// 最適化されたスコアリングシステム
+export class OptimizedScoringSystem {
+    static calculateProfile(answers: Array<{ questionId: string; choice: 'A' | 'B' | 'C' | 'D' }>): PersonalityProfile {
+        let totalEnergy = 0;
+        let totalThinking = 0;
+        let totalSocial = 0;
+        let totalStability = 0;
+        let totalWeight = 0;
+
+        answers.forEach((answer) => {
+            const question = questions.find(q => q.id === answer.questionId);
+            if (!question) return;
+
+            const weight = question.weight;
+            const choiceIndex = ['A', 'B', 'C', 'D'].indexOf(answer.choice);
+            const scores = question.options[choiceIndex];
+
+            if (scores) {
+                totalEnergy += scores.energy * weight;
+                totalThinking += scores.thinking * weight;
+                totalSocial += scores.social * weight;
+                totalStability += scores.stability * weight;
+                totalWeight += weight;
+            }
+        });
+
+        // 修正された正規化 (1-10スケールに直接マッピング)
+        const avgEnergy = totalEnergy / totalWeight;
+        const avgThinking = totalThinking / totalWeight;
+        const avgSocial = totalSocial / totalWeight;
+        const avgStability = totalStability / totalWeight;
+
+        return {
+            energy: Math.max(1, Math.min(10, Math.round(avgEnergy))),
+            thinking: Math.max(1, Math.min(10, Math.round(avgThinking))),
+            social: Math.max(1, Math.min(10, Math.round(avgSocial))),
+            stability: Math.max(1, Math.min(10, Math.round(avgStability)))
+        };
+    }
+
+    static calculateCompatibility(userProfile: PersonalityProfile, animal: Animal): number {
+        // 改善された適合度計算：複数の方式の組み合わせ
+
+        // 1. ユークリッド距離ベース（基本適合度）
+        const euclideanDistance = Math.sqrt(
+            Math.pow(userProfile.energy - animal.energy, 2) +
+            Math.pow(userProfile.thinking - animal.thinking, 2) +
+            Math.pow(userProfile.social - animal.social, 2) +
+            Math.pow(userProfile.stability - animal.stability, 2)
+        );
+        const euclideanCompatibility = Math.max(0, 100 - (euclideanDistance / 18) * 100);
+
+        // 2. マンハッタン距離ベース（特性の強さを重視）
+        const manhattanDistance =
+            Math.abs(userProfile.energy - animal.energy) +
+            Math.abs(userProfile.thinking - animal.thinking) +
+            Math.abs(userProfile.social - animal.social) +
+            Math.abs(userProfile.stability - animal.stability);
+        const manhattanCompatibility = Math.max(0, 100 - (manhattanDistance / 36) * 100);
+
+        // 3. 強い特性マッチボーナス（極端値の一致を重要視）
+        let strongTraitBonus = 0;
+        const threshold = 8; // 強い特性の閾値
+
+        if (userProfile.energy >= threshold && animal.energy >= threshold) strongTraitBonus += 15;
+        if (userProfile.thinking >= threshold && animal.thinking >= threshold) strongTraitBonus += 15;
+        if (userProfile.social >= threshold && animal.social >= threshold) strongTraitBonus += 15;
+        if (userProfile.stability >= threshold && animal.stability >= threshold) strongTraitBonus += 15;
+
+        // 4. 弱い特性マッチボーナス（低い値の一致も評価）
+        let weakTraitBonus = 0;
+        const weakThreshold = 3;
+
+        if (userProfile.energy <= weakThreshold && animal.energy <= weakThreshold) weakTraitBonus += 10;
+        if (userProfile.thinking <= weakThreshold && animal.thinking <= weakThreshold) weakTraitBonus += 10;
+        if (userProfile.social <= weakThreshold && animal.social <= weakThreshold) weakTraitBonus += 10;
+        if (userProfile.stability <= weakThreshold && animal.stability <= weakThreshold) weakTraitBonus += 10;
+
+        // 5. 特性の相関性ボーナス（性格パターンの調和）
+        let correlationBonus = 0;
+        const energyThinkingCorr = (userProfile.energy > 5) === (animal.energy > 5) &&
+            (userProfile.thinking > 5) === (animal.thinking > 5) ? 5 : 0;
+        const socialStabilityCorr = (userProfile.social > 5) === (animal.social > 5) &&
+            (userProfile.stability > 5) === (animal.stability > 5) ? 5 : 0;
+        correlationBonus = energyThinkingCorr + socialStabilityCorr;
+
+        // 最終適合度の計算（重み付け平均 + ボーナス）
+        const baseCompatibility = (euclideanCompatibility * 0.6 + manhattanCompatibility * 0.4);
+        const bonusCompatibility = strongTraitBonus + weakTraitBonus + correlationBonus;
+        const finalCompatibility = Math.min(100, baseCompatibility + bonusCompatibility);
+
+        // 動的バランシングを適用（影響を軽減）
+        return globalBalancer.adjustCompatibility(animal, finalCompatibility);
+    }
+
+    static findBestMatch(userProfile: PersonalityProfile, answers: Array<{ questionId: string; choice: 'A' | 'B' | 'C' | 'D' }>): DiagnosisResult {
+        // デバッグ用ログ（開発時のみ）
+        if (typeof window !== 'undefined' && (window as any).DEBUG_DIAGNOSIS) {
+            console.log('ユーザープロファイル:', userProfile);
+        }
+
+        const matches: AnimalMatch[] = animals.map(animal => ({
+            animal,
+            compatibility: this.calculateCompatibility(userProfile, animal)
+        })).sort((a, b) => b.compatibility - a.compatibility);
+
+        // 段階的選択システムを使用して最適な動物を選択
+        const selectedMatch = globalBalancer.selectAnimalWithBalancing(matches, answers);
+
+        // デバッグ用ログ（開発時のみ）
+        if (typeof window !== 'undefined' && (window as any).DEBUG_DIAGNOSIS) {
+            console.log('トップ5マッチ:');
+            matches.slice(0, 5).forEach((match, i) => {
+                console.log(`${i + 1}. ${match.animal.name}: ${match.compatibility.toFixed(1)}%`);
+            });
+            console.log('選択された動物:', selectedMatch.animal.name, '適合度:', selectedMatch.compatibility);
+            console.log('バランシング統計:', globalBalancer.getBalancingStats());
+        }
+
+        const alternatives = matches
+            .filter(match => match.animal.id !== selectedMatch.animal.id)
+            .slice(0, 3)
+            .map(match => match.animal);
+
+        // 結果を記録 (決定論性確保のため無効化)
+        //         globalBalancer.recordResult(selectedMatch.animal.id);
+
+        return {
+            animal: selectedMatch.animal,
+            userProfile,
+            compatibility: Math.round(selectedMatch.compatibility),
+            explanation: this.generateExplanation(userProfile, selectedMatch.animal, selectedMatch.compatibility),
+            alternatives
+        };
+    }
+
+    static generateExplanation(userProfile: PersonalityProfile, animal: Animal, compatibility: number): string {
+        const traits = [];
+
+        if (userProfile.energy >= 7) traits.push("活動的");
+        else if (userProfile.energy <= 3) traits.push("慎重");
+
+        if (userProfile.thinking >= 7) traits.push("論理的");
+        else if (userProfile.thinking <= 3) traits.push("直感的");
+
+        if (userProfile.social >= 7) traits.push("社交的");
+        else if (userProfile.social <= 3) traits.push("独立志向");
+
+        if (userProfile.stability >= 7) traits.push("安定志向");
+        else if (userProfile.stability <= 3) traits.push("変化好き");
+
+        const traitText = traits.length > 0 ? traits.join("で") : "バランスの取れた";
+
+        return `あなたは${traitText}性格の持ち主です。${animal.name}との適合度は${Math.round(compatibility)}%で、${animal.description || ""}この動物のように、${animal.catchphrase}的な魅力を持っています。`;
+    }
+}
+
+// 強化されたフォールバック機能
+export class EnhancedFallbackSystem {
+    static handleLowCompatibility(userProfile: PersonalityProfile, result: DiagnosisResult): FallbackResult {
+        if (result.compatibility >= 70) {
+            return {
+                explanation: result.explanation,
+                suggestedAnimals: []
+            };
+        }
+
+        if (result.compatibility >= 50) {
+            return this.partialMatch(userProfile, result);
+        }
+
+        return this.categoryMatch(userProfile);
+    }
+
+    private static partialMatch(userProfile: PersonalityProfile, result: DiagnosisResult): FallbackResult {
+        const strongTraits = this.identifyStrongTraits(userProfile);
+
+        return {
+            explanation: `${strongTraits}な面で${result.animal.name}と共通点がありますが、適合度は${result.compatibility}%でした。`,
+            suggestedAnimals: [result.animal]
+        };
+    }
+
+    private static categoryMatch(userProfile: PersonalityProfile): FallbackResult {
+        // 最も強い特性で動物カテゴリを決定
+        const maxTrait = this.getMaxTrait(userProfile);
+        const categoryAnimals = this.getAnimalsByCategory(maxTrait);
+        const bestInCategory = categoryAnimals[0];
+
+        return {
+            explanation: `あなたの最も強い特性は${maxTrait}です。${bestInCategory.name}カテゴリの動物として診断しました。`,
+            suggestedAnimals: [bestInCategory]
+        };
+    }
+
+    private static identifyStrongTraits(profile: PersonalityProfile): string {
+        const traits = [];
+        if (profile.energy >= 7) traits.push("エネルギッシュ");
+        if (profile.thinking >= 7) traits.push("知的");
+        if (profile.social >= 7) traits.push("社交的");
+        if (profile.stability >= 7) traits.push("安定");
+
+        return traits.join("で") || "バランスの取れた";
+    }
+
+    private static getMaxTrait(profile: PersonalityProfile): string {
+        const traits: Record<string, number> = {
+            energy: profile.energy,
+            thinking: profile.thinking,
+            social: profile.social,
+            stability: profile.stability
+        };
+
+        return Object.entries(traits).reduce((max, [key, value]) =>
+            value > traits[max] ? key : max, 'energy'
+        );
+    }
+
+    private static getAnimalsByCategory(trait: string): Animal[] {
+        return animals.filter(animal => {
+            switch (trait) {
+                case 'energy': return animal.energy >= 8;
+                case 'thinking': return animal.thinking >= 8;
+                case 'social': return animal.social >= 8;
+                case 'stability': return animal.stability >= 8;
+                default: return true;
+            }
+        }).sort((a, b) => {
+            const traitKey = trait as keyof Pick<Animal, 'energy' | 'thinking' | 'social' | 'stability'>;
+            return (b[traitKey] as number) - (a[traitKey] as number);
+        });
+    }
+}
+
+// メイン診断関数
+export function diagnoseUser(answers: Array<{ questionId: string; choice: 'A' | 'B' | 'C' | 'D' }>): DiagnosisResult {
+    // ユーザープロファイル計算
+    const userProfile = OptimizedScoringSystem.calculateProfile(answers);
+
+    // 最適マッチング（回答パターンも渡す）
+    const result = OptimizedScoringSystem.findBestMatch(userProfile, answers);
+
+    // フォールバック処理
+    const fallbackResult = EnhancedFallbackSystem.handleLowCompatibility(userProfile, result);
+
+    return {
+        ...result,
+        explanation: fallbackResult.explanation,
+        alternatives: result.alternatives
+    };
+}
+
+// 統計情報取得関数（バランシング統計を含む）
+export function getDiagnosisStats() {
+    return {
+        totalAnimals: animals.length,
+        totalQuestions: questions.length,
+        balancerStats: globalBalancer.getBalancingStats()
+    };
+}
+
+// デバッグ用関数（開発時のみ）
+export function enableDebugMode() {
+    if (typeof window !== 'undefined') {
+        (window as any).DEBUG_DIAGNOSIS = true;
+        console.log('診断デバッグモードが有効になりました');
+    }
+}
+
+// 旧システムとの互換性のため（削除予定）
+export class DiagnosisEngine {
+    private animals: Animal[];
+    private weights = { personality: 1, environment: 2, relation: 2 };
+
+    constructor() {
+        this.animals = animals;
+    }
+
+    diagnose(answers: string[]): DiagnosisResult {
+        // 新システムへリダイレクト
+        const newAnswers = answers.map((answer, index) => ({
+            questionId: `Q${index + 1}`,
+            choice: answer as 'A' | 'B' | 'C' | 'D'
+        }));
+
+        return diagnoseUser(newAnswers);
+    }
+
+    private calculateScores(answers: string[]) {
+        const scores = {
+            personality: { A: 0, B: 0, C: 0, D: 0 },
+            environment: { '1': 0, '2': 0, '3': 0, '4': 0 },
+            relation: { α: 0, β: 0, γ: 0, δ: 0 }
+        };
+
+        answers.forEach((answer, index) => {
+            if (answer) {
+                const questionCategory = index < 4 ? 'personality' :
+                    index < 8 ? 'environment' : 'relation';
+
+                if (questionCategory === 'personality' && ['A', 'B', 'C', 'D'].includes(answer)) {
+                    scores.personality[answer as keyof typeof scores.personality]++;
+                } else if (questionCategory === 'environment' && ['1', '2', '3', '4'].includes(answer)) {
+                    scores.environment[answer as keyof typeof scores.environment]++;
+                } else if (questionCategory === 'relation' && ['α', 'β', 'γ', 'δ'].includes(answer)) {
+                    scores.relation[answer as keyof typeof scores.relation]++;
+                }
+            }
+        });
+
+        return scores;
+    }
+
+    private getTopCategories(scores: any) {
+        const getTopKey = (obj: Record<string, number>) => {
+            return Object.entries(obj).reduce((max, [key, value]) =>
+                value > obj[max] ? key : max, Object.keys(obj)[0]
+            );
+        };
+
+        return {
+            personality: getTopKey(scores.personality),
+            environment: getTopKey(scores.environment),
+            relation: getTopKey(scores.relation)
+        };
+    }
+
+    private filterAnimals(topCategories: any): Animal[] {
+        return this.animals.filter(animal =>
+            (animal as any).personality === topCategories.personality &&
+            (animal as any).environment === topCategories.environment &&
+            (animal as any).relation === topCategories.relation
+        );
+    }
+
+    private calculateAnimalScore(animal: Animal, topCategories: any): number {
+        let score = 0;
+
+        if ((animal as any).personality === topCategories.personality) {
+            score += this.weights.personality;
+        }
+        if ((animal as any).environment === topCategories.environment) {
+            score += this.weights.environment;
+        }
+        if ((animal as any).relation === topCategories.relation) {
+            score += this.weights.relation;
+        }
+
+        return score;
+    }
+
+    private selectAnimal(candidateAnimals: Animal[], answers: string[]): Animal {
+        if (candidateAnimals.length === 1) {
+            return candidateAnimals[0];
+        }
+
+        const hash = this.hashString(answers.join(''));
+        const index = hash % candidateAnimals.length;
+        return candidateAnimals[index];
+    }
+
+    private hashString(str: string): number {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return Math.abs(hash);
+    }
+
+    getAnimalById(id: string): Animal | undefined {
+        return this.animals.find(animal => animal.id === id);
+    }
+
+    getAllAnimals(): Animal[] {
+        return [...this.animals];
+    }
+
+    getAnimalsByCategory(category: 'personality' | 'environment' | 'relation', value: string): Animal[] {
+        return this.animals.filter(animal => (animal as any)[category] === value);
+    }
+
+    getCompatibleAnimals(targetAnimal: Animal, limit: number = 5): Animal[] {
+        return this.animals
+            .filter(animal => animal.id !== targetAnimal.id)
+            .sort((a, b) => {
+                const scoreA = this.calculateAnimalScore(a, {
+                    personality: (targetAnimal as any).personality,
+                    environment: (targetAnimal as any).environment,
+                    relation: (targetAnimal as any).relation
+                });
+                const scoreB = this.calculateAnimalScore(b, {
+                    personality: (targetAnimal as any).personality,
+                    environment: (targetAnimal as any).environment,
+                    relation: (targetAnimal as any).relation
+                });
+                return scoreB - scoreA;
+            })
+            .slice(0, limit);
+    }
+}
+
+export const diagnosisEngine = new DiagnosisEngine(); 
