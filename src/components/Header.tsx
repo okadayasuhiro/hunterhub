@@ -39,7 +39,6 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                         className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={handleHomeClick}
                     >
-                        <span className="text-2xl mr-2">🎯</span>
                         <h1 className="text-2xl font-bold text-white">HunterHub</h1>
                     </div>
 
