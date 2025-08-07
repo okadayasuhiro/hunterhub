@@ -48,31 +48,41 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                     {description}
                 </p>
                 
-                {/* 前回の結果表示 */}
-                {lastResult && (
-                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
-                        <div className="flex items-center mb-2">
-                            <Trophy size={16} className="text-yellow-600 mr-2" />
-                            <span className="text-sm font-medium text-gray-700">前回の記録</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <p className="text-xs text-gray-500">{lastResult.primaryStat}</p>
-                                <p className="text-lg font-bold text-blue-600">{lastResult.primaryValue}</p>
+                {/* 前回の結果表示（常に表示で高さ統一） */}
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg border min-h-[100px]">
+                    {lastResult ? (
+                        <>
+                            <div className="flex items-center mb-2">
+                                <Trophy size={16} className="text-yellow-600 mr-2" />
+                                <span className="text-sm font-medium text-gray-700">前回の記録</span>
                             </div>
-                            {lastResult.secondaryStat && (
+                            <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <p className="text-xs text-gray-500">{lastResult.secondaryStat}</p>
-                                    <p className="text-lg font-bold text-green-600">{lastResult.secondaryValue}</p>
+                                    <p className="text-xs text-gray-500">{lastResult.primaryStat}</p>
+                                    <p className="text-lg font-bold text-blue-600">{lastResult.primaryValue}</p>
                                 </div>
-                            )}
+                                {lastResult.secondaryStat && (
+                                    <div>
+                                        <p className="text-xs text-gray-500">{lastResult.secondaryStat}</p>
+                                        <p className="text-lg font-bold text-green-600">{lastResult.secondaryValue}</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex items-center mt-2">
+                                <Clock size={12} className="text-gray-400 mr-1" />
+                                <span className="text-xs text-gray-500">{lastResult.date}</span>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full py-2">
+                            <div className="flex items-center mb-2">
+                                <Trophy size={16} className="text-gray-400 mr-2" />
+                                <span className="text-sm font-medium text-gray-500">記録</span>
+                            </div>
+                            <p className="text-sm text-gray-400 text-center">まだプレイ記録が<br />ありません</p>
                         </div>
-                        <div className="flex items-center mt-2">
-                            <Clock size={12} className="text-gray-400 mr-1" />
-                            <span className="text-xs text-gray-500">{lastResult.date}</span>
-                        </div>
-                    </div>
-                )}
+                    )}
+                </div>
                 
                 <div className="mt-6">
                     <button className="w-full px-8 py-3 bg-blue-500 text-white rounded-lg text-sm font-medium group-hover:bg-blue-600 transition-all duration-300 shadow-md group-hover:shadow-lg">
