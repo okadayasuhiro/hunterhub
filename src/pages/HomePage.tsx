@@ -31,19 +31,19 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
 
     return (
         <div
-            className="bg-white rounded-xl shadow-lg border-0 p-8 cursor-pointer transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group"
+            className="bg-white rounded-xl shadow-lg border-0 cursor-pointer transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group overflow-hidden"
             style={{
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
             }}
             onClick={handleClick}
         >
             {imageSrc && (
-                <div className="mb-6 rounded-lg overflow-hidden h-40 relative">
+                <div className="h-40 relative">
                     <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                 </div>
             )}
-            <div className="text-left">
+            <div className="text-left p-8">
                 <div className="flex items-center mb-4">
                     <div className="mr-3 group-hover:scale-110 transition-transform duration-300">
                         {icon}
