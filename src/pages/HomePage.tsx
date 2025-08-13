@@ -20,9 +20,10 @@ interface GameCardProps {
     path: string;
     lastResult?: LastResult;
     imageSrc?: string;
+    playCount?: number;
 }
 
-const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc }) => {
+const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc, playCount }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -41,10 +42,15 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                 <div className="h-40 relative">
                     <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    {playCount !== undefined && (
+                        <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+                            {playCount}回プレイ
+                        </div>
+                    )}
                 </div>
             )}
-            <div className="text-left p-8">
-                <div className="mb-4">
+            <div className="text-left p-6">
+                <div className="mb-2">
                     <h3 className="text-xl font-semibold text-gray-800">
                         {title}
                     </h3>
@@ -106,6 +112,12 @@ const HomePage: React.FC = () => {
         target?: LastResult;
         sequence?: LastResult;
     }>({});
+    
+    const [playCounts, setPlayCounts] = useState<{
+        reflex?: number;
+        target?: number;
+        sequence?: number;
+    }>({});
 
     // LocalStorageから各ゲームの最新記録を取得
     useEffect(() => {
@@ -128,6 +140,11 @@ const HomePage: React.FC = () => {
                             }
                         }));
                     }
+                    // プレイ回数を設定
+                    setPlayCounts(prev => ({
+                        ...prev,
+                        reflex: history.length
+                    }));
                 }
 
                 // ターゲット追跡ゲームの最新記録
@@ -216,6 +233,7 @@ const HomePage: React.FC = () => {
                             path="/reflex/instructions"
                             lastResult={lastResults.reflex}
                             imageSrc={ENABLE_REFLEX_PANEL ? panel1 : undefined}
+                            playCount={playCounts.reflex}
                         />
                         <GameCard
                             title="ターゲット追跡"
