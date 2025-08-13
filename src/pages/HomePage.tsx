@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy } from 'lucide-react';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
+import panel1 from '../assets/images/panel1.png';
 
 interface LastResult {
     primaryStat: string;
@@ -18,9 +19,10 @@ interface GameCardProps {
     icon: React.ReactNode;
     path: string;
     lastResult?: LastResult;
+    imageSrc?: string;
 }
 
-const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult }) => {
+const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -35,6 +37,12 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
             }}
             onClick={handleClick}
         >
+            {imageSrc && (
+                <div className="mb-6 rounded-lg overflow-hidden h-40 relative">
+                    <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                </div>
+            )}
             <div className="text-left">
                 <div className="flex items-center mb-4">
                     <div className="mr-3 group-hover:scale-110 transition-transform duration-300">
@@ -95,6 +103,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
 };
 
 const HomePage: React.FC = () => {
+    const ENABLE_REFLEX_PANEL = true;
     const [lastResults, setLastResults] = useState<{
         reflex?: LastResult;
         target?: LastResult;
@@ -209,6 +218,7 @@ const HomePage: React.FC = () => {
                             icon={<Zap size={32} className="text-blue-500" />}
                             path="/reflex/instructions"
                             lastResult={lastResults.reflex}
+                            imageSrc={ENABLE_REFLEX_PANEL ? panel1 : undefined}
                         />
                         <GameCard
                             title="ターゲット追跡"
