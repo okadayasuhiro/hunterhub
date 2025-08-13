@@ -44,10 +44,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                 </div>
             )}
             <div className="text-left p-8">
-                <div className="flex items-center mb-4">
-                    <div className="mr-3 group-hover:scale-110 transition-transform duration-300">
-                        {icon}
-                    </div>
+                <div className="mb-4">
                     <h3 className="text-xl font-semibold text-gray-800">
                         {title}
                     </h3>
@@ -215,7 +212,7 @@ const HomePage: React.FC = () => {
                         <GameCard
                             title="反射神経テスト"
                             description="緑から赤への色変化に素早く反応して、クリックしてください。赤になる前にクリックするとフライング！。"
-                            icon={<Zap size={32} className="text-blue-500" />}
+                            icon={<></>}
                             path="/reflex/instructions"
                             lastResult={lastResults.reflex}
                             imageSrc={ENABLE_REFLEX_PANEL ? panel1 : undefined}
@@ -223,14 +220,14 @@ const HomePage: React.FC = () => {
                         <GameCard
                             title="ターゲット追跡"
                             description="画面上の標的を順番にクリック！10個のターゲットを順番に撃ち抜き、反応時間と総合時間を測定します。"
-                            icon={<Crosshair size={32} className="text-blue-600" />}
+                            icon={<></>}
                             path="/target/instructions"
                             lastResult={lastResults.target}
                         />
                         <GameCard
                             title="数字順序ゲーム"
                             description="画面上にランダムに配置された数字を小さい順にクリックします！反応時間と総合時間を競います。"
-                            icon={<Hash size={32} className="text-blue-700" />}
+                            icon={<></>}
                             path="/sequence/instructions"
                             lastResult={lastResults.sequence}
                         />
