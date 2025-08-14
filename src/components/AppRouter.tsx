@@ -24,7 +24,7 @@ const AppRouter: React.FC = () => {
     return (
         <Router>
             <ScrollToTop />
-            <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#006cc1' }}>
+            <div className="min-h-screen flex flex-col">
                 <Header />
                 <div className="flex-1">
                     <Routes>
