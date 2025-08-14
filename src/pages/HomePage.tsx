@@ -9,6 +9,7 @@ import { UserIdentificationService } from '../services/userIdentificationService
 import panel1 from '../assets/images/panel1.png';
 import panel2 from '../assets/images/panel2.png';
 import panel3 from '../assets/images/panel3.png';
+import panel4 from '../assets/images/panel4.png';
 
 interface LastResult {
     primaryStat: string;
@@ -343,6 +344,7 @@ const HomePage: React.FC = () => {
                             description="12の質問であなたの性格を分析し、46種の狩猟対象動物から最も近い1匹を診断します。所要時間約5分。"
                             icon={<Compass size={32} className="text-green-600" />}
                             path="/diagnosis"
+                            imageSrc={panel4}
                         />
                     </div>
                 </div>
