@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Hash, Trophy, Clock } from 'lucide-react';
+import { HybridRankingService } from '../services/hybridRankingService';
 
 interface SequenceGamePageProps {
     mode: 'instructions' | 'game' | 'result';
@@ -97,7 +98,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
     }, [clickTimes, totalClicks, successfulClicks, calculateAverageInterval]);
 
     // ゲーム履歴を保存
-    const saveGameHistory = useCallback((completionTime: number, completed: boolean, avgInterval: number, successRate: number) => {
+    const saveGameHistory = useCallback(async (completionTime: number, completed: boolean, avgInterval: number, successRate: number) => {
         const rankInfo = getRankFromTime(completionTime);
 
         const newGameResult: SequenceGameHistory = {
@@ -113,6 +114,21 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         const updatedHistory = [newGameResult, ...gameHistory].slice(0, 10);
         setGameHistory(updatedHistory);
         localStorage.setItem('sequenceGameHistory', JSON.stringify(updatedHistory));
+
+        // クラウドDBにもスコア送信（完了した場合のみ）
+        if (completed) {
+            try {
+                const hybridService = HybridRankingService.getInstance();
+                await hybridService.submitScore('sequence', completionTime, {
+                    averageClickInterval: avgInterval,
+                    successClickRate: successRate,
+                    rank: rankInfo.rank
+                });
+                console.log('✅ Sequence game score submitted to cloud:', completionTime);
+            } catch (error) {
+                console.error('❌ Failed to submit sequence game score to cloud:', error);
+            }
+        }
     }, [gameHistory]);
 
     // ベスト記録を取得

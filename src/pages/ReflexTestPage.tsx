@@ -4,6 +4,8 @@ import { Zap } from 'lucide-react';
 import type { TestResult, ReflexGameHistory } from '../types/game';
 import { getReflexHunterRank, STORAGE_KEYS } from '../types/game';
 import { useGameHistory } from '../hooks/useGameHistory';
+import { UsernameRegistrationModal } from '../components/UsernameRegistrationModal';
+import { HybridRankingService } from '../services/hybridRankingService';
 
 interface ReflexTestPageProps {
     mode: 'instructions' | 'game' | 'result';
@@ -17,12 +19,16 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     const [results, setResults] = useState<TestResult[]>([]);
     const [startTime, setStartTime] = useState(0);
     const [, setIsTestRunning] = useState(false);
-    // 共通フックを使用
-    const { gameHistory, saveGameResult } = useGameHistory<ReflexGameHistory>(STORAGE_KEYS.REFLEX_HISTORY);
+    // 共通フックを使用（拡張版）
+    const { gameHistory, saveGameResult, getBestRecord, isNewRecord, shouldShowUsernameModal } = useGameHistory<ReflexGameHistory>(STORAGE_KEYS.REFLEX_HISTORY);
+    
+    // ユーザー名登録モーダル状態
+    const [showUsernameModal, setShowUsernameModal] = useState(false);
+    const [modalGameData, setModalGameData] = useState<{ gameType: string; score: number; isNewRecord: boolean } | null>(null);
 
     // タイマーIDを管理するためのref
-    const testTimerRef = useRef<number | null>(null);
-    const nextTestTimerRef = useRef<number | null>(null);
+    const testTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const nextTestTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const MAX_TESTS = 5;
 
@@ -98,7 +104,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     }, [gameState, startSingleTest]);
 
     // ゲーム履歴を保存
-    const saveGameHistory = useCallback((finalResults: TestResult[]) => {
+    const saveGameHistory = useCallback(async (finalResults: TestResult[]) => {
         const validResults = finalResults.filter(r => r.success && r.time > 0);
         const avgTime = validResults.length > 0 ?
             Math.round(validResults.reduce((sum, result) => sum + result.time, 0) / validResults.length) : 0;
@@ -113,8 +119,36 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             testResults: finalResults
         };
 
-        saveGameResult(newGameResult);
-    }, [saveGameResult]);
+        // ゲーム結果を保存（LocalStorage）
+        await saveGameResult(newGameResult);
+
+        // クラウドDBにもスコア送信
+        try {
+            const hybridService = HybridRankingService.getInstance();
+            await hybridService.submitScore('reflex', bestTime, {
+                averageTime: avgTime,
+                successRate: successRate,
+                totalTests: finalResults.length
+            });
+            console.log('✅ Reflex score submitted to cloud:', bestTime);
+        } catch (error) {
+            console.error('❌ Failed to submit reflex score to cloud:', error);
+        }
+
+        // 新記録かどうかチェック（反射神経は時間が短い方が良い）
+        const isRecord = isNewRecord(bestTime, (a, b) => a.bestTime < b.bestTime);
+        
+        // ユーザー名登録モーダル表示判定
+        const shouldShow = await shouldShowUsernameModal(isRecord);
+        if (shouldShow) {
+            setModalGameData({
+                gameType: 'reflex',
+                score: bestTime,
+                isNewRecord: isRecord
+            });
+            setShowUsernameModal(true);
+        }
+    }, [saveGameResult, isNewRecord, shouldShowUsernameModal]);
 
     const handleClick = useCallback(() => {
         if (gameState === 'go') {
@@ -402,6 +436,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
     // mode === 'game'
     return (
+        <>
         <div className="flex-1">
             <div className="min-h-screen">
                 <div className="py-8 px-4">
@@ -505,6 +540,26 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                 </div>
             </div>
         </div>
+
+        {/* ユーザー名登録モーダル */}
+        {modalGameData && (
+            <UsernameRegistrationModal
+                isOpen={showUsernameModal}
+                onClose={() => {
+                    setShowUsernameModal(false);
+                    setModalGameData(null);
+                }}
+                onUsernameSet={(username: string) => {
+                    console.log(`✅ Username set: ${username}`);
+                    setShowUsernameModal(false);
+                    setModalGameData(null);
+                }}
+                gameType={modalGameData.gameType}
+                score={modalGameData.score}
+                isNewRecord={modalGameData.isNewRecord}
+            />
+        )}
+        </>
     );
 };
 

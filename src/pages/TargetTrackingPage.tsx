@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Crosshair } from 'lucide-react';
+import { HybridRankingService } from '../services/hybridRankingService';
 
 interface TargetTrackingPageProps {
     mode: 'instructions' | 'game' | 'result';
@@ -35,7 +36,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     const [isTargetClickable, setIsTargetClickable] = useState(true);
 
     // タイマーIDを管理するためのref
-    const timerRef = useRef<number | null>(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     const TOTAL_TARGETS = 10;
     const TARGET_SIZE = 60;
@@ -182,7 +183,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     };
 
     // ゲーム終了処理
-    const endGame = (finalResults: TargetResult[]) => {
+    const endGame = async (finalResults: TargetResult[]) => {
         setGameState('finished');
 
         const totalTime = (Date.now() - gameStartTime) / 1000;
@@ -202,6 +203,19 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         const updatedHistory = [newGameResult, ...gameHistory].slice(0, 10);
         setGameHistory(updatedHistory);
         localStorage.setItem('targetTrackingHistory', JSON.stringify(updatedHistory));
+
+        // クラウドDBにもスコア送信
+        try {
+            const hybridService = HybridRankingService.getInstance();
+            await hybridService.submitScore('target', Math.round(averageReactionTime), {
+                totalTime: totalTime,
+                accuracy: accuracy,
+                targetCount: finalResults.length
+            });
+            console.log('✅ Target tracking score submitted to cloud:', Math.round(averageReactionTime));
+        } catch (error) {
+            console.error('❌ Failed to submit target tracking score to cloud:', error);
+        }
 
         navigate('/target/result');
     };

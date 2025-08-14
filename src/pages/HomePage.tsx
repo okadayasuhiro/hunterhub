@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy, Crown } from 'lucide-react';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
+import { HybridRankingService } from '../services/hybridRankingService';
+import type { RankingEntry } from '../services/localRankingService';
+import { UserIdentificationService } from '../services/userIdentificationService';
 import panel1 from '../assets/images/panel1.png';
 import panel2 from '../assets/images/panel2.png';
 import panel3 from '../assets/images/panel3.png';
@@ -23,10 +26,13 @@ interface GameCardProps {
     lastResult?: LastResult;
     imageSrc?: string;
     playCount?: number;
+    topPlayer?: RankingEntry | null;
 }
 
-const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc, playCount }) => {
+const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc, playCount, topPlayer }) => {
     const navigate = useNavigate();
+    
+    // ログ出力を完全に削除
 
     const handleClick = () => {
         navigate(path);
@@ -61,13 +67,34 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                     {description}
                 </p>
                 
+                {/* 1位プレイヤー表示 */}
+                <div className="mb-4 p-3 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
+                    {topPlayer ? (
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                <Crown className="w-4 h-4 text-yellow-600 mr-2" />
+                                <span className="text-sm font-medium text-gray-700">現在の1位</span>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm font-bold text-yellow-700">{topPlayer?.displayName}</p>
+                                <p className="text-xs text-yellow-600">{topPlayer?.score}{title.includes('反射神経') || title.includes('ターゲット') || title.includes('数字') ? 'ms' : ''}</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex items-center">
+                            <Crown className="w-4 h-4 text-gray-400 mr-2" />
+                            <span className="text-sm text-gray-500">まだランキングがありません</span>
+                        </div>
+                    )}
+                </div>
+                
                 {/* 前回の結果表示（常に表示で高さ統一） */}
                 <div className="mb-6 p-4 bg-gray-50 rounded-lg border min-h-[100px]">
                     {lastResult ? (
                         <>
                             <div className="flex items-center mb-2">
                                 <Trophy size={16} className="text-yellow-600 mr-2" />
-                                <span className="text-sm font-medium text-gray-700">前回の記録</span>
+                                <span className="text-sm font-medium text-gray-700">あなたの前回記録</span>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
@@ -121,6 +148,12 @@ const HomePage: React.FC = () => {
         reflex?: number;
         target?: number;
         sequence?: number;
+    }>({});
+    
+    const [topPlayers, setTopPlayers] = useState<{
+        reflex?: RankingEntry | null;
+        target?: RankingEntry | null;
+        sequence?: RankingEntry | null;
     }>({});
 
     // LocalStorageから各ゲームの最新記録を取得
@@ -206,6 +239,24 @@ const HomePage: React.FC = () => {
         loadLastResults();
     }, []);
 
+    const location = useLocation();
+
+    // トップランカーを取得（初回 + ページナビゲーション時）
+    useEffect(() => {
+        const loadTopPlayers = async () => {
+            try {
+                const rankingService = HybridRankingService.getInstance();
+                const topPlayers = await rankingService.getAllTopPlayers();
+                setTopPlayers(topPlayers);
+            } catch (error) {
+                console.error('❌ Failed to load top players:', error);
+            }
+        };
+
+        loadTopPlayers();
+
+    }, [location.pathname]); // ページ遷移時に再実行
+
     return (
         <div className="flex-1">
             {/* ヒーローセクション */}
@@ -248,6 +299,7 @@ const HomePage: React.FC = () => {
                             lastResult={lastResults.reflex}
                             imageSrc={ENABLE_REFLEX_PANEL ? panel1 : undefined}
                             playCount={playCounts.reflex}
+                            topPlayer={topPlayers.reflex}
                         />
                         <GameCard
                             title="ターゲット追跡"
@@ -257,6 +309,7 @@ const HomePage: React.FC = () => {
                             lastResult={lastResults.target}
                             imageSrc={ENABLE_TARGET_PANEL ? panel2 : undefined}
                             playCount={playCounts.target}
+                            topPlayer={topPlayers.target}
                         />
                         <GameCard
                             title="数字順序ゲーム"
@@ -266,6 +319,7 @@ const HomePage: React.FC = () => {
                             lastResult={lastResults.sequence}
                             imageSrc={ENABLE_SEQUENCE_PANEL ? panel3 : undefined}
                             playCount={playCounts.sequence}
+                            topPlayer={topPlayers.sequence}
                         />
                     </div>
                 </div>

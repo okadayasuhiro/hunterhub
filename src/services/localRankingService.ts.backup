@@ -1,0 +1,345 @@
+/**
+ * ローカルランキングサービス
+ * LocalStorageベースのランキングシステム（プロトタイプ版）
+ * 後でサーバーサイドランキングに移行予定
+ */
+
+import { UserIdentificationService } from './userIdentificationService';
+
+export interface GameScore {
+  userId: string;
+  gameType: string;
+  score: number;
+  timestamp: string;
+  sessionId: string;
+  metadata?: any;
+}
+
+export interface RankingEntry {
+  rank: number;
+  userId: string;
+  username?: string;
+  displayName: string;
+  score: number;
+  timestamp: string;
+  isCurrentUser: boolean;
+}
+
+export interface RankingData {
+  rankings: RankingEntry[];
+  userRank: RankingEntry | null;
+  totalPlayers: number;
+  lastUpdated: string;
+}
+
+export class LocalRankingService {
+  private static instance: LocalRankingService;
+  private userService: UserIdentificationService;
+  
+  private readonly STORAGE_KEYS = {
+    GLOBAL_SCORES: 'hunterhub_global_scores',
+    RANKING_CACHE: 'hunterhub_ranking_cache',
+    LAST_SYNC: 'hunterhub_last_ranking_sync'
+  };
+
+  private constructor() {
+    this.userService = UserIdentificationService.getInstance();
+  }
+
+  public static getInstance(): LocalRankingService {
+    if (!LocalRankingService.instance) {
+      LocalRankingService.instance = new LocalRankingService();
+    }
+    return LocalRankingService.instance;
+  }
+
+  /**
+   * スコアをローカルランキングに送信
+   */
+  public async submitScore(gameType: string, score: number, metadata?: any): Promise<void> {
+    const userId = await this.userService.getCurrentUserId();
+    
+    const gameScore: GameScore = {
+      userId,
+      gameType,
+      score,
+      timestamp: new Date().toISOString(),
+      sessionId: `${userId.substring(0, 8)}_${Date.now()}`,
+      metadata
+    };
+
+    // 既存スコアを取得
+    const allScores = this.getAllScores();
+    
+    // 新しいスコアを追加
+    allScores.push(gameScore);
+    
+    // 最新1000件のみ保持（パフォーマンス対策）
+    const recentScores = allScores
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 1000);
+    
+    // ローカルストレージに保存
+    localStorage.setItem(this.STORAGE_KEYS.GLOBAL_SCORES, JSON.stringify(recentScores));
+    
+    // ランキングキャッシュを更新
+    this.updateRankingCache(gameType);
+    
+    console.log(`📊 Score submitted: ${gameType} - ${score} (User: ${userId.substring(0, 8)}...)`);
+  }
+
+  /**
+   * ランキングデータを取得
+   */
+  public async getRankings(gameType: string, limit: number = 50): Promise<RankingData> {
+    const userId = await this.userService.getCurrentUserId();
+    const allScores = this.getAllScores();
+    
+    // 指定ゲームタイプのスコアをフィルタリング
+    const gameScores = allScores.filter(score => score.gameType === gameType);
+    
+    // ユーザーごとの最高スコアを計算
+    const userBestScores = this.calculateUserBestScores(gameScores);
+    
+    // ランキング順にソート（スコアが高い順、同じ場合は日時が新しい順）
+    const sortedRankings = userBestScores
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      })
+      .slice(0, limit);
+    
+    // ランキング情報を生成（ユーザー名付き）
+    const rankings: RankingEntry[] = await Promise.all(
+      sortedRankings.map(async (entry, index) => {
+        const username = await this.getUsernameByUserId(entry.userId);
+        const displayName = username || `ユーザー${entry.userId.substring(0, 6)}`;
+        
+        return {
+          rank: index + 1,
+          userId: entry.userId,
+          username,
+          displayName,
+          score: entry.score,
+          timestamp: entry.timestamp,
+          isCurrentUser: entry.userId === userId
+        };
+      })
+    );    
+    // 現在ユーザーのランク情報を取得
+    const userRank = rankings.find(entry => entry.isCurrentUser) || null;
+    
+    return {
+      rankings,
+      userRank,
+      totalPlayers: userBestScores.length,
+      lastUpdated: new Date().toISOString()
+    };
+  }
+
+  /**
+   * ユーザーの統計情報を取得
+   */
+  public async getUserStats(gameType?: string): Promise<{
+    totalGames: number;
+    bestScore: number | null;
+    averageScore: number | null;
+    recentGames: GameScore[];
+    rank: number | null;
+  }> {
+    const userId = await this.userService.getCurrentUserId();
+    const allScores = this.getAllScores();
+    
+    // ユーザーのスコアをフィルタリング
+    let userScores = allScores.filter(score => score.userId === userId);
+    
+    if (gameType) {
+      userScores = userScores.filter(score => score.gameType === gameType);
+    }
+    
+    // 統計計算
+    const totalGames = userScores.length;
+    const bestScore = totalGames > 0 ? Math.max(...userScores.map(s => s.score)) : null;
+    const averageScore = totalGames > 0 ? userScores.reduce((sum, s) => sum + s.score, 0) / totalGames : null;
+    const recentGames = userScores
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 10);
+    
+    // ランクを取得
+    let rank: number | null = null;
+    if (gameType && bestScore !== null) {
+      const rankingData = await this.getRankings(gameType);
+      rank = rankingData.userRank?.rank || null;
+    }
+    
+    return {
+      totalGames,
+      bestScore,
+      averageScore: averageScore ? Math.round(averageScore * 100) / 100 : null,
+      recentGames,
+      rank
+    };
+  }
+
+  /**
+   * 全スコアデータを取得
+   */
+  private getAllScores(): GameScore[] {
+    try {
+      const scoresData = localStorage.getItem(this.STORAGE_KEYS.GLOBAL_SCORES);
+      return scoresData ? JSON.parse(scoresData) : [];
+    } catch (error) {
+      console.error('Failed to load global scores:', error);
+      return [];
+    }
+  }
+
+  /**
+   * ユーザーごとの最高スコアを計算
+   */
+  private calculateUserBestScores(scores: GameScore[]): GameScore[] {
+    const userScoreMap = new Map<string, GameScore>();
+    
+    scores.forEach(score => {
+      const existingScore = userScoreMap.get(score.userId);
+      if (!existingScore || score.score > existingScore.score) {
+        userScoreMap.set(score.userId, score);
+      }
+    });
+    
+    return Array.from(userScoreMap.values());
+  }
+
+  /**
+   * ランキングキャッシュを更新
+   */
+  private updateRankingCache(gameType: string): void {
+    try {
+      const cache = this.getRankingCache();
+      cache[gameType] = {
+        lastUpdated: new Date().toISOString(),
+        needsRefresh: true
+      };
+      localStorage.setItem(this.STORAGE_KEYS.RANKING_CACHE, JSON.stringify(cache));
+    } catch (error) {
+      console.error('Failed to update ranking cache:', error);
+    }
+  }
+
+  /**
+   * ランキングキャッシュを取得
+   */
+  private getRankingCache(): any {
+    try {
+      const cacheData = localStorage.getItem(this.STORAGE_KEYS.RANKING_CACHE);
+      return cacheData ? JSON.parse(cacheData) : {};
+    } catch (error) {
+      console.error('Failed to load ranking cache:', error);
+      return {};
+    }
+  }
+
+  /**
+   * デバッグ用：全データを取得
+   */
+  public getDebugInfo(): any {
+    const allScores = this.getAllScores();
+    const cache = this.getRankingCache();
+    
+    return {
+      totalScores: allScores.length,
+      scoresByGame: this.getScoresByGameType(allScores),
+      uniqueUsers: new Set(allScores.map(s => s.userId)).size,
+      cache,
+      storageKeys: this.STORAGE_KEYS,
+      storageUsage: this.calculateStorageUsage()
+    };
+  }
+
+  /**
+   * ゲームタイプ別スコア統計
+   */
+  private getScoresByGameType(scores: GameScore[]): Record<string, number> {
+    const gameTypeCount: Record<string, number> = {};
+    scores.forEach(score => {
+      gameTypeCount[score.gameType] = (gameTypeCount[score.gameType] || 0) + 1;
+    });
+    return gameTypeCount;
+  }
+
+  /**
+   * ストレージ使用量計算
+   */
+  private calculateStorageUsage(): { totalKB: number; scoreDataKB: number } {
+    const scoreData = localStorage.getItem(this.STORAGE_KEYS.GLOBAL_SCORES) || '';
+    const totalData = JSON.stringify(localStorage);
+    
+    return {
+      totalKB: Math.round((totalData.length * 2) / 1024), // UTF-16なので2バイト
+      scoreDataKB: Math.round((scoreData.length * 2) / 1024)
+    };
+  }
+
+  /**
+   * データクリア（テスト用）
+   */
+  public clearAllRankingData(): void {
+    Object.values(this.STORAGE_KEYS).forEach(key => {
+      localStorage.removeItem(key);
+    });
+    console.log('🗑️ All ranking data cleared');
+  }
+  /**
+   * 指定ゲームタイプの1位プレイヤーを取得
+   */
+  public async getTopPlayer(gameType: string): Promise<RankingEntry | null> {
+    try {
+      const rankingData = await this.getRankings(gameType, 1);
+      return rankingData.rankings.length > 0 ? rankingData.rankings[0] : null;
+    } catch (error) {
+      console.error('Failed to get top player:', error);
+      return null;
+    }
+  }
+
+  /**
+   * 全ゲームの1位プレイヤーを一括取得
+   */
+  public async getAllTopPlayers(): Promise<{
+    reflex: RankingEntry | null;
+    target: RankingEntry | null;
+    sequence: RankingEntry | null;
+  }> {
+    try {
+      const [reflexTop, targetTop, sequenceTop] = await Promise.all([
+        this.getTopPlayer('reflex'),
+        this.getTopPlayer('target'),
+        this.getTopPlayer('sequence')
+      ]);
+
+      return {
+        reflex: reflexTop,
+        target: targetTop,
+        sequence: sequenceTop
+      };
+    } catch (error) {
+
+  /**
+   * ユーザーIDからユーザー名を取得
+   */
+  private async getUsernameByUserId(userId: string): Promise<string | null> {
+    try {
+      return await this.userService.getUsername();
+    } catch (error) {
+      console.error("Failed to get username:", error);
+      return null;
+    }
+  }      console.error('Failed to get all top players:', error);
+      return {
+        reflex: null,
+        target: null,
+        sequence: null
+      };
+    }
+  }
+  }

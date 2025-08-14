@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^6.11.2",
     "@types/react-router-dom": "^5.3.3",
+    "aws-amplify": "^6.15.5",
+    "firebase": "^12.1.0",
     "lucide-react": "^0.513.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

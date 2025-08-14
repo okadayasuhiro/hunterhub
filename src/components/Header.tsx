@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Trophy } from 'lucide-react';
 
 interface HeaderProps {
     onHomeClick?: () => void;
@@ -44,6 +45,15 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
 
                     {/* ナビゲーション部分 */}
                     <div className="flex items-center space-x-4">
+                        {/* ランキングボタン */}
+                        <button
+                            onClick={() => navigate('/ranking')}
+                            className="flex items-center px-4 py-2 glass-light text-slate-700 rounded-lg hover:bg-white/30 transition-all duration-200"
+                        >
+                            <Trophy className="w-4 h-4 mr-2" />
+                            ランキング
+                        </button>
+
                         {shouldShowBackButton && (
                             <button
                                 onClick={handleBackClick}

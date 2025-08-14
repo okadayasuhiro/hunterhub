@@ -6,6 +6,7 @@ import HomePage from '../pages/HomePage';
 import ReflexTestPage from '../pages/ReflexTestPage';
 import TargetTrackingPage from '../pages/TargetTrackingPage';
 import SequenceGamePage from '../pages/SequenceGamePage';
+import RankingPage from '../pages/RankingPage';
 import DiagnosisHomePage from '../pages/diagnosis/DiagnosisHomePage';
 import DiagnosisPage from '../pages/DiagnosisPage';
 import DiagnosisResultPage from '../pages/DiagnosisResultPage';
@@ -48,6 +49,9 @@ const AppRouter: React.FC = () => {
                         <Route path="/sequence/instructions" element={<SequenceGamePage mode="instructions" />} />
                         <Route path="/sequence/game" element={<SequenceGamePage mode="game" />} />
                         <Route path="/sequence/result" element={<SequenceGamePage mode="result" />} />
+
+                        {/* ランキング */}
+                        <Route path="/ranking" element={<RankingPage />} />
 
                         {/* 狩猟鳥獣診断 */}
                         <Route path="/diagnosis" element={<DiagnosisHomePage />} />
