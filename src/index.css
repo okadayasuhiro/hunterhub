@@ -7,11 +7,11 @@ html, body {
   font-family: 'Noto Sans JP', sans-serif;
   /* ガラス風グラデーション背景 */
   background: linear-gradient(135deg, 
-    rgba(248, 250, 252, 0.9) 0%,     /* 淡いブルーグレー */
-    rgba(241, 245, 249, 0.95) 25%,   /* 薄いスレートグレー */
-    rgba(238, 242, 255, 0.9) 50%,    /* 淡いインディゴ */
-    rgba(245, 247, 250, 0.95) 75%,   /* 薄いグレー */
-    rgba(249, 250, 251, 0.9) 100%    /* 淡いニュートラル */
+    #e0f2fe 0%,     /* 淡いシアンブルー */
+    #f1f5f9 25%,    /* 薄いスレートグレー */
+    #e8eaf6 50%,    /* 淡いインディゴ */
+    #f5f7fa 75%,    /* 薄いグレー */
+    #fafafa 100%    /* 淡いニュートラル */
   );
   background-attachment: fixed;
   background-size: 400% 400%;
@@ -88,16 +88,16 @@ button {
 
 /* ガラスモルフィズム効果のユーティリティクラス */
 .glass-card {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
 .glass-light {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
