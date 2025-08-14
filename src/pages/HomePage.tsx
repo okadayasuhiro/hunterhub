@@ -43,8 +43,8 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                     <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     {playCount !== undefined && (
-                        <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
-                            {playCount}回プレイ
+                        <div className="absolute bottom-0 right-0 bg-blue-500 text-white px-2 py-1 text-sm font-medium">
+                            {playCount}
                         </div>
                     )}
                 </div>
