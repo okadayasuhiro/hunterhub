@@ -43,8 +43,8 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                     <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     {playCount !== undefined && (
-                        <div className="absolute bottom-0 right-0 bg-blue-500 text-white px-2 py-1 text-sm font-medium">
-                            {playCount}
+                        <div className="absolute bottom-0 right-0 bg-blue-500 text-white px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105">
+                            {playCount} times played
                         </div>
                     )}
                 </div>
