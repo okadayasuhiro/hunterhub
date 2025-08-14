@@ -43,7 +43,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                     <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     {playCount !== undefined && (
-                        <div className="absolute -bottom-px -right-px bg-blue-500 text-white px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105">
+                        <div className="absolute bottom-0 right-0 bg-blue-500 text-white px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105">
                             {playCount} times played
                         </div>
                     )}
@@ -228,7 +228,7 @@ const HomePage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <GameCard
                             title="反射神経テスト"
-                            description="緑から赤への色変化に素早く反応して、クリックしてください。赤になる前にクリックするとフライング！。"
+                            description="緑から赤への色変化に素早く反応して、クリックしてください。赤になる前にクリックするとフライング！"
                             icon={<></>}
                             path="/reflex/instructions"
                             lastResult={lastResults.reflex}
