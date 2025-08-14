@@ -228,7 +228,7 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* ゲーム選択セクション */}
-            <div className="py-16 px-4" style={{ backgroundColor: '#f8fafc' }}>
+            <div className="py-16 px-4">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-light text-gray-800 mb-4">
@@ -295,7 +295,7 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* 特徴セクション */}
-            <div className="py-12 px-4" style={{ backgroundColor: '#f8fafc' }}>
+            <div className="py-12 px-4">
                 <div className="max-w-4xl mx-auto text-center">
                     <p className="text-gray-500 font-light">
                         継続的なトレーニングで、狩猟時の反射神経と集中力を向上させましょう

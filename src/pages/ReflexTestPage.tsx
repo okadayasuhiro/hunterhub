@@ -204,7 +204,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     if (mode === 'instructions') {
         return (
             <div className="flex-1">
-                <div className="min-h-screen" style={{ backgroundColor: '#f8fafc' }}>
+                <div className="min-h-screen">
                     <div className="py-16 px-4">
                         <div className="max-w-3xl mx-auto">
                             {/* ヘッダー */}
@@ -286,7 +286,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     if (mode === 'result') {
         return (
             <div className="flex-1">
-                <div className="min-h-screen" style={{ backgroundColor: '#f8fafc' }}>
+                <div className="min-h-screen">
                     <div className="py-16 px-4">
                         <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
@@ -403,7 +403,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     // mode === 'game'
     return (
         <div className="flex-1">
-            <div className="min-h-screen" style={{ backgroundColor: '#f8fafc' }}>
+            <div className="min-h-screen">
                 <div className="py-8 px-4">
                     <div className="max-w-4xl mx-auto">
                         {/* ヘッダー */}
