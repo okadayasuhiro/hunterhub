@@ -4,6 +4,7 @@ import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy } from 'lucide-rea
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import panel1 from '../assets/images/panel1.png';
+import panel2 from '../assets/images/panel2.png';
 import panel3 from '../assets/images/panel3.png';
 
 interface LastResult {
@@ -108,6 +109,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
 
 const HomePage: React.FC = () => {
     const ENABLE_REFLEX_PANEL = true;
+    const ENABLE_TARGET_PANEL = true;
     const ENABLE_SEQUENCE_PANEL = true;
     const [lastResults, setLastResults] = useState<{
         reflex?: LastResult;
@@ -166,6 +168,11 @@ const HomePage: React.FC = () => {
                             }
                         }));
                     }
+                    // プレイ回数を設定
+                    setPlayCounts(prev => ({
+                        ...prev,
+                        target: history.length
+                    }));
                 }
 
                 // 数字順序ゲームの最新記録
@@ -248,6 +255,8 @@ const HomePage: React.FC = () => {
                             icon={<></>}
                             path="/target/instructions"
                             lastResult={lastResults.target}
+                            imageSrc={ENABLE_TARGET_PANEL ? panel2 : undefined}
+                            playCount={playCounts.target}
                         />
                         <GameCard
                             title="数字順序ゲーム"
