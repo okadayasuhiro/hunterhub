@@ -33,7 +33,24 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     const [showXLinkModal, setShowXLinkModal] = useState(false);
     const [xLinkModalData, setXLinkModalData] = useState<{ gameType: string; score: number; playerName: string } | null>(null);
     
+    // X連携状態の追跡
+    const [isXLinked, setIsXLinked] = useState<boolean | null>(null);
+    const [displayName, setDisplayName] = useState<string>('');
+    
     const userService = UserIdentificationService.getInstance();
+    
+    // X連携状態を初期化時とゲーム完了時に確認
+    useEffect(() => {
+        const checkXLinkStatus = async () => {
+            const linked = await userService.isXLinked();
+            const name = await userService.getDisplayName();
+            setIsXLinked(linked);
+            setDisplayName(name);
+            console.log('🔗 X連携状態確認:', { linked, name });
+        };
+        
+        checkXLinkStatus();
+    }, [gameState]); // gameStateが変わるたびにチェック
     
     // モーダル状態の変更を監視してデバッグ
     useEffect(() => {
@@ -178,31 +195,20 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             shouldShowModal: !isXLinked
         });
         
-        // X連携していない場合、さりげなくX連携を促す
-        if (!isXLinked) {
-            console.log('✅ X連携モーダルを表示します');
-            const modalData = {
-                gameType: 'reflex',
-                score: weightedScore,
-                playerName: displayName
-            };
-            console.log('🔧 Setting modal data:', modalData);
-            
-            // flushSyncを使って状態更新を強制的に同期化
-            flushSync(() => {
-                setXLinkModalData(modalData);
-                setShowXLinkModal(true);
-            });
-            
-            console.log('🔧 Modal states set with flushSync - should be immediately visible');
-            
-            // 状態確認のため少し遅延してログ出力
-            setTimeout(() => {
-                console.log('🔧 Modal should be visible now. Check XLinkPromptModal render logs.');
-            }, 100);
-        } else {
-            console.log('❌ X連携済みのためモーダル非表示');
-        }
+        // 自動モーダル表示は無効化 - ボタンクリック時のみ表示
+        console.log('ℹ️ 自動X連携モーダル表示は無効化されました。ボタンクリックで表示してください。');
+        
+        // X連携状態を更新（結果画面でボタン表示判定に使用）
+        const currentIsXLinked = await userService.isXLinked();
+        const currentDisplayName = await userService.getDisplayName();
+        setIsXLinked(currentIsXLinked);
+        setDisplayName(currentDisplayName);
+        
+        console.log('🔗 X連携状態更新:', { 
+            currentIsXLinked, 
+            currentDisplayName,
+            willShowButton: !currentIsXLinked 
+        });
         
         // 旧ユーザー名登録システム（X連携していない場合のみ）
         if (!isXLinked) {
@@ -283,6 +289,29 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
     const handleXLinkClose = () => {
         setShowXLinkModal(false);
+    };
+
+    // ボタンクリック時にX連携モーダルを表示
+    const showXLinkModalOnClick = () => {
+        console.log('🎯 X連携ボタンクリック - モーダル表示開始');
+        
+        // 最新のゲーム結果を取得
+        const latestResult = results.length > 0 ? results[results.length - 1] : null;
+        const currentScore = latestResult ? calculateWeightedScore(results).weightedScore : 1000;
+        
+        const modalData = {
+            gameType: 'reflex',
+            score: currentScore,
+            playerName: displayName
+        };
+        
+        console.log('🔧 ボタンクリック - Setting modal data:', modalData);
+        
+        // 直接状態設定（flushSyncは不要 - ユーザーアクション由来）
+        setXLinkModalData(modalData);
+        setShowXLinkModal(true);
+        
+        console.log('✅ X連携モーダル表示完了');
     };
 
     const resetTest = () => {
@@ -506,19 +535,35 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             </div>
 
                             {/* ボタン */}
-                            <div className="flex gap-4 justify-center">
-                                <button
-                                    onClick={resetTest}
-                                    className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
-                                >
-                                    もう一度
-                                </button>
-                                <button
-                                    onClick={handleBack}
-                                    className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
-                                >
-                                    メニューに戻る
-                                </button>
+                            <div className="flex flex-col gap-4 justify-center">
+                                {/* X連携促進ボタン（X未連携の場合のみ表示） */}
+                                {isXLinked === false && (
+                                    <div className="text-center">
+                                        <button
+                                            onClick={showXLinkModalOnClick}
+                                            className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105"
+                                        >
+                                            🔗 Xと連携してランキングに名前を表示
+                                        </button>
+                                        <p className="text-xs text-gray-500 mt-1">※ 連携しなくても引き続きプレイできます</p>
+                                    </div>
+                                )}
+                                
+                                {/* 既存のボタン */}
+                                <div className="flex gap-4 justify-center">
+                                    <button
+                                        onClick={resetTest}
+                                        className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
+                                    >
+                                        もう一度
+                                    </button>
+                                    <button
+                                        onClick={handleBack}
+                                        className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+                                    >
+                                        メニューに戻る
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
