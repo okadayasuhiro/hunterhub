@@ -161,14 +161,24 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         const isXLinked = await userService.isXLinked();
         const displayName = await userService.getDisplayName();
         
+        console.log('🔍 X連携モーダル表示チェック:', {
+            isXLinked,
+            displayName,
+            weightedScore,
+            shouldShowModal: !isXLinked
+        });
+        
         // X連携していない場合、さりげなくX連携を促す
         if (!isXLinked) {
+            console.log('✅ X連携モーダルを表示します');
             setXLinkModalData({
                 gameType: 'reflex',
                 score: weightedScore,
                 playerName: displayName
             });
             setShowXLinkModal(true);
+        } else {
+            console.log('❌ X連携済みのためモーダル非表示');
         }
         
         // 旧ユーザー名登録システム（X連携していない場合のみ）

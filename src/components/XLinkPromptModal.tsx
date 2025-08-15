@@ -18,7 +18,19 @@ const XLinkPromptModal: React.FC<XLinkPromptModalProps> = ({
     gameType,
     score
 }) => {
-    if (!isOpen) return null;
+    console.log('🔍 XLinkPromptModal render:', {
+        isOpen,
+        playerName,
+        gameType,
+        score
+    });
+    
+    if (!isOpen) {
+        console.log('❌ XLinkPromptModal: isOpen = false');
+        return null;
+    }
+    
+    console.log('✅ XLinkPromptModal: レンダリング中');
 
     const getGameDisplayName = (type: string) => {
         switch (type) {
