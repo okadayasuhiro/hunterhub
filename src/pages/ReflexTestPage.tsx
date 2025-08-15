@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Zap } from 'lucide-react';
 import type { TestResult, ReflexGameHistory } from '../types/game';
@@ -33,6 +34,15 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     const [xLinkModalData, setXLinkModalData] = useState<{ gameType: string; score: number; playerName: string } | null>(null);
     
     const userService = UserIdentificationService.getInstance();
+    
+    // モーダル状態の変更を監視してデバッグ
+    useEffect(() => {
+        console.log('🔄 Modal state changed:', {
+            showXLinkModal,
+            xLinkModalData,
+            isModalVisible: showXLinkModal && xLinkModalData !== null
+        });
+    }, [showXLinkModal, xLinkModalData]);
 
     // タイマーIDを管理するためのref
     const testTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -178,11 +188,13 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             };
             console.log('🔧 Setting modal data:', modalData);
             
-            // 状態を同時に設定してレンダリング問題を回避
-            setXLinkModalData(modalData);
-            setShowXLinkModal(true);
+            // flushSyncを使って状態更新を強制的に同期化
+            flushSync(() => {
+                setXLinkModalData(modalData);
+                setShowXLinkModal(true);
+            });
             
-            console.log('🔧 Modal states set - data and show flag both updated');
+            console.log('🔧 Modal states set with flushSync - should be immediately visible');
             
             // 状態確認のため少し遅延してログ出力
             setTimeout(() => {

@@ -22,15 +22,17 @@ const XLinkPromptModal: React.FC<XLinkPromptModalProps> = ({
         isOpen,
         playerName,
         gameType,
-        score
+        score,
+        timestamp: new Date().toISOString()
     });
     
     if (!isOpen) {
-        console.log('❌ XLinkPromptModal: isOpen = false');
+        console.log('❌ XLinkPromptModal: isOpen = false, not rendering modal');
         return null;
     }
     
-    console.log('✅ XLinkPromptModal: レンダリング中');
+    console.log('✅ XLinkPromptModal: レンダリング中 - Modal should be visible!');
+    console.log('🎯 Modal data:', { playerName, gameType, score });
 
     const getGameDisplayName = (type: string) => {
         switch (type) {
