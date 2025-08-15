@@ -14,6 +14,12 @@
     "categories": {
       "api": {
         "hunterhub": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d202ov1d7n8aaj",
+          "type": "manual"
+        }
       }
     }
   }

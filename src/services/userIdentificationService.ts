@@ -5,6 +5,7 @@
 
 import { BrowserFingerprint } from '../utils/browserFingerprint';
 import type { FingerprintData } from '../utils/browserFingerprint';
+import { generateHunterNameFromSeed } from '../data/hunterNames';
 export interface UserProfile {
   userId: string;
   fingerprint: FingerprintData;
@@ -13,6 +14,12 @@ export interface UserProfile {
   fingerprintQuality: number;
   sessionCount: number;
   totalGamesPlayed: number;
+  // 新ハンター名前システム
+  hunterName: string;
+  isXLinked: boolean;
+  xDisplayName?: string;
+  xLinkedAt?: string;
+  // 旧システム（非推奨）
   username?: string;
   usernameUpdatedAt?: string;
 }
@@ -85,6 +92,9 @@ export class UserIdentificationService {
     const userId = await this.fingerprinter.hashFingerprint(fingerprint);
     const quality = this.fingerprinter.calculateFingerprintQuality(fingerprint);
     
+    // ユーザーIDを使ってハンター名前を生成（一意性確保）
+    const hunterName = generateHunterNameFromSeed(userId);
+    
     const userProfile: UserProfile = {
       userId,
       fingerprint,
@@ -92,7 +102,10 @@ export class UserIdentificationService {
       lastActiveAt: new Date().toISOString(),
       fingerprintQuality: quality,
       sessionCount: 1,
-      totalGamesPlayed: 0
+      totalGamesPlayed: 0,
+      // 新ハンター名前システム
+      hunterName,
+      isXLinked: false
     };
 
     // ローカルストレージに保存
@@ -118,7 +131,21 @@ export class UserIdentificationService {
         return null;
       }
 
-      console.log(`🔄 Loaded existing user: ${profile.userId.substring(0, 8)}... (Quality: ${profile.fingerprintQuality}%)`);
+      // 新ハンター名前システムへの移行処理
+      if (!profile.hunterName) {
+        profile.hunterName = generateHunterNameFromSeed(profile.userId);
+        profile.isXLinked = false;
+        // 既存の手動登録名は削除（仕様Aに従い強制変更）
+        delete profile.username;
+        delete profile.usernameUpdatedAt;
+        
+        console.log(`🔄 Migrated user to new hunter name system: ${profile.hunterName}`);
+        
+        // 移行後のプロファイルを保存
+        this.saveUserProfile(profile);
+      }
+
+      console.log(`🔄 Loaded existing user: ${profile.userId.substring(0, 8)}... (${profile.hunterName})`);
       return profile;
     } catch (error) {
       console.error('❌ Error loading user profile:', error);
@@ -298,13 +325,43 @@ export class UserIdentificationService {
   }
 
   /**
-   * ユーザー名を取得
+   * 表示名を取得（新システム）
+   * X連携時はX表示名、未連携時はハンター名
+   */
+  public async getDisplayName(): Promise<string> {
+    await this.getCurrentUserId(); // ユーザー初期化を保証
+    
+    if (this.currentUser?.isXLinked && this.currentUser.xDisplayName) {
+      return this.currentUser.xDisplayName;
+    }
+    
+    return this.currentUser?.hunterName || 'ハンター名無し';
+  }
+
+  /**
+   * ハンター名を取得
+   */
+  public async getHunterName(): Promise<string> {
+    await this.getCurrentUserId(); // ユーザー初期化を保証
+    return this.currentUser?.hunterName || 'ハンター名無し';
+  }
+
+  /**
+   * X連携状態を取得
+   */
+  public async isXLinked(): Promise<boolean> {
+    await this.getCurrentUserId(); // ユーザー初期化を保証
+    return this.currentUser?.isXLinked || false;
+  }
+
+  /**
+   * ユーザー名を取得（旧システム・非推奨）
+   * 後方互換性のため残す
    */
   public async getUsername(): Promise<string | null> {
     await this.getCurrentUserId(); // ユーザー初期化を保証
-    const username = this.currentUser?.username || null;
-    console.log('🔧 Debug: getUsername returning:', username);
-    return username;
+    // 新システムでは表示名を返す
+    return await this.getDisplayName();
   }
 
   /**
@@ -315,6 +372,38 @@ export class UserIdentificationService {
     const hasName = username !== null && username.length >= 2;
     console.log('🔧 Debug: hasUsername returning:', hasName);
     return hasName;
+  }
+
+  /**
+   * X連携を設定
+   */
+  public async linkXAccount(xDisplayName: string): Promise<void> {
+    await this.getCurrentUserId(); // ユーザー初期化を保証
+    
+    if (this.currentUser) {
+      this.currentUser.isXLinked = true;
+      this.currentUser.xDisplayName = xDisplayName;
+      this.currentUser.xLinkedAt = new Date().toISOString();
+      
+      this.saveUserProfile(this.currentUser);
+      console.log(`✅ X account linked: ${xDisplayName}`);
+    }
+  }
+
+  /**
+   * X連携を解除
+   */
+  public async unlinkXAccount(): Promise<void> {
+    await this.getCurrentUserId(); // ユーザー初期化を保証
+    
+    if (this.currentUser) {
+      this.currentUser.isXLinked = false;
+      delete this.currentUser.xDisplayName;
+      delete this.currentUser.xLinkedAt;
+      
+      this.saveUserProfile(this.currentUser);
+      console.log(`✅ X account unlinked, reverted to: ${this.currentUser.hunterName}`);
+    }
   }
 
   /**
