@@ -6,6 +6,8 @@ import { getReflexHunterRank, STORAGE_KEYS, calculateWeightedScore, REFLEX_SCORI
 import { useGameHistory } from '../hooks/useGameHistory';
 import { UsernameRegistrationModal } from '../components/UsernameRegistrationModal';
 import { HybridRankingService } from '../services/hybridRankingService';
+import XLinkPromptModal from '../components/XLinkPromptModal';
+import { UserIdentificationService } from '../services/userIdentificationService';
 
 interface ReflexTestPageProps {
     mode: 'instructions' | 'game' | 'result';
@@ -22,9 +24,15 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     // 共通フックを使用（拡張版）
     const { gameHistory, saveGameResult, getBestRecord, isNewRecord, shouldShowUsernameModal } = useGameHistory<ReflexGameHistory>(STORAGE_KEYS.REFLEX_HISTORY);
     
-    // ユーザー名登録モーダル状態
+    // ユーザー名登録モーダル状態（旧システム）
     const [showUsernameModal, setShowUsernameModal] = useState(false);
     const [modalGameData, setModalGameData] = useState<{ gameType: string; score: number; isNewRecord: boolean } | null>(null);
+    
+    // X連携促進モーダル状態
+    const [showXLinkModal, setShowXLinkModal] = useState(false);
+    const [xLinkModalData, setXLinkModalData] = useState<{ gameType: string; score: number; playerName: string } | null>(null);
+    
+    const userService = UserIdentificationService.getInstance();
 
     // タイマーIDを管理するためのref
     const testTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -149,15 +157,32 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         // 新記録かどうかチェック（加重平均スコアが低い方が良い）
         const isRecord = isNewRecord(weightedScore, (a, b) => a.weightedScore < b.weightedScore);
         
-        // ユーザー名登録モーダル表示判定
-        const shouldShow = await shouldShowUsernameModal(isRecord);
-        if (shouldShow) {
-            setModalGameData({
+        // X連携状態をチェック
+        const isXLinked = await userService.isXLinked();
+        const displayName = await userService.getDisplayName();
+        
+        // X連携していない場合、さりげなくX連携を促す
+        if (!isXLinked) {
+            setXLinkModalData({
                 gameType: 'reflex',
                 score: weightedScore,
-                isNewRecord: isRecord
+                playerName: displayName
             });
-            setShowUsernameModal(true);
+            setShowXLinkModal(true);
+        }
+        
+        // 旧ユーザー名登録システム（X連携していない場合のみ）
+        if (!isXLinked) {
+            const shouldShow = await shouldShowUsernameModal(isRecord);
+            if (shouldShow) {
+                setModalGameData({
+                    gameType: 'reflex',
+                    score: weightedScore,
+                    isNewRecord: isRecord
+                });
+                // X連携モーダルの後に表示するため、少し遅延
+                setTimeout(() => setShowUsernameModal(true), 1000);
+            }
         }
     }, [saveGameResult, isNewRecord, shouldShowUsernameModal]);
 
@@ -211,6 +236,21 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             }, 1500);
         }
     }, [gameState, startTime, currentRound, startSingleTest, startTestSequence, clearAllTimers, results, saveGameHistory, navigate]);
+
+    // X連携モーダルハンドラー
+    const handleXLink = async () => {
+        // 簡易X連携（実際のOAuth実装は後で）
+        const xName = prompt('X表示名を入力してください（テスト用）:');
+        if (xName && xName.trim()) {
+            await userService.linkXAccount(xName.trim());
+            alert('X連携しました！');
+        }
+        setShowXLinkModal(false);
+    };
+
+    const handleXLinkClose = () => {
+        setShowXLinkModal(false);
+    };
 
     const resetTest = () => {
         clearAllTimers();
@@ -560,6 +600,18 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                 </div>
             </div>
         </div>
+
+        {/* X連携促進モーダル */}
+        {xLinkModalData && (
+            <XLinkPromptModal
+                isOpen={showXLinkModal}
+                onClose={handleXLinkClose}
+                onLinkX={handleXLink}
+                playerName={xLinkModalData.playerName}
+                gameType={xLinkModalData.gameType}
+                score={xLinkModalData.score}
+            />
+        )}
 
         {/* ユーザー名登録モーダル */}
         {modalGameData && (
