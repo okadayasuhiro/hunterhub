@@ -306,12 +306,42 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         };
         
         console.log('🔧 ボタンクリック - Setting modal data:', modalData);
+        console.log('🔧 Current state before update:', {
+            showXLinkModal,
+            xLinkModalData,
+            displayName,
+            isXLinked
+        });
         
         // 直接状態設定（flushSyncは不要 - ユーザーアクション由来）
         setXLinkModalData(modalData);
         setShowXLinkModal(true);
         
         console.log('✅ X連携モーダル表示完了');
+        
+        // 状態更新後の確認
+        setTimeout(() => {
+            console.log('🔧 State should be updated now. Check modal render logs.');
+        }, 100);
+    };
+
+    // 🚨 デバッグ用: 強制モーダル表示（テスト用）
+    const forceShowModal = () => {
+        console.log('🚨 FORCE MODAL TEST - 強制表示開始');
+        
+        const testData = {
+            gameType: 'reflex',
+            score: 999,
+            playerName: 'テスト用ハンター'
+        };
+        
+        console.log('🔧 Force setting modal data:', testData);
+        
+        // 強制的に状態設定
+        setXLinkModalData(testData);
+        setShowXLinkModal(true);
+        
+        console.log('🚨 FORCE MODAL - States set, modal should appear immediately');
     };
 
     const resetTest = () => {
@@ -538,14 +568,22 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             <div className="flex flex-col gap-4 justify-center">
                                 {/* X連携促進ボタン（X未連携の場合のみ表示） */}
                                 {isXLinked === false && (
-                                    <div className="text-center">
+                                    <div className="text-center space-y-2">
                                         <button
                                             onClick={showXLinkModalOnClick}
                                             className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105"
                                         >
                                             🔗 Xと連携してランキングに名前を表示
                                         </button>
-                                        <p className="text-xs text-gray-500 mt-1">※ 連携しなくても引き続きプレイできます</p>
+                                        <p className="text-xs text-gray-500">※ 連携しなくても引き続きプレイできます</p>
+                                        
+                                        {/* 🚨 デバッグ用強制表示ボタン */}
+                                        <button
+                                            onClick={forceShowModal}
+                                            className="px-4 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
+                                        >
+                                            🚨 デバッグ: 強制モーダル表示
+                                        </button>
                                     </div>
                                 )}
                                 

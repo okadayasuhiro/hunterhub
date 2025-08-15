@@ -55,9 +55,15 @@ const XLinkPromptModal: React.FC<XLinkPromptModalProps> = ({
     return (
         <>
             {/* オーバーレイ */}
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div 
+                className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                style={{ zIndex: 9999 }}
+            >
                 {/* モーダル本体 */}
-                <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative">
+                <div 
+                    className="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative shadow-2xl"
+                    style={{ zIndex: 10000 }}
+                >
                     {/* 閉じるボタン */}
                     <button
                         onClick={onClose}
