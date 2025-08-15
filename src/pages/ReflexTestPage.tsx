@@ -171,12 +171,23 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         // X連携していない場合、さりげなくX連携を促す
         if (!isXLinked) {
             console.log('✅ X連携モーダルを表示します');
-            setXLinkModalData({
+            const modalData = {
                 gameType: 'reflex',
                 score: weightedScore,
                 playerName: displayName
-            });
+            };
+            console.log('🔧 Setting modal data:', modalData);
+            
+            // 状態を同時に設定してレンダリング問題を回避
+            setXLinkModalData(modalData);
             setShowXLinkModal(true);
+            
+            console.log('🔧 Modal states set - data and show flag both updated');
+            
+            // 状態確認のため少し遅延してログ出力
+            setTimeout(() => {
+                console.log('🔧 Modal should be visible now. Check XLinkPromptModal render logs.');
+            }, 100);
         } else {
             console.log('❌ X連携済みのためモーダル非表示');
         }
@@ -612,16 +623,14 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         </div>
 
         {/* X連携促進モーダル */}
-        {xLinkModalData && (
-            <XLinkPromptModal
-                isOpen={showXLinkModal}
-                onClose={handleXLinkClose}
-                onLinkX={handleXLink}
-                playerName={xLinkModalData.playerName}
-                gameType={xLinkModalData.gameType}
-                score={xLinkModalData.score}
-            />
-        )}
+        <XLinkPromptModal
+            isOpen={showXLinkModal && xLinkModalData !== null}
+            onClose={handleXLinkClose}
+            onLinkX={handleXLink}
+            playerName={xLinkModalData?.playerName || 'ハンター名無し'}
+            gameType={xLinkModalData?.gameType || 'reflex'}
+            score={xLinkModalData?.score || 0}
+        />
 
         {/* ユーザー名登録モーダル */}
         {modalGameData && (
