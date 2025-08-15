@@ -19,6 +19,10 @@ export interface ReflexGameHistory {
     bestTime: number;
     successRate: number;
     testResults: TestResult[];
+    // 加重平均システム用の新フィールド
+    successCount: number;
+    failureCount: number;
+    weightedScore: number; // 最終ランキングスコア（低いほど上位）
 }
 
 // ターゲット追跡関連
@@ -113,4 +117,40 @@ export const STORAGE_KEYS = {
     REFLEX_HISTORY: 'reflexTestHistory',
     TARGET_HISTORY: 'targetTrackingHistory',
     SEQUENCE_HISTORY: 'sequenceGameHistory'
-} as const; 
+} as const;
+
+// 反射神経テスト - 加重平均システム定数
+export const REFLEX_SCORING = {
+    FAILURE_PENALTY: 1000, // 失敗時のペナルティ（ms）
+    MIN_SUCCESS_COUNT: 3,  // ランキング参加最低成功回数
+    MAX_ATTEMPTS: 5        // 最大試行回数
+} as const;
+
+// 反射神経テスト - 加重平均スコア計算関数
+export const calculateWeightedScore = (testResults: TestResult[]): {
+    successCount: number;
+    failureCount: number;
+    averageSuccessTime: number;
+    weightedScore: number;
+} => {
+    const successResults = testResults.filter(r => r.success && r.time > 0);
+    const failureResults = testResults.filter(r => !r.success);
+    
+    const successCount = successResults.length;
+    const failureCount = failureResults.length;
+    const averageSuccessTime = successCount > 0 
+        ? Math.round(successResults.reduce((sum, r) => sum + r.time, 0) / successCount)
+        : 0;
+    
+    // 加重平均スコア計算: (成功平均 × 成功回数 + ペナルティ × 失敗回数) / 総試行回数
+    const weightedScore = testResults.length > 0
+        ? Math.round((averageSuccessTime * successCount + REFLEX_SCORING.FAILURE_PENALTY * failureCount) / testResults.length)
+        : REFLEX_SCORING.FAILURE_PENALTY;
+    
+    return {
+        successCount,
+        failureCount,
+        averageSuccessTime,
+        weightedScore
+    };
+}; 

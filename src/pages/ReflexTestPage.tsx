@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap } from 'lucide-react';
 import type { TestResult, ReflexGameHistory } from '../types/game';
-import { getReflexHunterRank, STORAGE_KEYS } from '../types/game';
+import { getReflexHunterRank, STORAGE_KEYS, calculateWeightedScore, REFLEX_SCORING } from '../types/game';
 import { useGameHistory } from '../hooks/useGameHistory';
 import { UsernameRegistrationModal } from '../components/UsernameRegistrationModal';
 import { HybridRankingService } from '../services/hybridRankingService';
@@ -103,7 +103,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         };
     }, [gameState, startSingleTest]);
 
-    // ゲーム履歴を保存
+    // ゲーム履歴を保存（加重平均システム）
     const saveGameHistory = useCallback(async (finalResults: TestResult[]) => {
         const validResults = finalResults.filter(r => r.success && r.time > 0);
         const avgTime = validResults.length > 0 ?
@@ -111,39 +111,50 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         const bestTime = validResults.length > 0 ? Math.min(...validResults.map(r => r.time)) : 0;
         const successRate = finalResults.length > 0 ? Math.round((validResults.length / finalResults.length) * 100) : 0;
 
+        // 加重平均スコア計算
+        const { successCount, failureCount, averageSuccessTime, weightedScore } = calculateWeightedScore(finalResults);
+
         const newGameResult: ReflexGameHistory = {
             date: new Date().toLocaleDateString('ja-JP'),
             averageTime: avgTime,
             bestTime,
             successRate,
-            testResults: finalResults
+            testResults: finalResults,
+            // 加重平均システム用フィールド
+            successCount,
+            failureCount,
+            weightedScore
         };
 
         // ゲーム結果を保存（LocalStorage）
         await saveGameResult(newGameResult);
 
-        // クラウドDBにもスコア送信
+        // クラウドDBにもスコア送信（加重平均スコアを使用）
         try {
             const hybridService = HybridRankingService.getInstance();
-            await hybridService.submitScore('reflex', bestTime, {
+            await hybridService.submitScore('reflex', weightedScore, {
                 averageTime: avgTime,
                 successRate: successRate,
-                totalTests: finalResults.length
+                totalTests: finalResults.length,
+                successCount: successCount,
+                failureCount: failureCount,
+                bestTime: bestTime,
+                weightedScore: weightedScore
             });
-            console.log('✅ Reflex score submitted to cloud:', bestTime);
+            console.log('✅ Reflex weighted score submitted to cloud:', weightedScore);
         } catch (error) {
             console.error('❌ Failed to submit reflex score to cloud:', error);
         }
 
-        // 新記録かどうかチェック（反射神経は時間が短い方が良い）
-        const isRecord = isNewRecord(bestTime, (a, b) => a.bestTime < b.bestTime);
+        // 新記録かどうかチェック（加重平均スコアが低い方が良い）
+        const isRecord = isNewRecord(weightedScore, (a, b) => a.weightedScore < b.weightedScore);
         
         // ユーザー名登録モーダル表示判定
         const shouldShow = await shouldShowUsernameModal(isRecord);
         if (shouldShow) {
             setModalGameData({
                 gameType: 'reflex',
-                score: bestTime,
+                score: weightedScore,
                 isNewRecord: isRecord
             });
             setShowUsernameModal(true);
@@ -219,18 +230,23 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         };
     }, [clearAllTimers]);
 
-    // 統計計算
+    // 統計計算（加重平均システム対応）
     const validResults = results.filter(r => r.success && r.time > 0);
     const currentResult = results.length > 0 ? results[results.length - 1] : null;
     const averageTime = validResults.length > 0 ?
         Math.round(validResults.reduce((sum, result) => sum + result.time, 0) / validResults.length) : 0;
     const bestTime = validResults.length > 0 ? Math.min(...validResults.map(r => r.time)) : 0;
     const successRate = results.length > 0 ? Math.round((validResults.length / results.length) * 100) : 0;
+    
+    // 現在の加重平均スコア計算
+    const currentWeightedScore = results.length > 0 ? calculateWeightedScore(results).weightedScore : 0;
+    const currentSuccessCount = results.filter(r => r.success).length;
+    const currentFailureCount = results.filter(r => !r.success).length;
 
-    // ベスト記録計算
+    // ベスト記録計算（加重平均スコアが最も低い記録）
     const bestRecord = gameHistory.length > 0
         ? gameHistory.reduce((best, game) =>
-            game.averageTime < best.averageTime ? game : best
+            (game.weightedScore || game.averageTime) < (best.weightedScore || best.averageTime) ? game : best
         )
         : null;
 
@@ -338,18 +354,22 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                 <h2 className="text-2xl font-medium text-gray-800 mb-6 text-center">最終結果</h2>
 
                                 {/* 統計カード */}
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
+                                        <div className="text-sm text-gray-600 mb-1">ランキングスコア</div>
+                                        <div className="text-2xl font-bold text-red-600">{currentWeightedScore > 0 ? `${currentWeightedScore}ms` : '-'}</div>
+                                    </div>
+                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
+                                        <div className="text-sm text-gray-600 mb-1">成功/失敗</div>
+                                        <div className="text-2xl font-bold text-blue-600">{currentSuccessCount}/{currentFailureCount}</div>
+                                    </div>
                                     <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
                                         <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                        <div className="text-2xl font-bold text-blue-600">{averageTime}ms</div>
+                                        <div className="text-2xl font-bold text-green-600">{averageTime}ms</div>
                                     </div>
                                     <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
                                         <div className="text-sm text-gray-600 mb-1">最速記録</div>
-                                        <div className="text-2xl font-bold text-green-600">{bestTime}ms</div>
-                                    </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-1">成功率</div>
-                                        <div className="text-2xl font-bold text-purple-600">{successRate}%</div>
+                                        <div className="text-2xl font-bold text-purple-600">{bestTime}ms</div>
                                     </div>
                                     <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
                                         <div className="text-sm text-gray-600 mb-1">完了テスト</div>
