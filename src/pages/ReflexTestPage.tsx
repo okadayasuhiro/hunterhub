@@ -716,8 +716,10 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                 </div>
             </div>
         </div>
-
-        {/* X連携促進モーダル */}
+        
+        {/* ===== モーダル群（ページ内で確実にレンダリング） ===== */}
+        
+        {/* X連携促進モーダル - 常にレンダリング、isOpenで表示制御 */}
         <XLinkPromptModal
             isOpen={showXLinkModal && xLinkModalData !== null}
             onClose={handleXLinkClose}
@@ -726,6 +728,25 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             gameType={xLinkModalData?.gameType || 'reflex'}
             score={xLinkModalData?.score || 0}
         />
+        
+        {/* 🚨 デバッグ: モーダル状態表示 */}
+        {import.meta.env.DEV && (
+            <div style={{ 
+                position: 'fixed', 
+                top: '10px', 
+                right: '10px', 
+                background: 'rgba(0,0,0,0.8)', 
+                color: 'white', 
+                padding: '10px', 
+                fontSize: '12px',
+                zIndex: 999,
+                borderRadius: '5px'
+            }}>
+                <div>showXLinkModal: {String(showXLinkModal)}</div>
+                <div>xLinkModalData: {xLinkModalData ? 'あり' : 'なし'}</div>
+                <div>isModalVisible: {String(showXLinkModal && xLinkModalData !== null)}</div>
+            </div>
+        )}
 
         {/* ユーザー名登録モーダル */}
         {modalGameData && (
