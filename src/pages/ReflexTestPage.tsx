@@ -455,11 +455,11 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         // 結果データが空の場合はダミーデータを追加
         if (results.length === 0) {
             const dummyResults: TestResult[] = [
-                { reactionTime: 250, success: true },
-                { reactionTime: 300, success: true },
-                { reactionTime: 0, success: false },
-                { reactionTime: 280, success: true },
-                { reactionTime: 320, success: true }
+                { time: 250, round: 1, success: true, reactionTime: 250 },
+                { time: 300, round: 2, success: true, reactionTime: 300 },
+                { time: 0, round: 3, success: false, reactionTime: 0 },
+                { time: 280, round: 4, success: true, reactionTime: 280 },
+                { time: 320, round: 5, success: true, reactionTime: 320 }
             ];
             // ダミーデータを設定（テスト用）
             setResults(dummyResults);
