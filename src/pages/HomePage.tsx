@@ -4,6 +4,7 @@ import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy, Crown } from 'luc
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import { HybridRankingService } from '../services/hybridRankingService';
+import { GameHistoryService } from '../services/gameHistoryService';
 import type { RankingEntry } from '../services/localRankingService';
 import { UserIdentificationService } from '../services/userIdentificationService';
 import panel1 from '../assets/images/panel1.png';
@@ -32,6 +33,8 @@ interface GameCardProps {
 
 const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc, playCount, topPlayer }) => {
     const navigate = useNavigate();
+    
+
     
     // 診断系ゲームかどうかを判定（ランキング・記録を表示しない）
     const isDiagnosisGame = title.includes('診断');
@@ -76,11 +79,26 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center">
                                     <Crown className="w-4 h-4 text-yellow-600 mr-2" />
-                                    <span className="text-sm font-medium text-gray-700">現在の1位</span>
+                                    <span className="text-sm font-medium text-gray-700 mr-2">1位</span>
+                                    <span className="text-md font-bold text-yellow-700">
+                                        {title.includes('反射神経') || title.includes('ターゲット') || title.includes('数字')
+                                            ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
+                                            : `${topPlayer?.score}`
+                                        }
+                                    </span>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-sm font-bold text-yellow-700">{topPlayer?.displayName}</p>
-                                    <p className="text-xs text-yellow-600">{topPlayer?.score}{title.includes('反射神経') || title.includes('ターゲット') || title.includes('数字') ? 'ms' : ''}</p>
+                                <div className="relative group">
+                                    <span 
+                                        className="text-sm text-yellow-700 truncate max-w-[120px] md:max-w-[160px] inline-block cursor-help"
+                                        title={topPlayer?.displayName}
+                                    >
+                                        {topPlayer?.displayName}
+                                    </span>
+                                    
+                                    {/* ホバーツールチップ */}
+                                    <div className="absolute right-0 top-full mt-1 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none">
+                                        {topPlayer?.displayName}
+                                    </div>
                                 </div>
                             </div>
                         ) : (
@@ -97,9 +115,14 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg border min-h-[100px]">
                         {lastResult ? (
                             <>
-                                <div className="flex items-center mb-2">
-                                    <Trophy size={16} className="text-yellow-600 mr-2" />
-                                    <span className="text-sm font-medium text-gray-700">あなたの前回記録</span>
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center">
+                                        <span className="text-sm font-medium text-gray-700">あなたの前回記録</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Clock size={12} className="text-gray-400 mr-1" />
+                                        <span className="text-xs text-gray-500">{lastResult.date}</span>
+                                    </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
@@ -112,10 +135,6 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                                             <p className="text-lg font-bold text-green-600">{lastResult.secondaryValue}</p>
                                         </div>
                                     )}
-                                </div>
-                                <div className="flex items-center mt-2">
-                                    <Clock size={12} className="text-gray-400 mr-1" />
-                                    <span className="text-xs text-gray-500">{lastResult.date}</span>
                                 </div>
                             </>
                         ) : (
@@ -162,79 +181,86 @@ const HomePage: React.FC = () => {
         sequence?: RankingEntry | null;
     }>({});
 
-    // LocalStorageから各ゲームの最新記録を取得
+    // ゲーム履歴から各ゲームの最新記録を取得
     useEffect(() => {
-        const loadLastResults = () => {
+        const loadLastResults = async () => {
             try {
+                const gameHistoryService = GameHistoryService.getInstance();
+                
+                // 初回ロード時にLocalStorageからクラウドへ移行
+                console.log('Starting migration from LocalStorage to cloud...');
+                await gameHistoryService.migrateLocalToCloud();
+
                 // 反射神経テストの最新記録
-                const reflexHistory = localStorage.getItem(STORAGE_KEYS.REFLEX_HISTORY);
-                if (reflexHistory) {
-                    const history: ReflexGameHistory[] = JSON.parse(reflexHistory);
-                    if (history.length > 0) {
-                        const latest = history[0];
-                        setLastResults(prev => ({
-                            ...prev,
-                            reflex: {
-                                primaryStat: '平均反応時間',
-                                primaryValue: `${Math.round(latest.averageTime)}ms`,
-                                secondaryStat: '成功率',
-                                secondaryValue: `${Math.round(latest.successRate)}%`,
-                                date: new Date(latest.date).toLocaleDateString('ja-JP')
-                            }
-                        }));
-                    }
+                const reflexLatest = await gameHistoryService.getLatestGameHistory<ReflexGameHistory>('reflex');
+                console.log('🔍 Reflex latest game history:', reflexLatest);
+                if (reflexLatest) {
+                    console.log('DEBUG Raw averageTime:', reflexLatest.averageTime);
+                    console.log('DEBUG Converted to seconds:', (reflexLatest.averageTime / 1000).toFixed(3));
+                    console.log('DEBUG Success rate:', reflexLatest.successRate);
+                    
+                    setLastResults(prev => ({
+                        ...prev,
+                        reflex: {
+                            primaryStat: '平均反応時間',
+                            primaryValue: `${(reflexLatest.averageTime / 1000).toFixed(3)}s`,
+                            secondaryStat: '成功率',
+                            secondaryValue: `${Math.round(reflexLatest.successRate)}%`,
+                            date: new Date(reflexLatest.date).toLocaleDateString('ja-JP')
+                        }
+                    }));
+                    
                     // プレイ回数を設定
+                    const reflexHistory = await gameHistoryService.getGameHistory<ReflexGameHistory>('reflex');
                     setPlayCounts(prev => ({
                         ...prev,
-                        reflex: history.length
+                        reflex: reflexHistory.length
                     }));
                 }
 
-                // ターゲット追跡ゲームの最新記録
-                const targetHistory = localStorage.getItem(STORAGE_KEYS.TARGET_HISTORY);
-                if (targetHistory) {
-                    const history: TargetTrackingHistory[] = JSON.parse(targetHistory);
-                    if (history.length > 0) {
-                        const latest = history[0];
-                        setLastResults(prev => ({
-                            ...prev,
-                            target: {
-                                primaryStat: '合計時間',
-                                primaryValue: `${(latest.totalTime / 1000).toFixed(1)}s`,
-                                secondaryStat: '平均反応',
-                                secondaryValue: `${Math.round(latest.averageReactionTime)}ms`,
-                                date: new Date(latest.date).toLocaleDateString('ja-JP')
-                            }
-                        }));
-                    }
-                    // プレイ回数を設定
+                // ターゲット追跡ゲームの最新記録（回避策：全履歴から最新を取得）
+                const targetHistory = await gameHistoryService.getGameHistory<TargetTrackingHistory>('target');
+                const targetLatest = targetHistory.length > 0 ? targetHistory[0] : null;
+                if (targetLatest) {
+                    setLastResults(prev => ({
+                        ...prev,
+                        target: {
+                            primaryStat: '合計時間',
+                            primaryValue: `${targetLatest.totalTime.toFixed(3)}s`, // 修正: 既に秒単位
+                            secondaryStat: '平均反応',
+                            secondaryValue: `${targetLatest.averageReactionTime.toFixed(3)}s`,
+                            date: new Date(targetLatest.date).toLocaleDateString('ja-JP')
+                        }
+                    }));
+                    
+                    // プレイ回数を設定（既に取得済みのhistoryを使用）
                     setPlayCounts(prev => ({
                         ...prev,
-                        target: history.length
+                        target: targetHistory.length
                     }));
                 }
 
-                // 数字順序ゲームの最新記録
-                const sequenceHistory = localStorage.getItem(STORAGE_KEYS.SEQUENCE_HISTORY);
-                if (sequenceHistory) {
-                    const history: SequenceGameHistory[] = JSON.parse(sequenceHistory);
-                    if (history.length > 0) {
-                        const latest = history[0];
-                        setLastResults(prev => ({
-                            ...prev,
-                            sequence: {
-                                primaryStat: '完了時間',
-                                primaryValue: `${(latest.completionTime / 1000).toFixed(1)}s`,
-                                secondaryStat: 'ランク',
-                                secondaryValue: latest.rankTitle,
-                                date: new Date(latest.date).toLocaleDateString('ja-JP')
-                            }
-                        }));
-                    }
-                    // プレイ回数を設定
+                // 数字順序ゲームの最新記録（回避策：全履歴から最新を取得）
+                const sequenceHistory = await gameHistoryService.getGameHistory<SequenceGameHistory>('sequence');
+                const sequenceLatest = sequenceHistory.length > 0 ? sequenceHistory[0] : null;
+                console.log('🔍 Sequence latest game history:', sequenceLatest);
+                if (sequenceLatest) {
+                    console.log('🔍 Sequence completionTime type:', typeof sequenceLatest.completionTime, 'value:', sequenceLatest.completionTime);
+                    setLastResults(prev => ({
+                        ...prev,
+                        sequence: {
+                            primaryStat: '完了時間',
+                            primaryValue: `${sequenceLatest.completionTime.toFixed(3)}s`, // 修正: 既に秒単位
+                            secondaryStat: '平均クリック間隔',
+                            secondaryValue: `${sequenceLatest.averageClickInterval.toFixed(3)}s`,
+                            date: new Date(sequenceLatest.date).toLocaleDateString('ja-JP')
+                        }
+                    }));
+                    
+                    // プレイ回数を設定（既に取得済みのhistoryを使用）
                     setPlayCounts(prev => ({
                         ...prev,
-                        sequence: history.length
+                        sequence: sequenceHistory.length
                     }));
                 }
             } catch (error) {
@@ -253,6 +279,10 @@ const HomePage: React.FC = () => {
             try {
                 const rankingService = HybridRankingService.getInstance();
                 const topPlayers = await rankingService.getAllTopPlayers();
+                console.log('🔍 Top players data:', topPlayers);
+                if (topPlayers.sequence) {
+                    console.log('🔍 Sequence top player score type:', typeof topPlayers.sequence.score, 'value:', topPlayers.sequence.score);
+                }
                 setTopPlayers(topPlayers);
             } catch (error) {
                 console.error('❌ Failed to load top players:', error);

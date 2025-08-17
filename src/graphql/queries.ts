@@ -63,6 +63,10 @@ export const getUserProfile = /* GraphQL */ `query GetUserProfile($id: ID!) {
     createdAt
     lastActiveAt
     fingerprintQuality
+    xLinked
+    xDisplayName
+    xProfileImageUrl
+    xLinkedAt
     updatedAt
     __typename
   }
@@ -85,6 +89,10 @@ export const listUserProfiles = /* GraphQL */ `query ListUserProfiles(
       createdAt
       lastActiveAt
       fingerprintQuality
+      xLinked
+      xDisplayName
+      xProfileImageUrl
+      xLinkedAt
       updatedAt
       __typename
     }
@@ -95,6 +103,48 @@ export const listUserProfiles = /* GraphQL */ `query ListUserProfiles(
 ` as GeneratedQuery<
   APITypes.ListUserProfilesQueryVariables,
   APITypes.ListUserProfilesQuery
+>;
+export const getGameHistory = /* GraphQL */ `query GetGameHistory($id: ID!) {
+  getGameHistory(id: $id) {
+    id
+    userId
+    gameType
+    gameData
+    playedAt
+    displayName
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetGameHistoryQueryVariables,
+  APITypes.GetGameHistoryQuery
+>;
+export const listGameHistories = /* GraphQL */ `query ListGameHistories(
+  $filter: ModelGameHistoryFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listGameHistories(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      userId
+      gameType
+      gameData
+      playedAt
+      displayName
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListGameHistoriesQueryVariables,
+  APITypes.ListGameHistoriesQuery
 >;
 export const userProfilesByUserId = /* GraphQL */ `query UserProfilesByUserId(
   $userId: String!
@@ -118,6 +168,10 @@ export const userProfilesByUserId = /* GraphQL */ `query UserProfilesByUserId(
       createdAt
       lastActiveAt
       fingerprintQuality
+      xLinked
+      xDisplayName
+      xProfileImageUrl
+      xLinkedAt
       updatedAt
       __typename
     }
@@ -128,4 +182,37 @@ export const userProfilesByUserId = /* GraphQL */ `query UserProfilesByUserId(
 ` as GeneratedQuery<
   APITypes.UserProfilesByUserIdQueryVariables,
   APITypes.UserProfilesByUserIdQuery
+>;
+export const gameHistoriesByUserId = /* GraphQL */ `query GameHistoriesByUserId(
+  $userId: String!
+  $sortDirection: ModelSortDirection
+  $filter: ModelGameHistoryFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  gameHistoriesByUserId(
+    userId: $userId
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      userId
+      gameType
+      gameData
+      playedAt
+      displayName
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GameHistoriesByUserIdQueryVariables,
+  APITypes.GameHistoriesByUserIdQuery
 >;

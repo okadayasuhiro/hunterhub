@@ -5,7 +5,7 @@
 
 import { generateClient } from 'aws-amplify/api';
 import { createGameScore, createUserProfile, updateUserProfile } from '../graphql/mutations';
-import { listGameScores, getUserProfile } from '../graphql/queries';
+import { listGameScores, getUserProfile, listUserProfiles, userProfilesByUserId } from '../graphql/queries';
 import type { 
   CreateGameScoreInput, 
   CreateUserProfileInput,
@@ -76,15 +76,57 @@ export class CloudRankingService {
         variables: { input }
       });
 
-      console.log('✅ Cloud score submission successful:', result);
+
 
       // ユーザープロファイルも更新
       await this.updateUserProfile();
 
     } catch (error) {
-      console.error('❌ Failed to submit score to cloud:', error);
+      console.error('Failed to submit score to cloud:', error);
       throw error;
     }
+  }
+
+  /**
+   * 複数ユーザーのUserProfileを個別取得
+   */
+  private async getUserProfiles(userIds: string[]): Promise<Map<string, UserProfile>> {
+    const profileMap = new Map<string, UserProfile>();
+    
+    // 個別取得で安全に処理
+    const profilePromises = userIds.map(async (userId) => {
+      try {
+        const result = await this.client.graphql({
+          query: userProfilesByUserId,
+          variables: {
+            userId: userId,
+            limit: 1
+          }
+        });
+        
+        const profiles = result.data?.userProfilesByUserId?.items || [];
+        if (profiles.length > 0) {
+          return { userId, profile: profiles[0] as UserProfile };
+        }
+        return null;
+      } catch (error) {
+        console.warn(`Failed to fetch profile for user ${userId.substring(0, 8)}...`);
+        return null;
+      }
+    });
+    
+    try {
+      const results = await Promise.all(profilePromises);
+      results.forEach(result => {
+        if (result && result.profile) {
+          profileMap.set(result.userId, result.profile);
+        }
+      });
+    } catch (error) {
+      console.error('Failed to fetch user profiles:', error);
+    }
+    
+    return profileMap;
   }
 
   /**
@@ -98,7 +140,7 @@ export class CloudRankingService {
         gameType: { eq: gameType }
       };
 
-      console.log('🌐 Fetching cloud rankings for:', gameType);
+
 
       const result = await this.client.graphql({
         query: listGameScores,
@@ -113,34 +155,78 @@ export class CloudRankingService {
       // スコアでソート（ゲームタイプに応じて）
       const sortedScores = this.sortScoresByGameType(gameScores as GameScore[], gameType);
       
-      // ユーザー別の最高スコアのみを取得
-      const userBestScores = this.getBestScorePerUser(sortedScores);
+      // 全ユーザーのUserProfileを一括取得
+      const userIds = sortedScores.slice(0, limit).map(score => score.userId);
+      const userProfiles = await this.getUserProfiles(userIds);
       
+      // 現在ユーザーのX連携情報を事前取得（UserServiceを優先）
+      let currentUserXLinked = false;
+      let currentUserXDisplayName: string | null = null;
+      
+      try {
+        // UserService（LocalStorage）を最優先で確認
+        currentUserXLinked = await this.userService.isXLinked();
+        if (currentUserXLinked) {
+          currentUserXDisplayName = await this.userService.getDisplayName();
+        }
+      } catch (error) {
+        // UserServiceが失敗した場合のみDynamoDBから取得
+        const currentUserProfile = userProfiles.get(userId);
+        if (currentUserProfile?.xLinked && currentUserProfile.xDisplayName) {
+          currentUserXLinked = true;
+          currentUserXDisplayName = currentUserProfile.xDisplayName;
+        }
+      }
+
       // ランキング形式に変換
-      const rankings: CloudRankingEntry[] = userBestScores.slice(0, limit).map((score, index) => ({
-        rank: index + 1,
-        userId: score.userId,
-        username: score.displayName || undefined,
-        displayName: score.displayName || `ユーザー${score.userId.substring(0, 6)}`,
-        score: score.score,
-        timestamp: score.timestamp,
-        isCurrentUser: score.userId === userId
-      }));
+      const rankings: CloudRankingEntry[] = sortedScores.slice(0, limit).map((score, index) => {
+        let finalDisplayName = score.displayName || `ユーザー${score.userId.substring(0, 6)}`;
+        let finalUsername = score.displayName || undefined;
+
+        // 現在ユーザーの場合はUserService（LocalStorage）を最優先
+        if (score.userId === userId) {
+          if (currentUserXLinked && currentUserXDisplayName) {
+            if (!currentUserXDisplayName.startsWith('ハンター')) {
+              finalDisplayName = currentUserXDisplayName;
+              finalUsername = currentUserXDisplayName;
+            }
+          }
+          // 現在ユーザーがX連携解除している場合は、DynamoDBデータを無視
+          // finalDisplayNameとfinalUsernameは初期値のまま（ハンターXXXX形式）
+        } else {
+          // 他のユーザーの場合のみDynamoDBからX連携情報を取得
+          const userProfile = userProfiles.get(score.userId);
+          if (userProfile?.xLinked && userProfile.xDisplayName) {
+            finalDisplayName = userProfile.xDisplayName;
+            finalUsername = userProfile.xDisplayName;
+          }
+        }
+
+        return {
+          rank: index + 1,
+          userId: score.userId,
+          username: finalUsername,
+          displayName: finalDisplayName,
+          score: score.score,
+          timestamp: score.timestamp,
+          isCurrentUser: score.userId === userId
+        };
+      });
 
       // 現在ユーザーのランクを検索
       const userRank = rankings.find(entry => entry.isCurrentUser) || null;
 
-      console.log('✅ Cloud rankings fetched successfully:', rankings);
+
 
       return {
         rankings,
         userRank,
-        totalPlayers: userBestScores.length,
+        totalPlayers: sortedScores.length,
         lastUpdated: new Date().toISOString()
       };
 
     } catch (error) {
-      console.error('❌ Failed to fetch cloud rankings:', error);
+      console.error('Failed to fetch cloud rankings:', error);
       
       // エラー時は空のランキングを返す
       return {

@@ -18,6 +18,7 @@ export interface UserProfile {
   hunterName: string;
   isXLinked: boolean;
   xDisplayName?: string;
+  xProfileImageUrl?: string; // X画像URL追加
   xLinkedAt?: string;
   // 旧システム（非推奨）
   username?: string;
@@ -131,15 +132,19 @@ export class UserIdentificationService {
         return null;
       }
 
-      // 新ハンター名前システムへの移行処理
-      if (!profile.hunterName) {
+      // 数字ハンター名前システムへの強制移行処理
+      const needsMigration = !profile.hunterName || 
+                            (profile.hunterName && !profile.hunterName.match(/^ハンター\d+$/));
+      
+      if (needsMigration) {
+        const oldName = profile.hunterName || 'なし';
         profile.hunterName = generateHunterNameFromSeed(profile.userId);
         profile.isXLinked = false;
-        // 既存の手動登録名は削除（仕様Aに従い強制変更）
+        // 既存の手動登録名は削除（仕様に従い強制変更）
         delete profile.username;
         delete profile.usernameUpdatedAt;
         
-        console.log(`🔄 Migrated user to new hunter name system: ${profile.hunterName}`);
+        console.log(`🔄 Force migrated user from "${oldName}" to number-based: ${profile.hunterName}`);
         
         // 移行後のプロファイルを保存
         this.saveUserProfile(profile);
@@ -375,7 +380,7 @@ export class UserIdentificationService {
   }
 
   /**
-   * X連携を設定
+   * X連携を設定（従来の簡易版）
    */
   public async linkXAccount(xDisplayName: string): Promise<void> {
     await this.getCurrentUserId(); // ユーザー初期化を保証
@@ -391,18 +396,57 @@ export class UserIdentificationService {
   }
 
   /**
+   * X連携を設定（画像付き・実際のOAuth用）
+   */
+  public async linkXAccountWithImage(xDisplayName: string, xProfileImageUrl: string): Promise<void> {
+    await this.getCurrentUserId(); // ユーザー初期化を保証
+    
+    if (this.currentUser) {
+      this.currentUser.isXLinked = true;
+      this.currentUser.xDisplayName = xDisplayName;
+      this.currentUser.xProfileImageUrl = xProfileImageUrl;
+      this.currentUser.xLinkedAt = new Date().toISOString();
+      
+      this.saveUserProfile(this.currentUser);
+      console.log(`✅ X account linked with image: ${xDisplayName}`);
+      console.log(`📸 Profile image: ${xProfileImageUrl}`);
+    }
+  }
+
+  /**
+   * Xプロフィール画像URLを取得
+   */
+  public async getXProfileImageUrl(): Promise<string | undefined> {
+    await this.getCurrentUserId();
+    return this.currentUser?.xProfileImageUrl;
+  }
+
+  /**
    * X連携を解除
    */
   public async unlinkXAccount(): Promise<void> {
     await this.getCurrentUserId(); // ユーザー初期化を保証
     
     if (this.currentUser) {
+      const oldXDisplayName = this.currentUser.xDisplayName;
+      
+      // LocalStorageのデータを更新
       this.currentUser.isXLinked = false;
       delete this.currentUser.xDisplayName;
+      delete this.currentUser.xProfileImageUrl;
       delete this.currentUser.xLinkedAt;
       
       this.saveUserProfile(this.currentUser);
-      console.log(`✅ X account unlinked, reverted to: ${this.currentUser.hunterName}`);
+      
+      // DynamoDBのデータも更新（X連携情報を削除）
+      try {
+        await this.updateUserProfileInCloud();
+        console.log(`✅ X account unlinked (both local and cloud), reverted to: ${this.currentUser.hunterName}`);
+        console.log(`📝 Previous X name: ${oldXDisplayName}`);
+      } catch (error) {
+        console.error('⚠️ Failed to update cloud profile, but local unlink successful:', error);
+        console.log(`✅ X account unlinked locally, reverted to: ${this.currentUser.hunterName}`);
+      }
     }
   }
 
@@ -417,6 +461,61 @@ export class UserIdentificationService {
       this.saveUserProfile(this.currentUser);
       
       console.log(`🎮 Total games played updated: ${this.currentUser.totalGamesPlayed} for user ${this.currentUser.userId.substring(0, 8)}...`);
+    }
+  }
+
+  /**
+   * UserProfileをDynamoDBに更新（X連携解除用）
+   */
+  private async updateUserProfileInCloud(): Promise<void> {
+    if (!this.currentUser) {
+      throw new Error('Current user not found');
+    }
+
+    try {
+      // Amplifyクライアントを動的にインポート
+      const { generateClient } = await import('@aws-amplify/api');
+      const client = generateClient();
+
+      // 既存のUserProfileを検索
+      const { userProfilesByUserId } = await import('../graphql/queries');
+      
+      const existingResult = await client.graphql({
+        query: userProfilesByUserId,
+        variables: {
+          userId: this.currentUser.userId,
+          limit: 1
+        }
+      });
+
+      const existingProfiles = existingResult.data?.userProfilesByUserId?.items || [];
+      
+      if (existingProfiles.length > 0) {
+        // 既存プロファイルを更新
+        const existingProfile = existingProfiles[0];
+        const { updateUserProfile } = await import('../graphql/mutations');
+        
+        await client.graphql({
+          query: updateUserProfile,
+          variables: {
+            input: {
+              id: existingProfile.id,
+              xLinked: this.currentUser.isXLinked,
+              xDisplayName: this.currentUser.xDisplayName || null,
+              xProfileImageUrl: this.currentUser.xProfileImageUrl || null,
+              xLinkedAt: this.currentUser.xLinkedAt || null,
+              updatedAt: new Date().toISOString()
+            }
+          }
+        });
+        
+        console.log('✅ UserProfile updated in DynamoDB (X連携情報削除)');
+      } else {
+        console.log('⚠️ No existing UserProfile found in DynamoDB');
+      }
+    } catch (error) {
+      console.error('❌ Failed to update UserProfile in cloud:', error);
+      throw error;
     }
   }
 }

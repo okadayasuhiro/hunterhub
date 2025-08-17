@@ -76,6 +76,10 @@ export const onCreateUserProfile = /* GraphQL */ `subscription OnCreateUserProfi
     createdAt
     lastActiveAt
     fingerprintQuality
+    xLinked
+    xDisplayName
+    xProfileImageUrl
+    xLinkedAt
     updatedAt
     __typename
   }
@@ -95,6 +99,10 @@ export const onUpdateUserProfile = /* GraphQL */ `subscription OnUpdateUserProfi
     createdAt
     lastActiveAt
     fingerprintQuality
+    xLinked
+    xDisplayName
+    xProfileImageUrl
+    xLinkedAt
     updatedAt
     __typename
   }
@@ -114,6 +122,10 @@ export const onDeleteUserProfile = /* GraphQL */ `subscription OnDeleteUserProfi
     createdAt
     lastActiveAt
     fingerprintQuality
+    xLinked
+    xDisplayName
+    xProfileImageUrl
+    xLinkedAt
     updatedAt
     __typename
   }
@@ -121,4 +133,61 @@ export const onDeleteUserProfile = /* GraphQL */ `subscription OnDeleteUserProfi
 ` as GeneratedSubscription<
   APITypes.OnDeleteUserProfileSubscriptionVariables,
   APITypes.OnDeleteUserProfileSubscription
+>;
+export const onCreateGameHistory = /* GraphQL */ `subscription OnCreateGameHistory(
+  $filter: ModelSubscriptionGameHistoryFilterInput
+) {
+  onCreateGameHistory(filter: $filter) {
+    id
+    userId
+    gameType
+    gameData
+    playedAt
+    displayName
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateGameHistorySubscriptionVariables,
+  APITypes.OnCreateGameHistorySubscription
+>;
+export const onUpdateGameHistory = /* GraphQL */ `subscription OnUpdateGameHistory(
+  $filter: ModelSubscriptionGameHistoryFilterInput
+) {
+  onUpdateGameHistory(filter: $filter) {
+    id
+    userId
+    gameType
+    gameData
+    playedAt
+    displayName
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateGameHistorySubscriptionVariables,
+  APITypes.OnUpdateGameHistorySubscription
+>;
+export const onDeleteGameHistory = /* GraphQL */ `subscription OnDeleteGameHistory(
+  $filter: ModelSubscriptionGameHistoryFilterInput
+) {
+  onDeleteGameHistory(filter: $filter) {
+    id
+    userId
+    gameType
+    gameData
+    playedAt
+    displayName
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteGameHistorySubscriptionVariables,
+  APITypes.OnDeleteGameHistorySubscription
 >;

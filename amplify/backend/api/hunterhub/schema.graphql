@@ -23,4 +23,19 @@ type UserProfile @model {
   createdAt: AWSDateTime!
   lastActiveAt: AWSDateTime!
   fingerprintQuality: Int
+  # X Integration Fields
+  xLinked: Boolean
+  xDisplayName: String
+  xProfileImageUrl: String
+  xLinkedAt: AWSDateTime
+}
+
+# HunterHub Game History Model (個人の詳細履歴)
+type GameHistory @model {
+  id: ID!
+  userId: String! @index(name: "byUserId")
+  gameType: String! # "reflex", "target", "sequence"
+  gameData: String! # JSON string with game-specific detailed data
+  playedAt: AWSDateTime!
+  displayName: String
 }

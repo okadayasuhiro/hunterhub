@@ -86,6 +86,10 @@ export const createUserProfile = /* GraphQL */ `mutation CreateUserProfile(
     createdAt
     lastActiveAt
     fingerprintQuality
+    xLinked
+    xDisplayName
+    xProfileImageUrl
+    xLinkedAt
     updatedAt
     __typename
   }
@@ -106,6 +110,10 @@ export const updateUserProfile = /* GraphQL */ `mutation UpdateUserProfile(
     createdAt
     lastActiveAt
     fingerprintQuality
+    xLinked
+    xDisplayName
+    xProfileImageUrl
+    xLinkedAt
     updatedAt
     __typename
   }
@@ -126,6 +134,10 @@ export const deleteUserProfile = /* GraphQL */ `mutation DeleteUserProfile(
     createdAt
     lastActiveAt
     fingerprintQuality
+    xLinked
+    xDisplayName
+    xProfileImageUrl
+    xLinkedAt
     updatedAt
     __typename
   }
@@ -133,4 +145,64 @@ export const deleteUserProfile = /* GraphQL */ `mutation DeleteUserProfile(
 ` as GeneratedMutation<
   APITypes.DeleteUserProfileMutationVariables,
   APITypes.DeleteUserProfileMutation
+>;
+export const createGameHistory = /* GraphQL */ `mutation CreateGameHistory(
+  $input: CreateGameHistoryInput!
+  $condition: ModelGameHistoryConditionInput
+) {
+  createGameHistory(input: $input, condition: $condition) {
+    id
+    userId
+    gameType
+    gameData
+    playedAt
+    displayName
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateGameHistoryMutationVariables,
+  APITypes.CreateGameHistoryMutation
+>;
+export const updateGameHistory = /* GraphQL */ `mutation UpdateGameHistory(
+  $input: UpdateGameHistoryInput!
+  $condition: ModelGameHistoryConditionInput
+) {
+  updateGameHistory(input: $input, condition: $condition) {
+    id
+    userId
+    gameType
+    gameData
+    playedAt
+    displayName
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateGameHistoryMutationVariables,
+  APITypes.UpdateGameHistoryMutation
+>;
+export const deleteGameHistory = /* GraphQL */ `mutation DeleteGameHistory(
+  $input: DeleteGameHistoryInput!
+  $condition: ModelGameHistoryConditionInput
+) {
+  deleteGameHistory(input: $input, condition: $condition) {
+    id
+    userId
+    gameType
+    gameData
+    playedAt
+    displayName
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteGameHistoryMutationVariables,
+  APITypes.DeleteGameHistoryMutation
 >;
