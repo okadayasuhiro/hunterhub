@@ -504,7 +504,7 @@ export class UserIdentificationService {
               xDisplayName: this.currentUser.xDisplayName || null,
               xProfileImageUrl: this.currentUser.xProfileImageUrl || null,
               xLinkedAt: this.currentUser.xLinkedAt || null,
-              updatedAt: new Date().toISOString()
+              // updatedAt: new Date().toISOString() // GraphQLスキーマで自動設定
             }
           }
         });

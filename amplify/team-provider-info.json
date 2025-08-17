@@ -20,6 +20,12 @@
           "appId": "d202ov1d7n8aaj",
           "type": "manual"
         }
+      },
+      "function": {
+        "hunterhubd328c7fe": {
+          "deploymentBucketName": "amplify-hunterhub-dev-e104e-deployment",
+          "s3Key": "amplify-builds/hunterhubd328c7fe-4d5645724e6d6d6f6346-build.zip"
+        }
       }
     }
   }

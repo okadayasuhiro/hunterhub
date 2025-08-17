@@ -80,9 +80,9 @@ export class HybridRankingService {
   }
 
   /**
-   * ランキングを取得（ハイブリッドモード）
+   * ランキングを取得（ハイブリッドモード） - 削除予定
    */
-  public async getRankings(gameType: string, limit: number = 10): Promise<RankingData> {
+  private async getRankingsOld(gameType: string, limit: number = 10): Promise<RankingData> {
     console.log('🏆 Fetching hybrid rankings for:', gameType);
 
     // 1. クラウドランキングを試行

@@ -11,6 +11,7 @@ export interface TestResult {
     time: number;
     round: number;
     success: boolean;
+    reactionTime?: number; // 互換性のため追加
 }
 
 export interface ReflexGameHistory {

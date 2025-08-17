@@ -124,7 +124,7 @@ export class GameHistoryService {
         }
       });
 
-      const cloudHistories = (result.data as any).listGameHistories.items as CloudGameHistory[];
+      const cloudHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
       
       // 日付でソート（新しい順）
       const sortedHistories = cloudHistories

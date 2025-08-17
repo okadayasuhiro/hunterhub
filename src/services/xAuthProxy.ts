@@ -38,10 +38,7 @@ export class XAuthProxy {
     
     try {
               // AWS API Gateway endpoint (東京リージョン)
-        const apiEndpoint = 'https://w0oo7bi7xe.execute-api.ap-northeast-1.amazonaws.com/dev/x-auth/exchange' ||
-                            import.meta.env.VITE_AWS_API_ENDPOINT || 
-                            import.meta.env.VITE_BACKEND_URL || 
-                            `${this.baseUrl}/api/x-auth/exchange`;
+        const apiEndpoint = 'https://w0oo7bi7xe.execute-api.ap-northeast-1.amazonaws.com/dev/x-auth/exchange';
       
       // 現在のユーザーIDを取得してリクエストに含める
       const { UserIdentificationService } = await import('./userIdentificationService');
