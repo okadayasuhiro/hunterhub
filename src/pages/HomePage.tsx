@@ -377,19 +377,17 @@ const HomePage: React.FC = () => {
 
                     {/* 新しいゲーム（開発中） */}
                     <div className="mt-12">
-                        <h3 className="text-2xl font-bold text-center mb-8 text-slate-700">
-                            🚧 Coming Soon
-                        </h3>
+
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <GameCard
                                 title="集中力テスト"
                                 description="長時間の集中維持能力を測定します。ランダムに出現する目標を見逃さずにクリックしてください。"
                                 icon={<></>}
                                 path="#"
-                                lastResult={null}
+                                lastResult={undefined}
                                 imageSrc={undefined}
                                 playCount={0}
-                                topPlayer={null}
+                                topPlayer={undefined}
                                 isComingSoon={true}
                             />
                             <GameCard
@@ -397,10 +395,10 @@ const HomePage: React.FC = () => {
                                 description="瞬間的に表示される動物を正確に識別・記憶するゲームです。狩猟知識と記憶力を同時に鍛えます。"
                                 icon={<></>}
                                 path="#"
-                                lastResult={null}
+                                lastResult={undefined}
                                 imageSrc={undefined}
                                 playCount={0}
-                                topPlayer={null}
+                                topPlayer={undefined}
                                 isComingSoon={true}
                             />
                             <GameCard
@@ -408,10 +406,10 @@ const HomePage: React.FC = () => {
                                 description="様々な動物の足跡パターンを記憶し、正確に識別するトラッキングスキルを向上させます。"
                                 icon={<></>}
                                 path="#"
-                                lastResult={null}
+                                lastResult={undefined}
                                 imageSrc={undefined}
                                 playCount={0}
-                                topPlayer={null}
+                                topPlayer={undefined}
                                 isComingSoon={true}
                             />
                         </div>
