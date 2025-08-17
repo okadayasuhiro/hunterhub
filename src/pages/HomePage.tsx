@@ -29,9 +29,10 @@ interface GameCardProps {
     imageSrc?: string;
     playCount?: number;
     topPlayer?: RankingEntry | null;
+    isComingSoon?: boolean;
 }
 
-const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc, playCount, topPlayer }) => {
+const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc, playCount, topPlayer, isComingSoon = false }) => {
     const navigate = useNavigate();
     
 
@@ -40,18 +41,33 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
     const isDiagnosisGame = title.includes('診断');
 
     const handleClick = () => {
+        if (isComingSoon) {
+            // Coming Soonの場合はクリック無効
+            return;
+        }
         navigate(path);
     };
 
     return (
         <div
-            className="bg-white rounded-xl shadow-lg border-0 cursor-pointer transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group overflow-hidden"
+            className={`bg-white rounded-xl shadow-lg border-0 transform transition-all duration-300 group overflow-hidden ${
+                isComingSoon 
+                    ? 'opacity-75 cursor-default' 
+                    : 'cursor-pointer hover:shadow-xl hover:-translate-y-2'
+            }`}
             style={{
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
             }}
             onClick={handleClick}
         >
-            {imageSrc && (
+            {isComingSoon ? (
+                <div className="h-40 relative bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="text-3xl mb-2">🚧</div>
+                        <div className="text-lg font-semibold text-gray-600">Now developing...</div>
+                    </div>
+                </div>
+            ) : imageSrc && (
                 <div className="h-40 relative">
                     <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
@@ -357,6 +373,48 @@ const HomePage: React.FC = () => {
                             playCount={playCounts.sequence}
                             topPlayer={topPlayers.sequence}
                         />
+                    </div>
+
+                    {/* 新しいゲーム（開発中） */}
+                    <div className="mt-12">
+                        <h3 className="text-2xl font-bold text-center mb-8 text-slate-700">
+                            🚧 Coming Soon
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <GameCard
+                                title="集中力テスト"
+                                description="長時間の集中維持能力を測定します。ランダムに出現する目標を見逃さずにクリックしてください。"
+                                icon={<></>}
+                                path="#"
+                                lastResult={null}
+                                imageSrc={undefined}
+                                playCount={0}
+                                topPlayer={null}
+                                isComingSoon={true}
+                            />
+                            <GameCard
+                                title="動物識別記憶"
+                                description="瞬間的に表示される動物を正確に識別・記憶するゲームです。狩猟知識と記憶力を同時に鍛えます。"
+                                icon={<></>}
+                                path="#"
+                                lastResult={null}
+                                imageSrc={undefined}
+                                playCount={0}
+                                topPlayer={null}
+                                isComingSoon={true}
+                            />
+                            <GameCard
+                                title="足跡追跡記憶"
+                                description="様々な動物の足跡パターンを記憶し、正確に識別するトラッキングスキルを向上させます。"
+                                icon={<></>}
+                                path="#"
+                                lastResult={null}
+                                imageSrc={undefined}
+                                playCount={0}
+                                topPlayer={null}
+                                isComingSoon={true}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
