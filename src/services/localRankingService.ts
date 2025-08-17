@@ -145,11 +145,8 @@ export class LocalRankingService {
     // 指定ゲームタイプのスコアをフィルタリング
     const gameScores = allScores.filter(score => score.gameType === gameType);
     
-    // ユーザーごとの最高スコアを計算
-    const userBestScores = this.calculateUserBestScores(gameScores);
-    
-    // ランキング順にソート（スコアが小さい順、同じ場合は日時が新しい順）
-    const sortedRankings = userBestScores
+    // 全スコアをランキング順にソート（スコアが小さい順、同じ場合は日時が新しい順）
+    const sortedRankings = gameScores
       .sort((a, b) => {
         if (a.score !== b.score) return a.score - b.score; // 小さい方が良い
         return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
@@ -180,7 +177,7 @@ export class LocalRankingService {
     return {
       rankings,
       userRank,
-      totalPlayers: userBestScores.length,
+      totalPlayers: gameScores.length,
       lastUpdated: new Date().toISOString()
     };
   }

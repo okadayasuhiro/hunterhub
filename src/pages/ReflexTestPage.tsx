@@ -7,14 +7,18 @@ import { getReflexHunterRank, STORAGE_KEYS, calculateWeightedScore, REFLEX_SCORI
 import { useGameHistory } from '../hooks/useGameHistory';
 import { UsernameRegistrationModal } from '../components/UsernameRegistrationModal';
 import { HybridRankingService } from '../services/hybridRankingService';
+import { GameHistoryService } from '../services/gameHistoryService';
 import XLinkPromptModal from '../components/XLinkPromptModal';
 import { UserIdentificationService } from '../services/userIdentificationService';
+import GameRankingTable from '../components/GameRankingTable';
 
 interface ReflexTestPageProps {
     mode: 'instructions' | 'game' | 'result';
 }
 
 const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
+
+    
     const navigate = useNavigate();
     const [gameState, setGameState] = useState<'waiting' | 'countdown' | 'ready' | 'go' | 'clicked' | 'finished'>('waiting');
     const [countdown, setCountdown] = useState(3);
@@ -46,7 +50,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             const name = await userService.getDisplayName();
             setIsXLinked(linked);
             setDisplayName(name);
-            console.log('🔗 X連携状態確認:', { linked, name });
+
         };
         
         checkXLinkStatus();
@@ -54,11 +58,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     
     // モーダル状態の変更を監視してデバッグ
     useEffect(() => {
-        console.log('🔄 Modal state changed:', {
-            showXLinkModal,
-            xLinkModalData,
-            isModalVisible: showXLinkModal && xLinkModalData !== null
-        });
+
     }, [showXLinkModal, xLinkModalData]);
 
     // タイマーIDを管理するためのref
@@ -151,7 +151,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
         const newGameResult: ReflexGameHistory = {
             date: new Date().toLocaleDateString('ja-JP'),
-            averageTime: avgTime,
+            averageTime: averageSuccessTime, // 修正: calculateWeightedScoreの結果を使用
             bestTime,
             successRate,
             testResults: finalResults,
@@ -161,24 +161,29 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             weightedScore
         };
 
-        // ゲーム結果を保存（LocalStorage）
-        await saveGameResult(newGameResult);
+        // DynamoDBに保存（LocalStorageは自動削除）
+        const gameHistoryService = GameHistoryService.getInstance();
+        await gameHistoryService.saveGameHistory('reflex', newGameResult);
 
-        // クラウドDBにもスコア送信（加重平均スコアを使用）
-        try {
-            const hybridService = HybridRankingService.getInstance();
-            await hybridService.submitScore('reflex', weightedScore, {
-                averageTime: avgTime,
-                successRate: successRate,
-                totalTests: finalResults.length,
-                successCount: successCount,
-                failureCount: failureCount,
-                bestTime: bestTime,
-                weightedScore: weightedScore
-            });
-            console.log('✅ Reflex weighted score submitted to cloud:', weightedScore);
-        } catch (error) {
-            console.error('❌ Failed to submit reflex score to cloud:', error);
+        // クラウドDBにもスコア送信（5回連続成功した場合のみ）
+        if (finalResults.length === MAX_TESTS && finalResults.every(r => r.success)) {
+            try {
+                const hybridService = HybridRankingService.getInstance();
+                await hybridService.submitScore('reflex', weightedScore, {
+                    averageTime: avgTime,
+                    successRate: successRate,
+                    totalTests: finalResults.length,
+                    successCount: successCount,
+                    failureCount: failureCount,
+                    bestTime: bestTime,
+                    weightedScore: weightedScore
+                });
+                console.log(`✅ Reflex weighted score submitted to cloud: ${weightedScore}`);
+            } catch (error) {
+                console.error('❌ Failed to submit reflex score to cloud:', error);
+            }
+        } else {
+            console.log('🚫 Score not submitted - did not complete 5 consecutive successes');
         }
 
         // 新記録かどうかチェック（加重平均スコアが低い方が良い）
@@ -188,15 +193,10 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         const isXLinked = await userService.isXLinked();
         const displayName = await userService.getDisplayName();
         
-        console.log('🔍 X連携モーダル表示チェック:', {
-            isXLinked,
-            displayName,
-            weightedScore,
-            shouldShowModal: !isXLinked
-        });
+
         
         // 自動モーダル表示は無効化 - ボタンクリック時のみ表示
-        console.log('ℹ️ 自動X連携モーダル表示は無効化されました。ボタンクリックで表示してください。');
+
         
         // X連携状態を更新（結果画面でボタン表示判定に使用）
         const currentIsXLinked = await userService.isXLinked();
@@ -204,11 +204,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         setIsXLinked(currentIsXLinked);
         setDisplayName(currentDisplayName);
         
-        console.log('🔗 X連携状態更新:', { 
-            currentIsXLinked, 
-            currentDisplayName,
-            willShowButton: !currentIsXLinked 
-        });
+
         
         // 旧ユーザー名登録システム（X連携していない場合のみ）
         if (!isXLinked) {
@@ -240,6 +236,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
             nextTestTimerRef.current = setTimeout(() => {
                 if (currentRound >= MAX_TESTS) {
+                    // 5回連続成功でゲーム完了
                     const finalResults = [...results, newResult];
                     saveGameHistory(finalResults);
                     setGameState('finished');
@@ -251,6 +248,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                 }
             }, 1500);
         } else if (gameState === 'ready') {
+            // フライング発生 - 即座にゲーム終了
             clearAllTimers();
             const newResult: TestResult = {
                 time: 0,
@@ -258,20 +256,16 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                 success: false
             };
 
-            setResults(prev => [...prev, newResult]);
+            const finalResults = [...results, newResult];
+            setResults(finalResults);
             setGameState('clicked');
 
+            // フライングでゲーム終了
             nextTestTimerRef.current = setTimeout(() => {
-                if (currentRound >= MAX_TESTS) {
-                    const finalResults = [...results, newResult];
-                    saveGameHistory(finalResults);
-                    setGameState('finished');
-                    setIsTestRunning(false);
-                    navigate('/reflex/result');
-                } else {
-                    setCurrentRound(prev => prev + 1);
-                    startSingleTest();
-                }
+                saveGameHistory(finalResults);
+                setGameState('finished');
+                setIsTestRunning(false);
+                navigate('/reflex/result');
             }, 1500);
         }
     }, [gameState, startTime, currentRound, startSingleTest, startTestSequence, clearAllTimers, results, saveGameHistory, navigate]);
@@ -293,7 +287,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
     // ボタンクリック時にX連携モーダルを表示
     const showXLinkModalOnClick = () => {
-        console.log('🎯 X連携ボタンクリック - モーダル表示開始');
+
         
         // 最新のゲーム結果を取得
         const latestResult = results.length > 0 ? results[results.length - 1] : null;
@@ -305,43 +299,32 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             playerName: displayName
         };
         
-        console.log('🔧 ボタンクリック - Setting modal data:', modalData);
-        console.log('🔧 Current state before update:', {
-            showXLinkModal,
-            xLinkModalData,
-            displayName,
-            isXLinked
-        });
+
         
-        // 直接状態設定（flushSyncは不要 - ユーザーアクション由来）
-        setXLinkModalData(modalData);
-        setShowXLinkModal(true);
-        
-        console.log('✅ X連携モーダル表示完了');
-        
-        // 状態更新後の確認
+        // 🔧 修正: setTimeoutでレンダリングサイクルを分離
+        // これによりReactの再レンダリングが確実に実行される
         setTimeout(() => {
-            console.log('🔧 State should be updated now. Check modal render logs.');
-        }, 100);
+
+            setXLinkModalData(modalData);
+            setShowXLinkModal(true);
+
+        }, 0);
+        
+
     };
 
-    // 🚨 デバッグ用: 強制モーダル表示（テスト用）
+    // デバッグ用: 強制モーダル表示（テスト用）
     const forceShowModal = () => {
-        console.log('🚨 FORCE MODAL TEST - 強制表示開始');
-        
         const testData = {
             gameType: 'reflex',
             score: 999,
             playerName: 'テスト用ハンター'
         };
         
-        console.log('🔧 Force setting modal data:', testData);
-        
-        // 強制的に状態設定
-        setXLinkModalData(testData);
-        setShowXLinkModal(true);
-        
-        console.log('🚨 FORCE MODAL - States set, modal should appear immediately');
+        setTimeout(() => {
+            setXLinkModalData(testData);
+            setShowXLinkModal(true);
+        }, 0);
     };
 
     const resetTest = () => {
@@ -391,12 +374,9 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                         <div className="max-w-3xl mx-auto">
                             {/* ヘッダー */}
                             <div className="text-center mb-12">
-                                <div className="flex items-center justify-center mb-4">
-                                    <Zap size={32} className="text-blue-500 mr-3" />
-                                    <h1 className="text-2xl font-bold text-gray-800">
-                                        反射神経テスト
-                                    </h1>
-                                </div>
+                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                                    反射神経テスト
+                                </h1>
                             </div>
 
                             {/* ルール説明 */}
@@ -409,15 +389,15 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                     </div>
                                     <div className="flex items-start">
                                         <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">2</span>
-                                        <p>5回のテストを自動連続で行い、平均反応時間を測定</p>
+                                        <p><strong>5回連続で成功する必要があります</strong></p>
                                     </div>
                                     <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">3</span>
-                                        <p>赤になる前にクリックするとフライング</p>
+                                        <span className="inline-block w-6 h-6 bg-red-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">3</span>
+                                        <p><strong>赤になる前にクリックするとフライングで即ゲーム終了</strong></p>
                                     </div>
                                     <div className="flex items-start">
                                         <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">4</span>
-                                        <p>結果に応じてハンターランクが決定</p>
+                                        <p>5回連続成功時の平均反応時間でランクが決定</p>
                                     </div>
                                 </div>
                             </div>
@@ -458,6 +438,11 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                     戻る
                                 </button>
                             </div>
+
+                            {/* ランキング表示 */}
+                            <div className="mt-12">
+                                <GameRankingTable gameType="reflex" limit={10} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -466,19 +451,31 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     }
 
     if (mode === 'result') {
+        
+        // 結果データが空の場合はダミーデータを追加
+        if (results.length === 0) {
+            const dummyResults: TestResult[] = [
+                { reactionTime: 250, success: true },
+                { reactionTime: 300, success: true },
+                { reactionTime: 0, success: false },
+                { reactionTime: 280, success: true },
+                { reactionTime: 320, success: true }
+            ];
+            // ダミーデータを設定（テスト用）
+            setResults(dummyResults);
+        }
+        
         return (
+            <>
             <div className="flex-1">
                 <div className="min-h-screen">
                     <div className="py-16 px-4">
                         <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
                             <div className="text-center mb-12">
-                                <div className="flex items-center justify-center mb-4">
-                                    <Zap size={32} className="text-blue-500 mr-3" />
-                                    <h1 className="text-2xl font-bold text-gray-800">
-                                        テスト完了
-                                    </h1>
-                                </div>
+                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                                    テスト完了
+                                </h1>
                             </div>
 
                             {/* 結果表示 */}
@@ -486,26 +483,22 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                 <h2 className="text-2xl font-medium text-gray-800 mb-6 text-center">最終結果</h2>
 
                                 {/* 統計カード */}
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-1">ランキングスコア</div>
-                                        <div className="text-2xl font-bold text-red-600">{currentWeightedScore > 0 ? `${currentWeightedScore}ms` : '-'}</div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-2xl mx-auto">
+                                    <div className="bg-blue-50 rounded-lg p-6 text-center border border-blue-200">
+                                        <div className="text-sm text-gray-600 mb-2">ランキングスコア</div>
+                                        <div className="text-3xl font-bold text-red-600">
+                                            {results.length === MAX_TESTS && results.every(r => r.success) && currentWeightedScore > 0 
+                                                ? `${currentWeightedScore}ms` 
+                                                : '失格'}
+                                        </div>
                                     </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-1">成功/失敗</div>
-                                        <div className="text-2xl font-bold text-blue-600">{currentSuccessCount}/{currentFailureCount}</div>
+                                    <div className="bg-blue-50 rounded-lg p-6 text-center border border-blue-200">
+                                        <div className="text-sm text-gray-600 mb-2">平均反応時間</div>
+                                        <div className="text-3xl font-bold text-green-600">{averageTime}ms</div>
                                     </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                        <div className="text-2xl font-bold text-green-600">{averageTime}ms</div>
-                                    </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-1">最速記録</div>
-                                        <div className="text-2xl font-bold text-purple-600">{bestTime}ms</div>
-                                    </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-1">完了テスト</div>
-                                        <div className="text-2xl font-bold text-gray-700">{results.length}/{MAX_TESTS}</div>
+                                    <div className="bg-blue-50 rounded-lg p-6 text-center border border-blue-200">
+                                        <div className="text-sm text-gray-600 mb-2">最速記録</div>
+                                        <div className="text-3xl font-bold text-purple-600">{bestTime}ms</div>
                                     </div>
                                 </div>
 
@@ -528,40 +521,46 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                     </div>
                                 </div>
 
-                                {/* ハンターランク */}
-                                <div className="text-center border-t border-blue-200 pt-8">
-                                    <div className="text-lg text-gray-600 mb-4">ハンターランク</div>
-                                    {averageTime > 0 ? (
-                                        <div className="inline-block">
-                                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 shadow-lg">
-                                                <div className="flex items-center justify-center space-x-4">
-                                                    <div className="text-center">
-                                                        <div className="text-sm text-blue-100 mb-1">ランク順位</div>
-                                                        <div className="text-3xl font-bold text-white">
-                                                            #{getReflexHunterRank(averageTime).number}
+                                {/* ハンターランク - 非表示（ロジックは保持） */}
+                                {false && (
+                                    <div className="text-center border-t border-blue-200 pt-8">
+                                        <div className="text-lg text-gray-600 mb-4">ハンターランク</div>
+                                        {results.length === MAX_TESTS && averageTime > 0 ? (
+                                            <div className="inline-block">
+                                                <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 shadow-lg">
+                                                    <div className="flex items-center justify-center space-x-4">
+                                                        <div className="text-center">
+                                                            <div className="text-sm text-blue-100 mb-1">ランク順位</div>
+                                                            <div className="text-3xl font-bold text-white">
+                                                                #{getReflexHunterRank(averageTime).number}
+                                                            </div>
+                                                            <div className="text-xs text-blue-100">
+                                                                / {getReflexHunterRank(averageTime).total}
+                                                            </div>
                                                         </div>
-                                                        <div className="text-xs text-blue-100">
-                                                            / {getReflexHunterRank(averageTime).total}
-                                                        </div>
-                                                    </div>
-                                                    <div className="w-px h-12 bg-white opacity-30"></div>
-                                                    <div className="text-center">
-                                                        <div className="text-xl font-bold text-white">
-                                                            {getReflexHunterRank(averageTime).rank}
-                                                        </div>
-                                                        <div className="text-sm text-blue-100 mt-1">
-                                                            {averageTime}ms平均
+                                                        <div className="w-px h-12 bg-white opacity-30"></div>
+                                                        <div className="text-center">
+                                                            <div className="text-xl font-bold text-white">
+                                                                {getReflexHunterRank(averageTime).rank}
+                                                            </div>
+                                                            <div className="text-sm text-blue-100 mt-1">
+                                                                {averageTime}ms平均
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className="inline-block px-6 py-3 bg-gray-400 text-white rounded-lg text-lg font-medium">
-                                            ランク判定不可
-                                        </div>
-                                    )}
-                                </div>
+                                        ) : results.some(r => !r.success) ? (
+                                            <div className="inline-block px-6 py-3 bg-red-500 text-white rounded-lg text-lg font-medium">
+                                                フライング失格 - 5回連続成功が必要です
+                                            </div>
+                                        ) : (
+                                            <div className="inline-block px-6 py-3 bg-gray-400 text-white rounded-lg text-lg font-medium">
+                                                ランク判定不可
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             {/* ボタン */}
@@ -571,19 +570,22 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                     <div className="text-center space-y-2">
                                         <button
                                             onClick={showXLinkModalOnClick}
-                                            className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105"
+                                            className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all duration-200 shadow-lg flex items-center justify-center mx-auto"
                                         >
-                                            🔗 Xと連携してランキングに名前を表示
+                                            {/* 公式Xロゴ */}
+                                            <svg 
+                                                width="16" 
+                                                height="16" 
+                                                viewBox="0 0 24 24" 
+                                                fill="currentColor"
+                                                className="mr-2"
+                                            >
+                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                            </svg>
+                                            連携してランキングに名前を表示
                                         </button>
                                         <p className="text-xs text-gray-500">※ 連携しなくても引き続きプレイできます</p>
-                                        
-                                        {/* 🚨 デバッグ用強制表示ボタン */}
-                                        <button
-                                            onClick={forceShowModal}
-                                            className="px-4 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
-                                        >
-                                            🚨 デバッグ: 強制モーダル表示
-                                        </button>
+
                                     </div>
                                 )}
                                 
@@ -602,11 +604,27 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                         メニューに戻る
                                     </button>
                                 </div>
+
+                                {/* ランキング表示 */}
+                                <div className="mt-12">
+                                    <GameRankingTable gameType="reflex" limit={10} />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {/* X連携促進モーダル */}
+                <XLinkPromptModal
+                    isOpen={showXLinkModal && xLinkModalData !== null}
+                    onClose={handleXLinkClose}
+                    onLinkX={handleXLink}
+                    playerName={xLinkModalData?.playerName || 'ハンター名無し'}
+                    gameType={xLinkModalData?.gameType || 'reflex'}
+                    score={xLinkModalData?.score || 0}
+                />
             </div>
+            </>
         );
     }
 
@@ -675,13 +693,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                         </div>
 
                         {/* リアルタイム結果表示 */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">現在のテスト</div>
-                                <div className="text-xl font-bold text-blue-600">
-                                    {currentResult ? (currentResult.success ? `${currentResult.time}ms` : 'フライング') : '-'}
-                                </div>
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                             <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
                                 <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
                                 <div className="text-xl font-bold text-green-600">{averageTime > 0 ? `${averageTime}ms` : '-'}</div>
@@ -696,8 +708,8 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             </div>
                         </div>
 
-                        {/* 現在のランク表示 */}
-                        {averageTime > 0 && (
+                        {/* 現在のランク表示 - 非表示（ロジックは保持） */}
+                        {false && averageTime > 0 && (
                             <div className="bg-white rounded-lg p-4 mb-8 shadow-sm border border-blue-100">
                                 <div className="text-center">
                                     <div className="text-sm text-gray-600 mb-2">現在のランク</div>
@@ -716,37 +728,8 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                 </div>
             </div>
         </div>
-        
-        {/* ===== モーダル群（ページ内で確実にレンダリング） ===== */}
-        
-        {/* X連携促進モーダル - 常にレンダリング、isOpenで表示制御 */}
-        <XLinkPromptModal
-            isOpen={showXLinkModal && xLinkModalData !== null}
-            onClose={handleXLinkClose}
-            onLinkX={handleXLink}
-            playerName={xLinkModalData?.playerName || 'ハンター名無し'}
-            gameType={xLinkModalData?.gameType || 'reflex'}
-            score={xLinkModalData?.score || 0}
-        />
-        
-        {/* 🚨 デバッグ: モーダル状態表示 */}
-        {import.meta.env.DEV && (
-            <div style={{ 
-                position: 'fixed', 
-                top: '10px', 
-                right: '10px', 
-                background: 'rgba(0,0,0,0.8)', 
-                color: 'white', 
-                padding: '10px', 
-                fontSize: '12px',
-                zIndex: 999,
-                borderRadius: '5px'
-            }}>
-                <div>showXLinkModal: {String(showXLinkModal)}</div>
-                <div>xLinkModalData: {xLinkModalData ? 'あり' : 'なし'}</div>
-                <div>isModalVisible: {String(showXLinkModal && xLinkModalData !== null)}</div>
-            </div>
-        )}
+
+
 
         {/* ユーザー名登録モーダル */}
         {modalGameData && (

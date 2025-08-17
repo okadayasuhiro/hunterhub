@@ -21,7 +21,7 @@ const GAMES: GameInfo[] = [
     name: '反射神経テスト',
     icon: <Clock className="w-5 h-5" />,
     color: 'bg-red-500',
-    unit: 'ms',
+    unit: 's',
     description: '反応速度が速いほど上位'
   },
   {
@@ -29,15 +29,15 @@ const GAMES: GameInfo[] = [
     name: 'ターゲット追跡',
     icon: <Target className="w-5 h-5" />,
     color: 'bg-blue-500',
-    unit: 'ms',
-    description: '平均反応時間が短いほど上位'
+    unit: 's',
+    description: '合計時間が短いほど上位'
   },
   {
     id: 'sequence',
     name: '数字順序ゲーム',
     icon: <Hash className="w-5 h-5" />,
     color: 'bg-green-500',
-    unit: 'ms',
+    unit: 's',
     description: '完了時間が短いほど上位'
   }
 ];
@@ -100,8 +100,9 @@ const RankingPage: React.FC = () => {
     const gameInfo = GAMES.find(g => g.id === gameType);
     if (!gameInfo) return score.toString();
     
-    if (gameInfo.unit === 'ms') {
-      return `${score}ms`;
+    if (gameInfo.unit === 's') {
+      // 全ゲームでミリ秒保存→秒表示（0.000s形式）
+      return `${(score / 1000).toFixed(3)}s`;
     }
     return `${score}${gameInfo.unit}`;
   };

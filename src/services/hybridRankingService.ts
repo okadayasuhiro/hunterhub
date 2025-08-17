@@ -153,6 +153,46 @@ export class HybridRankingService {
   }
 
   /**
+   * ランキングデータを取得（ハイブリッドモード）
+   */
+  public async getRankings(gameType: string, limit: number = 10): Promise<RankingData> {
+    console.log('🏅 Fetching hybrid rankings for:', gameType);
+
+    // 1. クラウドから取得を試行
+    if (this.config.useCloud) {
+      try {
+        const cloudRankings = await this.cloudService.getRankings(gameType, limit);
+        console.log('✅ Cloud rankings fetched successfully');
+        
+        // CloudRankingResult を RankingData に変換
+        return {
+          rankings: cloudRankings.rankings.map(entry => this.convertCloudEntryToLocal(entry)),
+          userRank: cloudRankings.userRank ? this.convertCloudEntryToLocal(cloudRankings.userRank) : null,
+          totalPlayers: cloudRankings.totalPlayers,
+          lastUpdated: cloudRankings.lastUpdated
+        };
+      } catch (error) {
+        console.error('❌ Cloud rankings fetch failed:', error);
+      }
+    }
+
+    // 2. ローカルから取得
+    try {
+      const localRankings = await this.localService.getRankings(gameType, limit);
+      console.log('✅ Local rankings fetched successfully (fallback)');
+      return localRankings;
+    } catch (error) {
+      console.error('❌ Local rankings fetch also failed:', error);
+      return {
+        rankings: [],
+        userRank: null,
+        totalPlayers: 0,
+        lastUpdated: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
    * 全ゲームのトップ1位プレイヤーを取得（ハイブリッドモード）
    */
   public async getAllTopPlayers(): Promise<{

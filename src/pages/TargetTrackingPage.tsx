@@ -2,24 +2,15 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Crosshair } from 'lucide-react';
 import { HybridRankingService } from '../services/hybridRankingService';
+import { GameHistoryService } from '../services/gameHistoryService';
+import type { TargetTrackingHistory, TargetResult } from '../types/game';
+import GameRankingTable from '../components/GameRankingTable';
 
 interface TargetTrackingPageProps {
     mode: 'instructions' | 'game' | 'result';
 }
 
-interface TargetResult {
-    targetNumber: number;
-    reactionTime: number;
-    timestamp: number;
-}
-
-interface GameHistory {
-    date: string;
-    totalTime: number;
-    averageReactionTime: number;
-    accuracy: number;
-    targetResults: TargetResult[];
-}
+// 型定義は src/types/game.ts から import
 
 const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     const navigate = useNavigate();
@@ -31,7 +22,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     const [gameStartTime, setGameStartTime] = useState(0);
     const [targetResults, setTargetResults] = useState<TargetResult[]>([]);
     const [gameArea, setGameArea] = useState({ width: 0, height: 0 });
-    const [gameHistory, setGameHistory] = useState<GameHistory[]>([]);
+    const [gameHistory, setGameHistory] = useState<TargetTrackingHistory[]>([]);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isTargetClickable, setIsTargetClickable] = useState(true);
 
@@ -41,13 +32,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     const TOTAL_TARGETS = 10;
     const TARGET_SIZE = 60;
 
-    // ローカルストレージからゲーム履歴を読み込み
-    useEffect(() => {
-        const savedHistory = localStorage.getItem('targetTrackingHistory');
-        if (savedHistory) {
-            setGameHistory(JSON.parse(savedHistory));
-        }
-    }, []);
+    // ゲーム履歴はGameHistoryServiceで管理（LocalStorageは不要）
 
     // ゲームエリアサイズの設定
     useEffect(() => {
@@ -192,7 +177,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
             : 0;
         const accuracy = Math.round((finalResults.length / TOTAL_TARGETS) * 100);
 
-        const newGameResult: GameHistory = {
+        const newGameResult: TargetTrackingHistory = {
             date: new Date().toLocaleDateString('ja-JP'),
             totalTime,
             averageReactionTime,
@@ -200,19 +185,26 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
             targetResults: finalResults
         };
 
+        // ゲーム履歴の状態更新（表示用）
         const updatedHistory = [newGameResult, ...gameHistory].slice(0, 10);
         setGameHistory(updatedHistory);
-        localStorage.setItem('targetTrackingHistory', JSON.stringify(updatedHistory));
+        
+        // DynamoDBに保存（LocalStorageは自動削除）
+        const gameHistoryService = GameHistoryService.getInstance();
+        await gameHistoryService.saveGameHistory('target', newGameResult);
 
-        // クラウドDBにもスコア送信
+        // クラウドDBにもスコア送信（合計時間をミリ秒で整数送信）
         try {
             const hybridService = HybridRankingService.getInstance();
-            await hybridService.submitScore('target', Math.round(averageReactionTime), {
+            // 合計時間をミリ秒に変換（小数点以下3桁まで保持してから整数化）
+            const totalTimeMs = Math.floor(totalTime * 1000);
+            await hybridService.submitScore('target', totalTimeMs, {
                 totalTime: totalTime,
+                averageReactionTime: averageReactionTime,
                 accuracy: accuracy,
                 targetCount: finalResults.length
             });
-            console.log('✅ Target tracking score submitted to cloud:', Math.round(averageReactionTime));
+            console.log('✅ Target tracking score submitted to cloud:', totalTimeMs, 'ms (total time)');
         } catch (error) {
             console.error('❌ Failed to submit target tracking score to cloud:', error);
         }
@@ -275,12 +267,9 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                         <div className="max-w-3xl mx-auto">
                             {/* ヘッダー */}
                             <div className="text-center mb-12">
-                                <div className="flex items-center justify-center mb-4">
-                                    <Crosshair size={32} className="text-blue-600 mr-3" />
-                                    <h1 className="text-2xl font-bold text-gray-800">
-                                        ターゲット追跡
-                                    </h1>
-                                </div>
+                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                                    ターゲット追跡
+                                </h1>
                             </div>
 
                             {/* ルール説明 */}
@@ -342,6 +331,11 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                     戻る
                                 </button>
                             </div>
+
+                            {/* ランキング表示 */}
+                            <div className="mt-12">
+                                <GameRankingTable gameType="target" limit={10} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -359,12 +353,9 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                         <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
                             <div className="text-center mb-12">
-                                <div className="flex items-center justify-center mb-4">
-                                    <Crosshair size={32} className="text-blue-600 mr-3" />
-                                    <h1 className="text-2xl font-bold text-gray-800">
-                                        ゲーム完了
-                                    </h1>
-                                </div>
+                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                                    ゲーム完了
+                                </h1>
                             </div>
 
                             {/* 結果表示 */}
@@ -391,40 +382,42 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                     </div>
                                 </div>
 
-                                {/* ハンターランク */}
-                                <div className="text-center border-t border-blue-200 pt-8">
-                                    <div className="text-lg text-gray-600 mb-4">ハンターランク</div>
-                                    {currentStats.averageReactionTime > 0 ? (
-                                        <div className="inline-block">
-                                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 shadow-lg">
-                                                <div className="flex items-center justify-center space-x-4">
-                                                    <div className="text-center">
-                                                        <div className="text-sm text-blue-100 mb-1">ランク順位</div>
-                                                        <div className="text-3xl font-bold text-white">
-                                                            #{getHunterRank(currentStats.averageReactionTime).number}
+                                {/* ハンターランク - 非表示（ロジックは保持） */}
+                                {false && (
+                                    <div className="text-center border-t border-blue-200 pt-8">
+                                        <div className="text-lg text-gray-600 mb-4">ハンターランク</div>
+                                        {currentStats.averageReactionTime > 0 ? (
+                                            <div className="inline-block">
+                                                <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 shadow-lg">
+                                                    <div className="flex items-center justify-center space-x-4">
+                                                        <div className="text-center">
+                                                            <div className="text-sm text-blue-100 mb-1">ランク順位</div>
+                                                            <div className="text-3xl font-bold text-white">
+                                                                #{getHunterRank(currentStats.averageReactionTime).number}
+                                                            </div>
+                                                            <div className="text-xs text-blue-100">
+                                                                / {getHunterRank(currentStats.averageReactionTime).total}
+                                                            </div>
                                                         </div>
-                                                        <div className="text-xs text-blue-100">
-                                                            / {getHunterRank(currentStats.averageReactionTime).total}
-                                                        </div>
-                                                    </div>
-                                                    <div className="w-px h-12 bg-white opacity-30"></div>
-                                                    <div className="text-center">
-                                                        <div className="text-xl font-bold text-white">
-                                                            {getHunterRank(currentStats.averageReactionTime).rank}
-                                                        </div>
-                                                        <div className="text-sm text-blue-100 mt-1">
-                                                            {currentStats.averageReactionTime.toFixed(3)}s平均
+                                                        <div className="w-px h-12 bg-white opacity-30"></div>
+                                                        <div className="text-center">
+                                                            <div className="text-xl font-bold text-white">
+                                                                {getHunterRank(currentStats.averageReactionTime).rank}
+                                                            </div>
+                                                            <div className="text-sm text-blue-100 mt-1">
+                                                                {currentStats.averageReactionTime.toFixed(3)}s平均
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className="inline-block px-6 py-3 bg-gray-400 text-white rounded-lg text-lg font-medium">
-                                            ランク判定不可
-                                        </div>
-                                    )}
-                                </div>
+                                        ) : (
+                                            <div className="inline-block px-6 py-3 bg-gray-400 text-white rounded-lg text-lg font-medium">
+                                                ランク判定不可
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             {/* ボタン */}
@@ -441,6 +434,11 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                 >
                                     メニューに戻る
                                 </button>
+                            </div>
+
+                            {/* ランキング表示 */}
+                            <div className="mt-12">
+                                <GameRankingTable gameType="target" limit={10} />
                             </div>
                         </div>
                     </div>
@@ -517,8 +515,8 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                             </div>
                         </div>
 
-                        {/* 現在のランク表示 */}
-                        {currentStats.averageReactionTime > 0 && (
+                        {/* 現在のランク表示 - 非表示（ロジックは保持） */}
+                        {false && currentStats.averageReactionTime > 0 && (
                             <div className="bg-white rounded-lg p-4 mb-8 shadow-sm border border-blue-100">
                                 <div className="text-center">
                                     <div className="text-sm text-gray-600 mb-2">現在のランク</div>

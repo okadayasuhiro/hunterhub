@@ -17,6 +17,13 @@
       "service": "AppSync"
     }
   },
+  "function": {
+    "hunterhubd328c7fe": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
   "hosting": {
     "amplifyhosting": {
       "providerPlugin": "awscloudformation",
@@ -25,6 +32,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_hunterhubd328c7fe_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "hunterhubd328c7fe"
+        }
+      ]
+    },
+    "AMPLIFY_function_hunterhubd328c7fe_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "hunterhubd328c7fe"
+        }
+      ]
+    },
     "AMPLIFY_hosting_amplifyhosting_appId": {
       "usedBy": [
         {

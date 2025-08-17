@@ -117,6 +117,10 @@ export type CreateUserProfileInput = {
   createdAt?: string | null,
   lastActiveAt: string,
   fingerprintQuality?: number | null,
+  xLinked?: boolean | null,
+  xDisplayName?: string | null,
+  xProfileImageUrl?: string | null,
+  xLinkedAt?: string | null,
 };
 
 export type ModelUserProfileConditionInput = {
@@ -126,10 +130,21 @@ export type ModelUserProfileConditionInput = {
   createdAt?: ModelStringInput | null,
   lastActiveAt?: ModelStringInput | null,
   fingerprintQuality?: ModelIntInput | null,
+  xLinked?: ModelBooleanInput | null,
+  xDisplayName?: ModelStringInput | null,
+  xProfileImageUrl?: ModelStringInput | null,
+  xLinkedAt?: ModelStringInput | null,
   and?: Array< ModelUserProfileConditionInput | null > | null,
   or?: Array< ModelUserProfileConditionInput | null > | null,
   not?: ModelUserProfileConditionInput | null,
   updatedAt?: ModelStringInput | null,
+};
+
+export type ModelBooleanInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
 };
 
 export type UserProfile = {
@@ -141,6 +156,10 @@ export type UserProfile = {
   createdAt: string,
   lastActiveAt: string,
   fingerprintQuality?: number | null,
+  xLinked?: boolean | null,
+  xDisplayName?: string | null,
+  xProfileImageUrl?: string | null,
+  xLinkedAt?: string | null,
   updatedAt: string,
 };
 
@@ -152,9 +171,60 @@ export type UpdateUserProfileInput = {
   createdAt?: string | null,
   lastActiveAt?: string | null,
   fingerprintQuality?: number | null,
+  xLinked?: boolean | null,
+  xDisplayName?: string | null,
+  xProfileImageUrl?: string | null,
+  xLinkedAt?: string | null,
 };
 
 export type DeleteUserProfileInput = {
+  id: string,
+};
+
+export type CreateGameHistoryInput = {
+  id?: string | null,
+  userId: string,
+  gameType: string,
+  gameData: string,
+  playedAt: string,
+  displayName?: string | null,
+};
+
+export type ModelGameHistoryConditionInput = {
+  userId?: ModelStringInput | null,
+  gameType?: ModelStringInput | null,
+  gameData?: ModelStringInput | null,
+  playedAt?: ModelStringInput | null,
+  displayName?: ModelStringInput | null,
+  and?: Array< ModelGameHistoryConditionInput | null > | null,
+  or?: Array< ModelGameHistoryConditionInput | null > | null,
+  not?: ModelGameHistoryConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type GameHistory = {
+  __typename: "GameHistory",
+  id: string,
+  userId: string,
+  gameType: string,
+  gameData: string,
+  playedAt: string,
+  displayName?: string | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateGameHistoryInput = {
+  id: string,
+  userId?: string | null,
+  gameType?: string | null,
+  gameData?: string | null,
+  playedAt?: string | null,
+  displayName?: string | null,
+};
+
+export type DeleteGameHistoryInput = {
   id: string,
 };
 
@@ -204,6 +274,10 @@ export type ModelUserProfileFilterInput = {
   createdAt?: ModelStringInput | null,
   lastActiveAt?: ModelStringInput | null,
   fingerprintQuality?: ModelIntInput | null,
+  xLinked?: ModelBooleanInput | null,
+  xDisplayName?: ModelStringInput | null,
+  xProfileImageUrl?: ModelStringInput | null,
+  xLinkedAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelUserProfileFilterInput | null > | null,
   or?: Array< ModelUserProfileFilterInput | null > | null,
@@ -213,6 +287,26 @@ export type ModelUserProfileFilterInput = {
 export type ModelUserProfileConnection = {
   __typename: "ModelUserProfileConnection",
   items:  Array<UserProfile | null >,
+  nextToken?: string | null,
+};
+
+export type ModelGameHistoryFilterInput = {
+  id?: ModelIDInput | null,
+  userId?: ModelStringInput | null,
+  gameType?: ModelStringInput | null,
+  gameData?: ModelStringInput | null,
+  playedAt?: ModelStringInput | null,
+  displayName?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelGameHistoryFilterInput | null > | null,
+  or?: Array< ModelGameHistoryFilterInput | null > | null,
+  not?: ModelGameHistoryFilterInput | null,
+};
+
+export type ModelGameHistoryConnection = {
+  __typename: "ModelGameHistoryConnection",
+  items:  Array<GameHistory | null >,
   nextToken?: string | null,
 };
 
@@ -287,9 +381,31 @@ export type ModelSubscriptionUserProfileFilterInput = {
   createdAt?: ModelSubscriptionStringInput | null,
   lastActiveAt?: ModelSubscriptionStringInput | null,
   fingerprintQuality?: ModelSubscriptionIntInput | null,
+  xLinked?: ModelSubscriptionBooleanInput | null,
+  xDisplayName?: ModelSubscriptionStringInput | null,
+  xProfileImageUrl?: ModelSubscriptionStringInput | null,
+  xLinkedAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionUserProfileFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserProfileFilterInput | null > | null,
+};
+
+export type ModelSubscriptionBooleanInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
+};
+
+export type ModelSubscriptionGameHistoryFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  userId?: ModelSubscriptionStringInput | null,
+  gameType?: ModelSubscriptionStringInput | null,
+  gameData?: ModelSubscriptionStringInput | null,
+  playedAt?: ModelSubscriptionStringInput | null,
+  displayName?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionGameHistoryFilterInput | null > | null,
+  or?: Array< ModelSubscriptionGameHistoryFilterInput | null > | null,
 };
 
 export type CreateGameScoreMutationVariables = {
@@ -370,6 +486,10 @@ export type CreateUserProfileMutation = {
     createdAt: string,
     lastActiveAt: string,
     fingerprintQuality?: number | null,
+    xLinked?: boolean | null,
+    xDisplayName?: string | null,
+    xProfileImageUrl?: string | null,
+    xLinkedAt?: string | null,
     updatedAt: string,
   } | null,
 };
@@ -389,6 +509,10 @@ export type UpdateUserProfileMutation = {
     createdAt: string,
     lastActiveAt: string,
     fingerprintQuality?: number | null,
+    xLinked?: boolean | null,
+    xDisplayName?: string | null,
+    xProfileImageUrl?: string | null,
+    xLinkedAt?: string | null,
     updatedAt: string,
   } | null,
 };
@@ -408,6 +532,67 @@ export type DeleteUserProfileMutation = {
     createdAt: string,
     lastActiveAt: string,
     fingerprintQuality?: number | null,
+    xLinked?: boolean | null,
+    xDisplayName?: string | null,
+    xProfileImageUrl?: string | null,
+    xLinkedAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateGameHistoryMutationVariables = {
+  input: CreateGameHistoryInput,
+  condition?: ModelGameHistoryConditionInput | null,
+};
+
+export type CreateGameHistoryMutation = {
+  createGameHistory?:  {
+    __typename: "GameHistory",
+    id: string,
+    userId: string,
+    gameType: string,
+    gameData: string,
+    playedAt: string,
+    displayName?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateGameHistoryMutationVariables = {
+  input: UpdateGameHistoryInput,
+  condition?: ModelGameHistoryConditionInput | null,
+};
+
+export type UpdateGameHistoryMutation = {
+  updateGameHistory?:  {
+    __typename: "GameHistory",
+    id: string,
+    userId: string,
+    gameType: string,
+    gameData: string,
+    playedAt: string,
+    displayName?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteGameHistoryMutationVariables = {
+  input: DeleteGameHistoryInput,
+  condition?: ModelGameHistoryConditionInput | null,
+};
+
+export type DeleteGameHistoryMutation = {
+  deleteGameHistory?:  {
+    __typename: "GameHistory",
+    id: string,
+    userId: string,
+    gameType: string,
+    gameData: string,
+    playedAt: string,
+    displayName?: string | null,
+    createdAt: string,
     updatedAt: string,
   } | null,
 };
@@ -472,6 +657,10 @@ export type GetUserProfileQuery = {
     createdAt: string,
     lastActiveAt: string,
     fingerprintQuality?: number | null,
+    xLinked?: boolean | null,
+    xDisplayName?: string | null,
+    xProfileImageUrl?: string | null,
+    xLinkedAt?: string | null,
     updatedAt: string,
   } | null,
 };
@@ -494,6 +683,52 @@ export type ListUserProfilesQuery = {
       createdAt: string,
       lastActiveAt: string,
       fingerprintQuality?: number | null,
+      xLinked?: boolean | null,
+      xDisplayName?: string | null,
+      xProfileImageUrl?: string | null,
+      xLinkedAt?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetGameHistoryQueryVariables = {
+  id: string,
+};
+
+export type GetGameHistoryQuery = {
+  getGameHistory?:  {
+    __typename: "GameHistory",
+    id: string,
+    userId: string,
+    gameType: string,
+    gameData: string,
+    playedAt: string,
+    displayName?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListGameHistoriesQueryVariables = {
+  filter?: ModelGameHistoryFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListGameHistoriesQuery = {
+  listGameHistories?:  {
+    __typename: "ModelGameHistoryConnection",
+    items:  Array< {
+      __typename: "GameHistory",
+      id: string,
+      userId: string,
+      gameType: string,
+      gameData: string,
+      playedAt: string,
+      displayName?: string | null,
+      createdAt: string,
       updatedAt: string,
     } | null >,
     nextToken?: string | null,
@@ -520,6 +755,36 @@ export type UserProfilesByUserIdQuery = {
       createdAt: string,
       lastActiveAt: string,
       fingerprintQuality?: number | null,
+      xLinked?: boolean | null,
+      xDisplayName?: string | null,
+      xProfileImageUrl?: string | null,
+      xLinkedAt?: string | null,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GameHistoriesByUserIdQueryVariables = {
+  userId: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelGameHistoryFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type GameHistoriesByUserIdQuery = {
+  gameHistoriesByUserId?:  {
+    __typename: "ModelGameHistoryConnection",
+    items:  Array< {
+      __typename: "GameHistory",
+      id: string,
+      userId: string,
+      gameType: string,
+      gameData: string,
+      playedAt: string,
+      displayName?: string | null,
+      createdAt: string,
       updatedAt: string,
     } | null >,
     nextToken?: string | null,
@@ -600,6 +865,10 @@ export type OnCreateUserProfileSubscription = {
     createdAt: string,
     lastActiveAt: string,
     fingerprintQuality?: number | null,
+    xLinked?: boolean | null,
+    xDisplayName?: string | null,
+    xProfileImageUrl?: string | null,
+    xLinkedAt?: string | null,
     updatedAt: string,
   } | null,
 };
@@ -618,6 +887,10 @@ export type OnUpdateUserProfileSubscription = {
     createdAt: string,
     lastActiveAt: string,
     fingerprintQuality?: number | null,
+    xLinked?: boolean | null,
+    xDisplayName?: string | null,
+    xProfileImageUrl?: string | null,
+    xLinkedAt?: string | null,
     updatedAt: string,
   } | null,
 };
@@ -636,6 +909,64 @@ export type OnDeleteUserProfileSubscription = {
     createdAt: string,
     lastActiveAt: string,
     fingerprintQuality?: number | null,
+    xLinked?: boolean | null,
+    xDisplayName?: string | null,
+    xProfileImageUrl?: string | null,
+    xLinkedAt?: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateGameHistorySubscriptionVariables = {
+  filter?: ModelSubscriptionGameHistoryFilterInput | null,
+};
+
+export type OnCreateGameHistorySubscription = {
+  onCreateGameHistory?:  {
+    __typename: "GameHistory",
+    id: string,
+    userId: string,
+    gameType: string,
+    gameData: string,
+    playedAt: string,
+    displayName?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateGameHistorySubscriptionVariables = {
+  filter?: ModelSubscriptionGameHistoryFilterInput | null,
+};
+
+export type OnUpdateGameHistorySubscription = {
+  onUpdateGameHistory?:  {
+    __typename: "GameHistory",
+    id: string,
+    userId: string,
+    gameType: string,
+    gameData: string,
+    playedAt: string,
+    displayName?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteGameHistorySubscriptionVariables = {
+  filter?: ModelSubscriptionGameHistoryFilterInput | null,
+};
+
+export type OnDeleteGameHistorySubscription = {
+  onDeleteGameHistory?:  {
+    __typename: "GameHistory",
+    id: string,
+    userId: string,
+    gameType: string,
+    gameData: string,
+    playedAt: string,
+    displayName?: string | null,
+    createdAt: string,
     updatedAt: string,
   } | null,
 };

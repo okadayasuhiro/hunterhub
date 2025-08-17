@@ -11,6 +11,7 @@ import DiagnosisHomePage from '../pages/diagnosis/DiagnosisHomePage';
 import DiagnosisPage from '../pages/DiagnosisPage';
 import DiagnosisResultPage from '../pages/DiagnosisResultPage';
 import DiagnosisGalleryPage from '../pages/DiagnosisGalleryPage';
+import XCallbackPage from '../pages/XCallbackPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 function ScrollToTop() {
@@ -58,6 +59,9 @@ const AppRouter: React.FC = () => {
                         <Route path="/diagnosis/quiz" element={<DiagnosisPage />} />
                         <Route path="/diagnosis/gallery" element={<DiagnosisGalleryPage />} />
                         <Route path="/diagnosis/result/:animalId/:userProfileHash" element={<DiagnosisResultPage />} />
+
+                        {/* X OAuth コールバック */}
+                        <Route path="/x-callback" element={<XCallbackPage />} />
 
                         {/* 404ページ */}
                         <Route path="*" element={<NotFoundPage />} />

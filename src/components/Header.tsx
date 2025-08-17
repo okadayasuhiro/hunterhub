@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { User, ExternalLink } from 'lucide-react';
 import { UserIdentificationService } from '../services/userIdentificationService';
+import XAuthService from '../services/xAuthService';
 
 interface HeaderProps {
     onHomeClick?: () => void;
@@ -53,34 +54,37 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
         loadUserInfo();
     }, [userService]);
 
-    // 簡易X連携（実際のOAuth実装は後で）
+    // 実際のX OAuth連携
     const handleXLink = async () => {
+        console.log('🔧 X Link button clicked, isXLinked:', isXLinked);
+        
         if (isXLinked) {
             // 連携解除
             await userService.unlinkXAccount();
             const newName = await userService.getDisplayName();
             setDisplayName(newName);
             setIsXLinked(false);
-            alert('X連携を解除しました');
+            alert('X連携を解除しました。ランキングが更新されます。');
+            
+            // ランキング表示を確実に更新するため、少し遅延してページリフレッシュ
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } else {
-            // 仮の連携（実際のX OAuth実装は後で）
-            const xName = prompt('X表示名を入力してください（テスト用）:');
-            if (xName && xName.trim()) {
-                await userService.linkXAccount(xName.trim());
-                setDisplayName(xName.trim());
-                setIsXLinked(true);
-                alert('X連携しました（テスト実装）');
-            }
+            // X OAuth認証フローを開始
+            console.log('🔧 Starting X OAuth flow...');
+            const xAuthService = XAuthService.getInstance();
+            await xAuthService.startAuthFlow();
         }
         setShowUserMenu(false);
     };
 
     return (
-        <header className="w-full glass-card border-0 border-b border-white/20" style={{ margin: 0, padding: 0 }}>
+        <header className="w-full glass-card border-0 border-b border-white/20 relative z-[10000]" style={{ margin: 0, padding: 0 }}>
             {/* メニュー外クリックで閉じる */}
             {showUserMenu && (
                 <div 
-                    className="fixed inset-0 z-40" 
+                    className="fixed inset-0 z-[9998]" 
                     onClick={() => setShowUserMenu(false)}
                 />
             )}
@@ -109,12 +113,18 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
 
                             {/* ユーザーメニュードロップダウン */}
                             {showUserMenu && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[10001]">
                                     <div className="px-4 py-2 text-xs text-gray-500 border-b">
                                         {isXLinked ? 'X連携中' : 'ハンター名'}
                                     </div>
                                     <button
-                                        onClick={handleXLink}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            console.log('🔧 Button clicked!');
+                                            alert('ボタンがクリックされました！');
+                                            handleXLink();
+                                        }}
                                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                                     >
                                         <ExternalLink className="w-4 h-4 mr-2" />

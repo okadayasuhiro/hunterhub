@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, X, Trophy } from 'lucide-react';
+import { X, Trophy } from 'lucide-react';
 
 interface XLinkPromptModalProps {
     isOpen: boolean;
@@ -18,21 +18,9 @@ const XLinkPromptModal: React.FC<XLinkPromptModalProps> = ({
     gameType,
     score
 }) => {
-    console.log('🔍 XLinkPromptModal render:', {
-        isOpen,
-        playerName,
-        gameType,
-        score,
-        timestamp: new Date().toISOString()
-    });
-    
-    if (!isOpen) {
-        console.log('❌ XLinkPromptModal: isOpen = false, not rendering modal');
+        if (!isOpen) {
         return null;
     }
-    
-    console.log('✅ XLinkPromptModal: レンダリング中 - Modal should be visible!');
-    console.log('🎯 Modal data:', { playerName, gameType, score });
 
     const getGameDisplayName = (type: string) => {
         switch (type) {
@@ -52,17 +40,28 @@ const XLinkPromptModal: React.FC<XLinkPromptModalProps> = ({
         }
     };
 
+    // 🔧 修正: React Portalを使わず通常のJSXとして返す
     return (
         <>
             {/* オーバーレイ */}
             <div 
-                className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                style={{ zIndex: 9999 }}
+                className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                style={{ 
+                    zIndex: 999999,
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0
+                }}
             >
                 {/* モーダル本体 */}
                 <div 
                     className="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative shadow-2xl"
-                    style={{ zIndex: 10000 }}
+                    style={{ 
+                        zIndex: 1000000,
+                        position: 'relative'
+                    }}
                 >
                     {/* 閉じるボタン */}
                     <button
@@ -110,16 +109,25 @@ const XLinkPromptModal: React.FC<XLinkPromptModalProps> = ({
                     <div className="flex gap-3">
                         <button
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                            className="flex-1 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
                         >
                             後で
                         </button>
                         <button
                             onClick={onLinkX}
-                            className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+                            className="flex-1 px-4 py-2 text-sm font-bold text-white bg-black rounded-full hover:bg-gray-800 transition-all duration-200 flex items-center justify-center"
                         >
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            X連携
+                            {/* 公式Xロゴ */}
+                            <svg 
+                                width="16" 
+                                height="16" 
+                                viewBox="0 0 24 24" 
+                                fill="currentColor"
+                                className="mr-2"
+                            >
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+X連携
                         </button>
                     </div>
                 </div>

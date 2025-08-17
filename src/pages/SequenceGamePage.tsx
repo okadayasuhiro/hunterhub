@@ -2,28 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Hash, Trophy, Clock } from 'lucide-react';
 import { HybridRankingService } from '../services/hybridRankingService';
+import { GameHistoryService } from '../services/gameHistoryService';
+import type { SequenceGameHistory, NumberButton } from '../types/game';
+import GameRankingTable from '../components/GameRankingTable';
 
 interface SequenceGamePageProps {
     mode: 'instructions' | 'game' | 'result';
 }
 
-interface NumberButton {
-    id: number;
-    number: number;
-    x: number;
-    y: number;
-    clicked: boolean;
-}
-
-interface SequenceGameHistory {
-    date: string;
-    completionTime: number;
-    averageClickInterval: number;
-    successClickRate: number;
-    rank: number;
-    rankTitle: string;
-    completed: boolean;
-}
+// 型定義は src/types/game.ts から import
 
 // ランク判定関数
 const getRankFromTime = (timeInSeconds: number): { rank: number; title: string; color: string } => {
@@ -111,20 +98,30 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
             completed
         };
 
+        // ゲーム履歴の状態更新（表示用）
         const updatedHistory = [newGameResult, ...gameHistory].slice(0, 10);
         setGameHistory(updatedHistory);
-        localStorage.setItem('sequenceGameHistory', JSON.stringify(updatedHistory));
+        
+        // DynamoDBに保存（LocalStorageは自動削除）
+        const gameHistoryService = GameHistoryService.getInstance();
+        await gameHistoryService.saveGameHistory('sequence', newGameResult);
 
-        // クラウドDBにもスコア送信（完了した場合のみ）
+        // クラウドDBにもスコア送信（完了した場合のみ、ミリ秒で整数送信）
         if (completed) {
             try {
                 const hybridService = HybridRankingService.getInstance();
-                await hybridService.submitScore('sequence', completionTime, {
+                // 完了時間をミリ秒に変換（小数点以下3桁まで保持してから整数化）
+                                        console.log('🔍 Original completionTime:', completionTime, 'type:', typeof completionTime);
+                        console.log('🔍 completionTime toFixed(3):', completionTime.toFixed(3));
+                const completionTimeMs = Math.floor(completionTime * 1000);
+                console.log('🔍 Converted completionTimeMs:', completionTimeMs, 'type:', typeof completionTimeMs);
+                await hybridService.submitScore('sequence', completionTimeMs, {
+                    completionTime: completionTime,
                     averageClickInterval: avgInterval,
                     successClickRate: successRate,
                     rank: rankInfo.rank
                 });
-                console.log('✅ Sequence game score submitted to cloud:', completionTime);
+                console.log('✅ Sequence game score submitted to cloud:', completionTimeMs, 'ms (completion time)');
             } catch (error) {
                 console.error('❌ Failed to submit sequence game score to cloud:', error);
             }
@@ -305,7 +302,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                 if (level === 7) {
                     setGameState('gameOver');
                     if (startTime) {
-                        const completionTime = Math.floor((Date.now() - startTime) / 1000);
+                        const completionTime = (Date.now() - startTime) / 1000;
                         setFinalTime(completionTime);
                         setIsGameCompleted(true);
 
@@ -363,12 +360,9 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                         <div className="max-w-3xl mx-auto">
                             {/* ヘッダー */}
                             <div className="text-center mb-12">
-                                <div className="flex items-center justify-center mb-4">
-                                    <Hash size={32} className="text-blue-700 mr-3" />
-                                    <h1 className="text-2xl font-bold text-gray-800">
-                                        数字順序ゲーム
-                                    </h1>
-                                </div>
+                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                                    数字順序ゲーム
+                                </h1>
                             </div>
 
                             {/* ルール説明 */}
@@ -430,6 +424,11 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                     戻る
                                 </button>
                             </div>
+
+                            {/* ランキング表示 */}
+                            <div className="mt-12">
+                                <GameRankingTable gameType="sequence" limit={10} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -445,16 +444,9 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                         <div className="max-w-3xl mx-auto">
                             {/* ヘッダー */}
                             <div className="text-center mb-12">
-                                <div className="flex items-center justify-center mb-4">
-                                    {level === 7 ? (
-                                        <Trophy size={56} className="text-blue-600 mr-4" />
-                                    ) : (
-                                        <Hash size={56} className="text-blue-700 mr-4" />
-                                    )}
-                                    <h1 className="text-2xl font-light text-gray-800">
-                                        {level === 7 ? '完全制覇！' : 'ゲーム終了'}
-                                    </h1>
-                                </div>
+                                <h1 className="text-2xl font-light text-gray-800 mb-4">
+                                    {level === 7 ? '完全制覇！' : 'ゲーム終了'}
+                                </h1>
                             </div>
 
                             {/* 結果表示 */}
@@ -489,32 +481,35 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                             </div>
                                         </div>
 
-                                        <div className="text-center border-t border-blue-200 pt-8">
-                                            <div className="inline-block">
-                                                {(() => {
-                                                    const rankInfo = getRankFromTime(finalTime);
-                                                    const isNewBest = !bestRecord || finalTime < bestRecord.completionTime;
-                                                    return (
-                                                        <div className={`text-white rounded-lg p-6 shadow-lg ${isNewBest
-                                                            ? 'bg-gradient-to-r from-yellow-500 to-orange-600'
-                                                            : 'bg-gradient-to-r from-purple-500 to-blue-600'
-                                                            }`}>
-                                                            {isNewBest && (
-                                                                <div className="text-sm font-medium mb-2 opacity-90">
-                                                                    🎉 NEW BEST RECORD! 🎉
+                                        {/* ランク表示 - 非表示（ロジックは保持） */}
+                                        {false && (
+                                            <div className="text-center border-t border-blue-200 pt-8">
+                                                <div className="inline-block">
+                                                    {(() => {
+                                                        const rankInfo = getRankFromTime(finalTime);
+                                                        const isNewBest = !bestRecord || finalTime < bestRecord.completionTime;
+                                                        return (
+                                                            <div className={`text-white rounded-lg p-6 shadow-lg ${isNewBest
+                                                                ? 'bg-gradient-to-r from-yellow-500 to-orange-600'
+                                                                : 'bg-gradient-to-r from-purple-500 to-blue-600'
+                                                                }`}>
+                                                                {isNewBest && (
+                                                                    <div className="text-sm font-medium mb-2 opacity-90">
+                                                                        🎉 NEW BEST RECORD! 🎉
+                                                                    </div>
+                                                                )}
+                                                                <div className="text-3xl font-bold mb-2">
+                                                                    #{rankInfo.rank} {rankInfo.title}
                                                                 </div>
-                                                            )}
-                                                            <div className="text-3xl font-bold mb-2">
-                                                                #{rankInfo.rank} {rankInfo.title}
+                                                                <div className="text-sm opacity-90">
+                                                                    完了時間: {formatTime(finalTime)}
+                                                                </div>
                                                             </div>
-                                                            <div className="text-sm opacity-90">
-                                                                完了時間: {formatTime(finalTime)}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })()}
+                                                        );
+                                                    })()}
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
 
                                         {/* ベスト記録比較 */}
                                         {bestRecord && bestRecord.averageClickInterval !== undefined && finalTime !== bestRecord.completionTime && (
@@ -599,6 +594,11 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                 >
                                     メニューに戻る
                                 </button>
+                            </div>
+
+                            {/* ランキング表示 */}
+                            <div className="mt-12">
+                                <GameRankingTable gameType="sequence" limit={10} />
                             </div>
                         </div>
                     </div>
