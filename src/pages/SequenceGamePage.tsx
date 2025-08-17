@@ -487,7 +487,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="inline-block">
                                                     {(() => {
                                                         const rankInfo = getRankFromTime(finalTime || 0);
-                                                        const isNewBest = !bestRecord || (finalTime !== null && finalTime > 0 && finalTime < (bestRecord?.completionTime || Infinity));
+                                                        const isNewBest = !bestRecord || (finalTime != null && finalTime > 0 && finalTime < (bestRecord?.completionTime || Infinity));
                                                         return (
                                                             <div className={`text-white rounded-lg p-6 shadow-lg ${isNewBest
                                                                 ? 'bg-gradient-to-r from-yellow-500 to-orange-600'
