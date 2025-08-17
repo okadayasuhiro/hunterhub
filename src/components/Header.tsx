@@ -64,7 +64,6 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
             const newName = await userService.getDisplayName();
             setDisplayName(newName);
             setIsXLinked(false);
-            alert('X連携を解除しました。ランキングが更新されます。');
             
             // ランキング表示を確実に更新するため、少し遅延してページリフレッシュ
             setTimeout(() => {
