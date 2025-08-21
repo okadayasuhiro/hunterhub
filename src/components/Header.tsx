@@ -60,8 +60,8 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
         }
     };
 
-    // 現在のパスに基づいて戻るボタンの表示を決定
-    const shouldShowBackButton = showBackButton || location.pathname !== '/';
+    // 戻るボタンは表示しない（ハンバーガーメニューで代替）
+    const shouldShowBackButton = false;
 
         // ユーザー情報を取得
     useEffect(() => {

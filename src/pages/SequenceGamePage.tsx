@@ -189,26 +189,46 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
     const generateNumbers = useCallback((currentLevel: number) => {
         const count = currentLevel + 1;
         const newNumbers: NumberButton[] = [];
-        const buttonSize = 60;
-        const margin = 50;
+        
+        // レスポンシブ対応：画面サイズに応じてボタンサイズと余白を調整
+        const isMobile = window.innerWidth < 768;
+        const buttonSize = isMobile ? 50 : 60; // モバイルでは小さく
+        const margin = isMobile ? 30 : 50; // モバイルでは余白を小さく
+        const minDistance = buttonSize + (isMobile ? 15 : 25); // 重複防止距離も調整
 
         const availableNumbers = Array.from({ length: count }, (_, i) => i + 1);
 
         for (let i = 0; i < count; i++) {
             let x: number, y: number;
             let attempts = 0;
+            let validPosition = false;
 
             do {
                 x = Math.random() * (gameArea.width - buttonSize - 2 * margin) + margin;
                 y = Math.random() * (gameArea.height - buttonSize - 2 * margin) + margin;
                 attempts++;
-            } while (
-                attempts < 100 &&
-                newNumbers.some(btn =>
-                    Math.abs(btn.x - x) < buttonSize + 20 &&
-                    Math.abs(btn.y - y) < buttonSize + 20
-                )
-            );
+                
+                // より厳密な重複チェック：他のボタンとの最小距離を確保
+                validPosition = !newNumbers.some(btn => {
+                    const distance = Math.sqrt(Math.pow(btn.x - x, 2) + Math.pow(btn.y - y, 2));
+                    return distance < minDistance;
+                });
+                
+            } while (!validPosition && attempts < 150); // 試行回数を増加
+
+            // 150回試行しても配置できない場合は、グリッド配置にフォールバック
+            if (!validPosition) {
+                const cols = Math.ceil(Math.sqrt(count));
+                const rows = Math.ceil(count / cols);
+                const cellWidth = (gameArea.width - 2 * margin) / cols;
+                const cellHeight = (gameArea.height - 2 * margin) / rows;
+                
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                
+                x = margin + col * cellWidth + (cellWidth - buttonSize) / 2;
+                y = margin + row * cellHeight + (cellHeight - buttonSize) / 2;
+            }
 
             newNumbers.push({
                 id: i,
@@ -224,9 +244,13 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
 
     useEffect(() => {
         const updateGameArea = () => {
+            const isMobile = window.innerWidth < 768;
+            const padding = isMobile ? 20 : 100;
+            const headerHeight = isMobile ? 200 : 300;
+            
             setGameArea({
-                width: Math.min(800, window.innerWidth - 100),
-                height: Math.min(600, window.innerHeight - 300)
+                width: Math.min(isMobile ? 350 : 800, window.innerWidth - padding),
+                height: Math.min(isMobile ? 400 : 600, window.innerHeight - headerHeight)
             });
         };
 
@@ -660,28 +684,38 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                         </div>
                                     </div>
                                 ) : (
-                                    numbers.map((num) => (
-                                        <button
-                                            key={num.id}
-                                            className={`absolute w-15 h-15 rounded-full font-bold text-lg transition-all duration-200 ${num.clicked
-                                                ? 'bg-green-500 text-white scale-110'
-                                                : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'
-                                                }`}
-                                            style={{
-                                                left: num.x,
-                                                top: num.y,
-                                                width: 60,
-                                                height: 60
-                                            }}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (!num.clicked) handleNumberClick(num.number);
-                                            }}
-                                            disabled={num.clicked}
-                                        >
-                                            {num.number}
-                                        </button>
-                                    ))
+                                    numbers.map((num) => {
+                                        const isMobile = window.innerWidth < 768;
+                                        const buttonSize = isMobile ? 50 : 60;
+                                        const fontSize = isMobile ? 'text-base' : 'text-lg';
+                                        
+                                        return (
+                                            <button
+                                                key={num.id}
+                                                className={`absolute rounded-full font-bold ${fontSize} transition-all duration-200 select-none ${num.clicked
+                                                    ? 'bg-green-500 text-white scale-110'
+                                                    : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105 active:scale-95'
+                                                    }`}
+                                                style={{
+                                                    left: num.x,
+                                                    top: num.y,
+                                                    width: buttonSize,
+                                                    height: buttonSize,
+                                                    minWidth: buttonSize,
+                                                    minHeight: buttonSize,
+                                                    touchAction: 'manipulation', // モバイルタップ最適化
+                                                    userSelect: 'none'
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (!num.clicked) handleNumberClick(num.number);
+                                                }}
+                                                disabled={num.clicked}
+                                            >
+                                                {num.number}
+                                            </button>
+                                        );
+                                    })
                                 )}
                             </div>
                         </div>
