@@ -344,13 +344,9 @@ export class CloudRankingService {
    */
   private sortScoresByGameType(scores: GameScore[], gameType: string): GameScore[] {
     return scores.sort((a, b) => {
-      // reflex, target: 小さいほど良い（ミリ秒）
-      // sequence: 大きいほど良い（スコア）
-      if (gameType === 'sequence') {
-        return b.score - a.score; // 降順
-      } else {
-        return a.score - b.score; // 昇順
-      }
+      // reflex, target, sequence: 全て小さいほど良い（ミリ秒）
+      // sequence も完了時間なので小さいほど良い
+      return a.score - b.score; // 昇順（小さいほど良い）
     });
   }
 

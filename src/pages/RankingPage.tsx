@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Medal, Award, Clock, Target, Hash, User, Crown, Star } from 'lucide-react';
-import { LocalRankingService } from '../services/localRankingService';
+import { HybridRankingService } from '../services/hybridRankingService';
 import type { RankingData, RankingEntry } from '../services/localRankingService';
 import { UserIdentificationService } from '../services/userIdentificationService';
 
@@ -48,7 +48,7 @@ const RankingPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string>('');
 
-  const rankingService = LocalRankingService.getInstance();
+  const rankingService = HybridRankingService.getInstance();
   const userService = UserIdentificationService.getInstance();
 
   useEffect(() => {
@@ -172,48 +172,100 @@ const RankingPage: React.FC = () => {
                 {rankingData.rankings.map((entry) => (
                   <div
                     key={`${entry.userId}-${entry.timestamp}`}
-                    className={`flex items-center justify-between p-4 rounded-lg transition-all duration-200 ${
+                    className={`p-4 rounded-lg transition-all duration-200 ${
                       entry.isCurrentUser
                         ? 'bg-blue-500/30 border-2 border-blue-400 transform scale-105'
                         : 'glass-light hover:bg-white/10'
                     }`}
                   >
-                    {/* 左側: 順位とアイコン */}
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        {getRankIcon(entry.rank)}
-                        <span className={`text-2xl font-bold ${
-                          entry.rank <= 3 ? 'text-yellow-300' : 'text-blue-200'
-                        }`}>
-                          #{entry.rank}
-                        </span>
+                    {/* デスクトップレイアウト（md以上） */}
+                    <div className="hidden md:flex items-center justify-between">
+                      {/* 左側: 順位とアイコン */}
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          {getRankIcon(entry.rank)}
+                          <span className={`text-2xl font-bold ${
+                            entry.rank <= 3 ? 'text-yellow-300' : 'text-blue-200'
+                          }`}>
+                            #{entry.rank}
+                          </span>
+                        </div>
+
+                        {/* ユーザー名 */}
+                        <div className="flex items-center gap-2">
+                          <User className="w-5 h-5 text-blue-300" />
+                          <span className={`font-medium ${
+                            entry.isCurrentUser ? 'text-white' : 'text-blue-100'
+                          }`}>
+                            {entry.displayName}
+                            {entry.isCurrentUser && (
+                              <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
+                                あなた
+                              </span>
+                            )}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* ユーザー名 */}
-                      <div className="flex items-center gap-2">
-                        <User className="w-5 h-5 text-blue-300" />
-                        <span className={`font-medium ${
+                      {/* 右側: スコアと日時 */}
+                      <div className="text-right">
+                        <div className={`text-xl font-bold ${
                           entry.isCurrentUser ? 'text-white' : 'text-blue-100'
                         }`}>
-                          {entry.displayName}
-                          {entry.isCurrentUser && (
-                            <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
-                              あなた
-                            </span>
-                          )}
-                        </span>
+                          {formatScore(entry.score, selectedGame)}
+                        </div>
+                        <div className="text-xs text-blue-300">
+                          {new Date(entry.timestamp).toLocaleDateString('ja-JP')}
+                        </div>
                       </div>
                     </div>
 
-                    {/* 右側: スコアと日時 */}
-                    <div className="text-right">
-                      <div className={`text-xl font-bold ${
-                        entry.isCurrentUser ? 'text-white' : 'text-blue-100'
-                      }`}>
-                        {formatScore(entry.score, selectedGame)}
+                    {/* モバイルレイアウト（md未満） */}
+                    <div className="md:hidden">
+                      {/* 上段：順位 + ユーザー名 + スコア */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          {/* 順位アイコン */}
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            {getRankIcon(entry.rank)}
+                            <span className={`text-lg font-bold ${
+                              entry.rank <= 3 ? 'text-yellow-300' : 'text-blue-200'
+                            }`}>
+                              #{entry.rank}
+                            </span>
+                          </div>
+                          
+                          {/* ユーザー名 */}
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <User className="w-4 h-4 text-blue-300 flex-shrink-0" />
+                            <span className={`font-medium text-sm truncate ${
+                              entry.isCurrentUser ? 'text-white' : 'text-blue-100'
+                            }`}>
+                              {entry.displayName}
+                              {entry.isCurrentUser && (
+                                <span className="ml-1 text-xs bg-blue-500 text-white px-1 py-0.5 rounded">
+                                  あなた
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* スコア */}
+                        <div className="flex-shrink-0 ml-2">
+                          <div className={`text-lg font-bold ${
+                            entry.isCurrentUser ? 'text-white' : 'text-blue-100'
+                          }`}>
+                            {formatScore(entry.score, selectedGame)}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xs text-blue-300">
-                        {new Date(entry.timestamp).toLocaleDateString('ja-JP')}
+                      
+                      {/* 下段：日付 */}
+                      <div className="ml-8 pl-2">
+                        <div className="text-xs text-blue-300">
+                          {new Date(entry.timestamp).toLocaleDateString('ja-JP')}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -224,30 +276,68 @@ const RankingPage: React.FC = () => {
               {rankingData.userRank && !rankingData.rankings.some(r => r.isCurrentUser) && (
                 <div className="mt-6 pt-4 border-t border-white/20">
                   <p className="text-center text-blue-200 mb-3">あなたの順位</p>
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-blue-500/20 border border-blue-400">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Star className="w-6 h-6 text-blue-400" />
-                        <span className="text-2xl font-bold text-blue-200">
-                          #{rankingData.userRank.rank}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <User className="w-5 h-5 text-blue-300" />
-                        <span className="font-medium text-white">
-                          {rankingData.userRank.displayName}
-                          <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
-                            あなた
+                  <div className="p-4 rounded-lg bg-blue-500/20 border border-blue-400">
+                    {/* デスクトップレイアウト（md以上） */}
+                    <div className="hidden md:flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <Star className="w-6 h-6 text-blue-400" />
+                          <span className="text-2xl font-bold text-blue-200">
+                            #{rankingData.userRank.rank}
                           </span>
-                        </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <User className="w-5 h-5 text-blue-300" />
+                          <span className="font-medium text-white">
+                            {rankingData.userRank.displayName}
+                            <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
+                              あなた
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold text-white">
+                          {formatScore(rankingData.userRank.score, selectedGame)}
+                        </div>
+                        <div className="text-xs text-blue-300">
+                          {new Date(rankingData.userRank.timestamp).toLocaleDateString('ja-JP')}
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-xl font-bold text-white">
-                        {formatScore(rankingData.userRank.score, selectedGame)}
+
+                    {/* モバイルレイアウト（md未満） */}
+                    <div className="md:hidden">
+                      {/* 上段：順位 + ユーザー名 + スコア */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <Star className="w-5 h-5 text-blue-400" />
+                            <span className="text-lg font-bold text-blue-200">
+                              #{rankingData.userRank.rank}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <User className="w-4 h-4 text-blue-300 flex-shrink-0" />
+                            <span className="font-medium text-sm text-white truncate">
+                              {rankingData.userRank.displayName}
+                              <span className="ml-1 text-xs bg-blue-500 text-white px-1 py-0.5 rounded">
+                                あなた
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0 ml-2">
+                          <div className="text-lg font-bold text-white">
+                            {formatScore(rankingData.userRank.score, selectedGame)}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xs text-blue-300">
-                        {new Date(rankingData.userRank.timestamp).toLocaleDateString('ja-JP')}
+                      {/* 下段：日付 */}
+                      <div className="ml-7 pl-2">
+                        <div className="text-xs text-blue-300">
+                          {new Date(rankingData.userRank.timestamp).toLocaleDateString('ja-JP')}
+                        </div>
                       </div>
                     </div>
                   </div>

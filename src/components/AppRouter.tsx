@@ -11,6 +11,12 @@ import DiagnosisHomePage from '../pages/diagnosis/DiagnosisHomePage';
 import DiagnosisPage from '../pages/DiagnosisPage';
 import DiagnosisResultPage from '../pages/DiagnosisResultPage';
 import DiagnosisGalleryPage from '../pages/DiagnosisGalleryPage';
+import AnimalQuizInstructionsPage from '../pages/AnimalQuizInstructionsPage';
+import AnimalQuizGamePage from '../pages/AnimalQuizGamePage';
+import AnimalQuizAnswerResultPage from '../pages/AnimalQuizAnswerResultPage';
+import TermsPage from '../pages/TermsPage';
+import PrivacyPage from '../pages/PrivacyPage';
+import AnimalQuizResultPage from '../pages/AnimalQuizResultPage';
 import XCallbackPage from '../pages/XCallbackPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
@@ -51,6 +57,13 @@ const AppRouter: React.FC = () => {
                         <Route path="/sequence/game" element={<SequenceGamePage mode="game" />} />
                         <Route path="/sequence/result" element={<SequenceGamePage mode="result" />} />
 
+                        {/* 動物クイズゲーム */}
+                        <Route path="/animal-quiz" element={<Navigate to="/animal-quiz/instructions" replace />} />
+                        <Route path="/animal-quiz/instructions" element={<AnimalQuizInstructionsPage />} />
+                        <Route path="/animal-quiz/game" element={<AnimalQuizGamePage />} />
+                        <Route path="/animal-quiz/answer-result" element={<AnimalQuizAnswerResultPage />} />
+                        <Route path="/animal-quiz/result" element={<AnimalQuizResultPage />} />
+
                         {/* ランキング */}
                         <Route path="/ranking" element={<RankingPage />} />
 
@@ -62,6 +75,10 @@ const AppRouter: React.FC = () => {
 
                         {/* X OAuth コールバック */}
                         <Route path="/x-callback" element={<XCallbackPage />} />
+
+                        {/* 法的文書 */}
+                        <Route path="/terms" element={<TermsPage />} />
+                        <Route path="/privacy" element={<PrivacyPage />} />
 
                         {/* 404ページ */}
                         <Route path="*" element={<NotFoundPage />} />

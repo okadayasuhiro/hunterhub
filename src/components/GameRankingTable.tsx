@@ -255,10 +255,12 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
 
             <div className="divide-y divide-gray-200">
                 {rankingData.rankings.map((entry: ExtendedRankingEntry) => (
-                    <div 
-                        key={`${entry.userId}-${entry.timestamp}`}
-                        className="flex items-center py-4 px-2"
-                    >
+                                    <div 
+                    key={`${entry.userId}-${entry.timestamp}`}
+                    className="py-4 px-2"
+                >
+                    {/* デスクトップレイアウト（md以上） */}
+                    <div className="hidden md:flex items-center">
                         {/* ランキング数字 */}
                         <div className="w-8 flex-shrink-0 text-center">
                             <div className="text-sm font-medium text-gray-600">
@@ -281,7 +283,7 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                                 entry.isCurrentUser ? 'text-blue-700' : 'text-gray-800'
                             }`}>
                                 <div 
-                                    className="truncate max-w-[140px] md:max-w-[180px] lg:max-w-[220px] inline-block cursor-help"
+                                    className="truncate max-w-[180px] lg:max-w-[220px] inline-block cursor-help"
                                     title={entry.isCurrentUser && entry.isXLinked && entry.xDisplayName 
                                         ? entry.xDisplayName 
                                         : entry.displayName}
@@ -319,6 +321,64 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                             </div>
                         </div>
                     </div>
+
+                    {/* モバイルレイアウト（md未満） */}
+                    <div className="md:hidden">
+                        {/* 上段：ランキング数字 + ユーザーアイコン + ユーザー名 + スコア */}
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center flex-1 min-w-0">
+                                {/* ランキング数字 */}
+                                <div className="w-6 flex-shrink-0 text-center mr-3">
+                                    <div className="text-sm font-medium text-gray-600">
+                                        {entry.rank}
+                                    </div>
+                                </div>
+                                
+                                {/* ユーザーアイコン */}
+                                <div className="flex-shrink-0 mr-3">
+                                    <UserIcon 
+                                        isXLinked={entry.isXLinked} 
+                                        isCurrentUser={entry.isCurrentUser}
+                                        xProfileImageUrl={entry.xProfileImageUrl}
+                                        className="w-8 h-8"
+                                    />
+                                </div>
+                                
+                                {/* ユーザー名（優先表示） */}
+                                <div className="flex-1 min-w-0">
+                                    <div className={`font-medium text-sm ${
+                                        entry.isCurrentUser ? 'text-blue-700' : 'text-gray-800'
+                                    }`}>
+                                        <div className="truncate">
+                                            {entry.isCurrentUser && entry.isXLinked && entry.xDisplayName 
+                                                ? entry.xDisplayName 
+                                                : entry.displayName}
+                                            {entry.isCurrentUser && (
+                                                <span className="text-xs text-blue-600 ml-1">(あなた)</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* スコア */}
+                            <div className="flex-shrink-0 ml-2">
+                                <div className={`text-lg font-bold ${
+                                    entry.isCurrentUser ? 'text-blue-600' : 'text-gray-800'
+                                }`}>
+                                    {formatScore(entry.score, gameType)}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* 下段：日付 */}
+                        <div className="ml-12 pl-2">
+                            <div className="text-xs text-gray-500">
+                                {formatDateTime(entry.timestamp)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 ))}
             </div>
 

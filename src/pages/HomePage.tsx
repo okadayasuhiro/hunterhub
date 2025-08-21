@@ -92,31 +92,57 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                 {!isDiagnosisGame && (
                     <div className="mb-4 p-3 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
                         {topPlayer ? (
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <Crown className="w-4 h-4 text-yellow-600 mr-2" />
-                                    <span className="text-sm font-medium text-gray-700 mr-2">1位</span>
-                                    <span className="text-md font-bold text-yellow-700">
-                                        {title.includes('反射神経') || title.includes('ターゲット') || title.includes('数字')
-                                            ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
-                                            : `${topPlayer?.score}`
-                                        }
-                                    </span>
-                                </div>
-                                <div className="relative group">
-                                    <span 
-                                        className="text-sm text-yellow-700 truncate max-w-[120px] md:max-w-[160px] inline-block cursor-help"
-                                        title={topPlayer?.displayName}
-                                    >
-                                        {topPlayer?.displayName}
-                                    </span>
-                                    
-                                    {/* ホバーツールチップ */}
-                                    <div className="absolute right-0 top-full mt-1 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none">
-                                        {topPlayer?.displayName}
+                            <>
+                                {/* デスクトップレイアウト（md以上） */}
+                                <div className="hidden md:flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <Crown className="w-4 h-4 text-yellow-600 mr-2" />
+                                        <span className="text-sm font-medium text-gray-700 mr-2">1位</span>
+                                        <span className="text-md font-bold text-yellow-700">
+                                            {title.includes('反射神経') || title.includes('ターゲット') || title.includes('数字')
+                                                ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
+                                                : `${topPlayer?.score}`
+                                            }
+                                        </span>
+                                    </div>
+                                    <div className="relative group">
+                                        <span 
+                                            className="text-sm text-yellow-700 truncate max-w-[160px] inline-block cursor-help"
+                                            title={topPlayer?.displayName}
+                                        >
+                                            {topPlayer?.displayName}
+                                        </span>
+                                        
+                                        {/* ホバーツールチップ */}
+                                        <div className="absolute right-0 top-full mt-1 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none">
+                                            {topPlayer?.displayName}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                
+                                {/* モバイルレイアウト（md未満） */}
+                                <div className="md:hidden">
+                                    {/* 上段：1位 + スコア */}
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center">
+                                            <Crown className="w-4 h-4 text-yellow-600 mr-2" />
+                                            <span className="text-sm font-medium text-gray-700">1位</span>
+                                        </div>
+                                        <span className="text-md font-bold text-yellow-700">
+                                            {title.includes('反射神経') || title.includes('ターゲット') || title.includes('数字')
+                                                ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
+                                                : `${topPlayer?.score}`
+                                            }
+                                        </span>
+                                    </div>
+                                    {/* 下段：ユーザー名 */}
+                                    <div className="ml-6">
+                                        <span className="text-sm text-yellow-700 truncate block">
+                                            {topPlayer?.displayName}
+                                        </span>
+                                    </div>
+                                </div>
+                            </>
                         ) : (
                             <div className="flex items-center">
                                 <Crown className="w-4 h-4 text-gray-400 mr-2" />
@@ -380,15 +406,15 @@ const HomePage: React.FC = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <GameCard
-                                title="集中力テスト"
-                                description="長時間の集中維持能力を測定します。ランダムに出現する目標を見逃さずにクリックしてください。"
+                                title="狩猟動物クイズ"
+                                description="16種の狩猟動物を識別するクイズゲーム。画像を見て動物名をテキスト入力で回答してください。"
                                 icon={<></>}
-                                path="#"
+                                path="/animal-quiz/instructions"
                                 lastResult={undefined}
-                                imageSrc={undefined}
+                                imageSrc="/src/assets/images/panel5.png"
                                 playCount={0}
                                 topPlayer={undefined}
-                                isComingSoon={true}
+                                isComingSoon={false}
                             />
                             <GameCard
                                 title="動物識別記憶"
