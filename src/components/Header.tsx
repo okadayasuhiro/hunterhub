@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { User, ExternalLink, Menu, X, Share2, FileText, Shield } from 'lucide-react';
+import { User, ExternalLink, Menu, X, Share2, FileText, Shield, CircleArrowRight } from 'lucide-react';
 import { UserIdentificationService } from '../services/userIdentificationService';
 import XAuthService from '../services/xAuthService';
 import { HybridRankingService } from '../services/hybridRankingService';
@@ -219,103 +219,151 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
             )}
 
             {/* 右端スライドメニュー */}
-            <div className={`fixed top-0 right-0 h-full w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-[10002] ${
+            <div className={`fixed top-0 right-0 h-full w-80 hero-background border border-blue-200/30 shadow-2xl transform transition-transform duration-300 ease-in-out z-[10002] flex flex-col ${
                 showHamburgerMenu ? 'translate-x-0' : 'translate-x-full'
             }`}>
+                {/* ヒーローパネルと同じグラデーションオーバーレイ */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-100/10 via-blue-300/40 to-transparent"></div>
+                {/* 半透明オーバーレイ */}
+                <div className="absolute inset-0 bg-black/20"></div>
                 {/* メニューヘッダー */}
-                <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-bold text-gray-800">ゲーム一覧</h2>
+                <div className="relative z-10 flex items-center justify-between p-6 border-b border-white/30">
+                    <h2 className="text-xl font-bold text-white">ゲーム一覧</h2>
                     <button
                         onClick={() => setShowHamburgerMenu(false)}
-                        className="flex items-center justify-center w-8 h-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                        className="flex items-center justify-center w-8 h-8 text-white hover:text-white hover:bg-white/20 rounded-full transition-colors duration-200"
                     >
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
                 {/* メニュー項目 */}
-                <div className="flex-1 overflow-y-auto">
+                <div className="relative z-10 flex-1 overflow-y-auto flex flex-col">
                     {/* ゲームセクション */}
                     <div className="py-2">
-                        <div className="px-6 py-3">
-                            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">ゲーム</h3>
-                        </div>
+
                         {gameLinksWithStats.map((game) => (
                             <button
                                 key={game.path}
                                 onClick={() => handleGameLinkClick(game.path)}
-                                className="w-full text-left px-6 py-4 text-gray-700 hover:bg-gray-50 border-b border-gray-100 transition-colors duration-200 group"
+                                className="w-full text-left px-6 py-3 text-white hover:bg-white/20 border-b border-white/20 transition-colors duration-200 group"
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex-1 min-w-0">
-                                        <div className="font-medium text-gray-800 group-hover:text-blue-600 transition-colors duration-200">
+                                        <div className="font-medium text-white group-hover:text-blue-100 transition-colors duration-200">
                                             {game.name}
                                         </div>
+                                    </div>
+                                    <div className="flex items-center space-x-3 text-xs text-white/80">
                                         {game.showStats && (
-                                            <div className="text-xs text-gray-500 mt-1">
+                                            <>
                                                 {gameStats[game.gameType] ? (
                                                     gameStats[game.gameType].playCount > 0 ? (
                                                         <>
-                                                            {gameStats[game.gameType].playCount}回プレイ
+                                                            <span>{gameStats[game.gameType].playCount}plyas</span>
                                                             {gameStats[game.gameType].rank && (
-                                                                <span className="ml-2 text-blue-600 font-medium">
-                                                                    #{gameStats[game.gameType].rank}
+                                                                <span className="text-yellow-200 font-medium">
+                                                                    {gameStats[game.gameType].rank}位
                                                                 </span>
                                                             )}
                                                         </>
                                                     ) : (
-                                                        <span className="text-orange-500">未プレイ</span>
+                                                        <span className="text-orange-200">未プレイ</span>
                                                     )
                                                 ) : (
-                                                    <span className="text-gray-400">読み込み中...</span>
+                                                    <span className="text-white/60">読み込み中...</span>
                                                 )}
-                                            </div>
+                                            </>
                                         )}
+                                        <CircleArrowRight className="w-5 h-5 text-white/80 group-hover:text-white transition-colors duration-200" />
                                     </div>
-                                    <span className="text-gray-400 group-hover:text-blue-600 transition-colors duration-200 ml-3">→</span>
                                 </div>
                             </button>
                         ))}
                     </div>
 
                     {/* SNSシェアセクション */}
-                    <div className="py-2 border-t border-gray-200">
+                    <div className="py-2">
                         <div className="px-6 py-3">
-                            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide flex items-center">
+                            <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wide flex items-center">
                                 <Share2 className="w-4 h-4 mr-2" />
                                 シェア
                             </h3>
                         </div>
-                        {shareLinks.map((share) => (
-                            <button
-                                key={share.action}
-                                onClick={() => handleShareClick(share.action)}
-                                className="w-full text-left px-6 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200 group"
-                            >
-                                <div className="flex items-center">
-                                    <span className="text-lg mr-3">{share.icon}</span>
-                                    <span className="font-medium group-hover:text-blue-600 transition-colors duration-200">
-                                        {share.name}
-                                    </span>
-                                </div>
-                            </button>
-                        ))}
+                        <div className="px-6 pb-4 pt-2">
+                            <div className="flex justify-center space-x-3">
+                                {/* X (Twitter) */}
+                                <button
+                                    onClick={() => handleShareClick('shareX')}
+                                    className="bg-black hover:bg-gray-800 text-white p-2 rounded-lg transition-colors duration-200 flex items-center justify-center w-10 h-10"
+                                    title="Xでシェア"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                </button>
+
+                                {/* Facebook */}
+                                <button
+                                    onClick={() => handleShareClick('shareFacebook')}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors duration-200 flex items-center justify-center w-10 h-10"
+                                    title="Facebookでシェア"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                </button>
+
+                                {/* LINE */}
+                                <button
+                                    onClick={() => handleShareClick('shareLine')}
+                                    className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg transition-colors duration-200 flex items-center justify-center w-10 h-10"
+                                    title="LINEでシェア"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.070 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+                                    </svg>
+                                </button>
+
+                                {/* Discord */}
+                                <button
+                                    onClick={() => handleShareClick('shareDiscord')}
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-lg transition-colors duration-200 flex items-center justify-center w-10 h-10"
+                                    title="Discord用テキストをコピー"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+                                    </svg>
+                                </button>
+
+                                {/* クリップボードコピー */}
+                                <button
+                                    onClick={() => handleShareClick('copyLink')}
+                                    className="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-lg transition-colors duration-200 flex items-center justify-center w-10 h-10"
+                                    title="URLをコピー"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* 法的文書セクション */}
-                    <div className="py-2 border-t border-gray-200">
-                        <div className="px-6 py-3">
-                            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">情報</h3>
-                        </div>
+                    {/* スペーサー（法的文書を下部に押し下げ） */}
+                    <div className="flex-1"></div>
+
+                    {/* 法的文書セクション（最下部） */}
+                    <div className="py-2 border-t border-white/20 mt-auto">
                         {legalLinks.map((legal) => (
                             <button
                                 key={legal.path}
                                 onClick={() => handleGameLinkClick(legal.path)}
-                                className="w-full text-left px-6 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200 group"
+                                className="w-full text-left px-6 py-3 text-white hover:bg-white/20 transition-colors duration-200 group"
                             >
                                 <div className="flex items-center">
-                                    <legal.icon className="w-4 h-4 mr-3 text-gray-500 group-hover:text-blue-600 transition-colors duration-200" />
-                                    <span className="font-medium group-hover:text-blue-600 transition-colors duration-200">
+                                    <legal.icon className="w-4 h-4 mr-3 text-white/80 group-hover:text-white transition-colors duration-200" />
+                                    <span className="font-medium group-hover:text-blue-100 transition-colors duration-200">
                                         {legal.name}
                                     </span>
                                 </div>

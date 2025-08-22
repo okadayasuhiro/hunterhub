@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy, Crown } from 'lucide-react';
+import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy, Crown, Bell, Calendar } from 'lucide-react';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import { HybridRankingService } from '../services/hybridRankingService';
@@ -20,6 +20,14 @@ interface LastResult {
     date: string;
 }
 
+interface Notice {
+    id: string;
+    date: string;
+    title: string;
+    content?: string;
+    type?: 'info' | 'update' | 'maintenance' | 'event';
+}
+
 interface GameCardProps {
     title: string;
     description: string;
@@ -31,6 +39,32 @@ interface GameCardProps {
     topPlayer?: RankingEntry | null;
     isComingSoon?: boolean;
 }
+
+// お知らせコンポーネント（2行レイアウト版）
+const NoticeSection: React.FC<{ notices: Notice[] }> = ({ notices }) => {
+    if (!notices || notices.length === 0) {
+        return null;
+    }
+
+    return (
+        <div className="bg-slate-50/80 backdrop-blur-sm py-3 px-4 border-b border-slate-200/60">
+            <div className="max-w-6xl mx-auto">
+                <div className="space-y-1.5">
+                    {notices.slice(0, 2).map((notice) => (
+                        <div key={notice.id} className="flex items-center space-x-3">
+                            <span className="text-xs text-slate-500 font-medium whitespace-nowrap bg-slate-100 px-2 py-0.5 rounded-full">
+                                {notice.date}
+                            </span>
+                            <span className="text-sm text-slate-700 font-medium">
+                                {notice.title}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc, playCount, topPlayer, isComingSoon = false }) => {
     const navigate = useNavigate();
@@ -73,7 +107,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     {playCount !== undefined && (
                         <div className="absolute bottom-0 right-0 bg-blue-500 text-white px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105">
-                            {playCount} times played
+                            {playCount} plays
                         </div>
                     )}
                 </div>
@@ -205,6 +239,22 @@ const HomePage: React.FC = () => {
     const ENABLE_REFLEX_PANEL = true;
     const ENABLE_TARGET_PANEL = true;
     const ENABLE_SEQUENCE_PANEL = true;
+    
+    // サンプルお知らせデータ
+    const notices: Notice[] = [
+        {
+            id: '1',
+            date: '09.22',
+            title: 'huterhubをリリースしました',
+            type: 'event'
+        },
+        {
+            id: '2',
+            date: '09.21',
+            title: '新規ゲームを追加しました',
+            type: 'update'
+        }
+    ];
     const [lastResults, setLastResults] = useState<{
         reflex?: LastResult;
         target?: LastResult;
@@ -338,35 +388,25 @@ const HomePage: React.FC = () => {
     return (
         <div className="flex-1">
             {/* ヒーローセクション */}
-            <div className="relative flex items-center justify-center py-12 px-4 min-h-[20vh] overflow-hidden hero-background">
+            <div className="relative flex items-center justify-center py-12 px-4 min-h-[15vh] overflow-hidden hero-background">
                 {/* グラデーションオーバーレイ */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-100/10 via-blue-300/40 to-transparent"></div>
                 {/* 半透明黒オーバーレイでテキスト可読性UP */}
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="relative z-10 max-w-4xl mx-auto text-center">
-                    <div className="flex items-center justify-center mb-6">
-                        <h1 className="text-4xl md:text-5xl font-bold text-slate-800 text-stone-50 mb-4">
-                            狩猟をオンラインでも
-                        </h1>
-
-                    </div>
-                    <p className="text-xl md:text-2xl text-white font-light mb-4 drop-shadow-lg">
-                        狩猟者の息抜きと、これから狩猟を楽しむ<br />人達のためのお遊びサイト
+                    <p className="text-xl md:text-2xl text-white font-light mb-4 drop-shadow-lg font-bold">
+                        狩猟者の息抜きと、狩猟を楽しむ<br />人達のためのお遊びサイト
                     </p>
                 </div>
             </div>
 
-            {/* ゲーム選択セクション */}
-            <div className="py-16 px-4">
+            {/* お知らせセクション */}
+            <NoticeSection notices={notices} />
+
+                        {/* ゲーム選択セクション */}
+            <div className="py-4 px-4">
                 <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-light text-gray-800 mb-4">
-                            トレーニングメニュー
-                        </h2>
-                        <p className="text-lg text-gray-600 font-light">
-                            あなたの反射神経と集中力を鍛える3つのゲーム
-                        </p>
-                    </div>
+
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <GameCard
