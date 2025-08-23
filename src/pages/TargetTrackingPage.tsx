@@ -25,6 +25,8 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     const [gameHistory, setGameHistory] = useState<TargetTrackingHistory[]>([]);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isTargetClickable, setIsTargetClickable] = useState(true);
+    const [currentRank, setCurrentRank] = useState<number | null>(null);
+    const [totalPlayers, setTotalPlayers] = useState<number>(0);
 
     // タイマーIDを管理するためのref
     const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -351,7 +353,36 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         );
     }
 
-
+    // 結果画面で現在のプレイスコアの順位を取得
+    useEffect(() => {
+        const fetchCurrentScoreRank = async () => {
+            if (mode === 'result' && targetResults.length > 0 && !currentRank) {
+                try {
+                    console.log('Fetching current score rank on target result page...');
+                    const rankingService = HybridRankingService.getInstance();
+                    
+                    // 現在のプレイスコア（総合時間）で順位を計算
+                    const totalTime = targetResults.reduce((sum, result) => sum + result.reactionTime, 0);
+                    console.log('Target result page current play score (totalTime):', totalTime);
+                    
+                    const rankResult = await rankingService.getCurrentScoreRank('target', totalTime);
+                    console.log('Target result page current score rank result:', rankResult);
+                    
+                    if (rankResult) {
+                        console.log('Target result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                        setCurrentRank(rankResult.rank);
+                        setTotalPlayers(rankResult.totalPlayers);
+                    } else {
+                        console.log('No current score rank found on target result page');
+                    }
+                } catch (error) {
+                    console.error('Failed to get current score rank on target result page:', error);
+                }
+            }
+        };
+        
+        fetchCurrentScoreRank();
+    }, [mode, targetResults, currentRank]);
 
     if (mode === 'result') {
         return (
@@ -380,12 +411,21 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                 </div>
                                 
                                 {/* ランキング表示 */}
-                                <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
-                                    <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
-                                    <div className="text-xl font-bold">
-                                        ランキング登録完了
+                                {currentRank && totalPlayers > 0 ? (
+                                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
+                                        <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                        <div className="text-xl font-bold">
+                                            {currentRank}位 / {totalPlayers}位
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
+                                        <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                        <div className="text-xl font-bold">
+                                            ランキング登録完了
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* ボタン */}

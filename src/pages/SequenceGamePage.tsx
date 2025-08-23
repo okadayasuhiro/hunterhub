@@ -52,6 +52,8 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
 
     // 新しい統計情報の状態を追加
     const [clickTimes, setClickTimes] = useState<number[]>([]);
+    const [currentRank, setCurrentRank] = useState<number | null>(null);
+    const [totalPlayers, setTotalPlayers] = useState<number>(0);
     const [totalClicks, setTotalClicks] = useState(0);
     const [successfulClicks, setSuccessfulClicks] = useState(0);
     const [currentAverageInterval, setCurrentAverageInterval] = useState(0);
@@ -468,6 +470,37 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         );
     }
 
+    // 結果画面で現在のプレイスコアの順位を取得
+    useEffect(() => {
+        const fetchCurrentScoreRank = async () => {
+            if (mode === 'result' && level === 7 && finalTime !== null && !currentRank) {
+                try {
+                    console.log('Fetching current score rank on sequence result page...');
+                    const rankingService = HybridRankingService.getInstance();
+                    
+                    // 現在のプレイスコア（完了時間）で順位を計算
+                    const completionTimeMs = finalTime;
+                    console.log('Sequence result page current play score (completionTime):', completionTimeMs);
+                    
+                    const rankResult = await rankingService.getCurrentScoreRank('sequence', completionTimeMs);
+                    console.log('Sequence result page current score rank result:', rankResult);
+                    
+                    if (rankResult) {
+                        console.log('Sequence result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                        setCurrentRank(rankResult.rank);
+                        setTotalPlayers(rankResult.totalPlayers);
+                    } else {
+                        console.log('No current score rank found on sequence result page');
+                    }
+                } catch (error) {
+                    console.error('Failed to get current score rank on sequence result page:', error);
+                }
+            }
+        };
+        
+        fetchCurrentScoreRank();
+    }, [mode, level, finalTime, currentRank]);
+
     if (mode === 'result') {
         return (
             <div className="flex-1">
@@ -498,12 +531,21 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                         </div>
                                         
                                         {/* ランキング表示 */}
-                                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
-                                            <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
-                                            <div className="text-xl font-bold">
-                                                全レベル完全制覇！
+                                        {currentRank && totalPlayers > 0 ? (
+                                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
+                                                <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                                <div className="text-xl font-bold">
+                                                    {currentRank}位 / {totalPlayers}位
+                                                </div>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
+                                                <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                                <div className="text-xl font-bold">
+                                                    全レベル完全制覇！
+                                                </div>
+                                            </div>
+                                        )}
                                     </>
                                 ) : (
                                     // 途中終了時の表示
