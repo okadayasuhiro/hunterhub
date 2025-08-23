@@ -420,4 +420,40 @@ export class HybridRankingService {
       return 0;
     }
   }
+
+  /**
+   * 現在ユーザーの個人プレイ回数を取得（クラウドから）
+   */
+  public async getUserPlayCount(gameType: string): Promise<number> {
+    try {
+      if (this.config.useCloud) {
+        // クラウドから現在ユーザーの全プレイ記録を取得
+        const cloudResult = await this.cloudService.getRankings(gameType, 10000);
+        // 現在ユーザーのスコア数をカウント
+        const userScores = cloudResult.rankings.filter(entry => entry.isCurrentUser);
+        return userScores.length;
+      } else {
+        // ローカルから取得（フォールバック）
+        const localResult = await this.localService.getRankings(gameType, 10000);
+        const userScores = localResult.rankings.filter(entry => entry.isCurrentUser);
+        return userScores.length;
+      }
+    } catch (error) {
+      console.error('Failed to get user play count from cloud, falling back to local:', error);
+      
+      if (this.config.fallbackToLocal) {
+        // フォールバック: ローカルから取得
+        try {
+          const localResult = await this.localService.getRankings(gameType, 10000);
+          const userScores = localResult.rankings.filter(entry => entry.isCurrentUser);
+          return userScores.length;
+        } catch (localError) {
+          console.error('Failed to get user play count from local:', localError);
+          return 0;
+        }
+      }
+      
+      return 0;
+    }
+  }
 }

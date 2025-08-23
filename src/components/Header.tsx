@@ -143,19 +143,26 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                     // 現在ユーザーのランク情報を取得（userRankから）
                     const userRank = rankings.userRank;
                     
-                    // 現在ユーザーの全プレイ記録数を取得（LocalStorageから）
+                    // 現在ユーザーの全プレイ記録数を取得（クラウドから）
                     let userPlayCount = 0;
                     try {
-                        // ハンバーガーメニューでは正確な方法（LocalStorage）を維持
-                        const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
-                        const userScores = allScores.filter((score: any) => 
-                            score.userId === currentUserId && score.gameType === game.gameType
-                        );
-                        userPlayCount = userScores.length;
-                        console.log(`🔍 Header: ${game.gameType} play count from localStorage:`, userPlayCount);
-                    } catch (localStorageError) {
-                        console.error('LocalStorage access error:', localStorageError);
-                        userPlayCount = 0;
+                        // ハンバーガーメニューでもクラウドから正確な個人プレイ回数を取得
+                        userPlayCount = await hybridRankingService.getUserPlayCount(game.gameType);
+                        console.log(`🔍 Header: ${game.gameType} play count from cloud:`, userPlayCount);
+                    } catch (cloudError) {
+                        console.error('Cloud access error, falling back to localStorage:', cloudError);
+                        // フォールバック: LocalStorageから取得
+                        try {
+                            const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
+                            const userScores = allScores.filter((score: any) => 
+                                score.userId === currentUserId && score.gameType === game.gameType
+                            );
+                            userPlayCount = userScores.length;
+                            console.log(`🔍 Header: ${game.gameType} play count fallback from localStorage:`, userPlayCount);
+                        } catch (localStorageError) {
+                            console.error('LocalStorage access error:', localStorageError);
+                            userPlayCount = 0;
+                        }
                     }
                     
                     // 統計情報を保存
