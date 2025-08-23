@@ -405,16 +405,16 @@ export class HybridRankingService {
         return cloudResult.totalCount || 0;
       } else {
         // ローカルから取得（フォールバック）
-        const localResult = this.localService.getRankings(gameType, 10000);
-        return localResult.entries.length;
+        const localResult = await this.localService.getRankings(gameType, 10000);
+        return localResult.rankings.length;
       }
     } catch (error) {
       console.error('Failed to get total play count from cloud, falling back to local:', error);
       
       if (this.config.fallbackToLocal) {
         // フォールバック: ローカルから取得
-        const localResult = this.localService.getRankings(gameType, 10000);
-        return localResult.entries.length;
+        const localResult = await this.localService.getRankings(gameType, 10000);
+        return localResult.rankings.length;
       }
       
       return 0;

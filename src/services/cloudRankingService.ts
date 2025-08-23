@@ -31,6 +31,7 @@ export interface CloudRankingResult {
   rankings: CloudRankingEntry[];
   userRank: CloudRankingEntry | null;
   totalPlayers: number;
+  totalCount: number;
   lastUpdated: string;
 }
 
@@ -240,6 +241,7 @@ export class CloudRankingService {
         rankings,
         userRank,
         totalPlayers,
+        totalCount: gameScores.length, // 全プレイ回数
         lastUpdated: new Date().toISOString()
       };
 
@@ -251,6 +253,7 @@ export class CloudRankingService {
         rankings: [],
         userRank: null,
         totalPlayers: 0,
+        totalCount: 0,
         lastUpdated: new Date().toISOString()
       };
     }
