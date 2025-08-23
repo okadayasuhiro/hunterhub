@@ -585,6 +585,19 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     }
 
     if (mode === 'result') {
+        // 成功した結果のみを抽出
+        const successfulResults = results.filter(result => result.success);
+        
+        // フライング失格判定（5回連続成功していない場合）
+        const isDisqualified = successfulResults.length < MAX_TESTS;
+        
+        // 成功時の統計計算
+        const averageTime = successfulResults.length > 0 
+            ? successfulResults.reduce((sum, result) => sum + result.time, 0) / successfulResults.length 
+            : 0;
+        const bestTime = successfulResults.length > 0 
+            ? Math.min(...successfulResults.map(result => result.time)) 
+            : 0;
         
         return (
             <>
@@ -601,25 +614,38 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
                             {/* コンパクト結果表示 */}
                             <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border border-blue-100">
-                                <div className="grid grid-cols-2 gap-6 mb-6">
-                                    <div className="text-center">
-                                        <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                        <div className="text-2xl font-bold text-green-600">{(averageTime / 1000).toFixed(3)}秒</div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="text-sm text-gray-600 mb-1">最速記録</div>
-                                        <div className="text-2xl font-bold text-purple-600">{(bestTime / 1000).toFixed(3)}秒</div>
-                                    </div>
-                                </div>
-                                
-                                {/* ランキング表示 */}
-                                {currentRank && totalPlayers > 0 && (
-                                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
-                                        <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
-                                        <div className="text-xl font-bold">
-                                            {currentRank}位 / {totalPlayers}位
+                                {isDisqualified ? (
+                                    // フライング失格時の表示
+                                    <div className="text-center py-8">
+                                        <div className="text-lg text-red-500 mb-2 font-bold">フライング失格</div>
+                                        <div className="text-sm text-gray-500">
+                                            5回連続成功が必要です（成功: {successfulResults.length}回）
                                         </div>
                                     </div>
+                                ) : (
+                                    // 正常完了時の表示
+                                    <>
+                                        <div className="grid grid-cols-2 gap-6 mb-6">
+                                            <div className="text-center">
+                                                <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
+                                                <div className="text-2xl font-bold text-green-600">{(averageTime / 1000).toFixed(3)}秒</div>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="text-sm text-gray-600 mb-1">最速記録</div>
+                                                <div className="text-2xl font-bold text-purple-600">{(bestTime / 1000).toFixed(3)}秒</div>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* ランキング表示 */}
+                                        {currentRank && totalPlayers > 0 && (
+                                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
+                                                <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                                <div className="text-xl font-bold">
+                                                    {currentRank}位 / {totalPlayers}位
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
 

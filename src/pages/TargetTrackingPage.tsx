@@ -454,35 +454,24 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     return (
         <div className="flex-1">
             <div className="min-h-screen" style={{ backgroundColor: '#ecf6ff' }}>
-                <div className="py-8 px-4">
+                <div className="py-4 px-4">
                     <div className="max-w-4xl mx-auto">
                         {/* ヘッダー */}
-                        <div className="text-center mb-8">
-                            <h1 className="text-2xl font-bold text-gray-800 mb-2">ターゲット追跡</h1>
-                            <div className="text-lg text-gray-600">ターゲット {currentTargetNumber} / {TOTAL_TARGETS}</div>
+                        <div className="text-right mb-4">
+                            <h1 className="text-sm font-medium text-gray-500">ターゲット追跡</h1>
                         </div>
 
-                        {/* 進捗とステータス */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">経過時間</div>
-                                <div className="text-xl font-bold text-blue-600">{elapsedTime.toFixed(1)}s</div>
+                        {/* プログレスバー */}
+                        <div className="bg-white rounded-lg p-4 mb-8 shadow-sm border border-blue-100">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium text-gray-700">進捗</span>
+                                <span className="text-sm text-gray-500">{targetResults.length}/{TOTAL_TARGETS}</span>
                             </div>
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                <div className="text-xl font-bold text-green-600">
-                                    {currentStats.averageReactionTime > 0 ? `${currentStats.averageReactionTime.toFixed(3)}s` : '-'}
-                                </div>
-                            </div>
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">最速反応</div>
-                                <div className="text-xl font-bold text-purple-600">
-                                    {currentStats.bestReactionTime > 0 ? `${currentStats.bestReactionTime.toFixed(3)}s` : '-'}
-                                </div>
-                            </div>
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">命中数</div>
-                                <div className="text-xl font-bold text-orange-600">{targetResults.length}/{TOTAL_TARGETS}</div>
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                                <div 
+                                    className="bg-blue-500 h-3 rounded-full transition-all duration-300"
+                                    style={{ width: `${(targetResults.length / TOTAL_TARGETS) * 100}%` }}
+                                ></div>
                             </div>
                         </div>
 
@@ -515,6 +504,26 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                     >
                                     </div>
                                 )}
+                            </div>
+                        </div>
+
+                        {/* 各種指標 */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
+                                <div className="text-sm text-gray-600 mb-1">経過時間</div>
+                                <div className="text-xl font-bold text-blue-600">{elapsedTime.toFixed(1)}s</div>
+                            </div>
+                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
+                                <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
+                                <div className="text-xl font-bold text-green-600">
+                                    {currentStats.averageReactionTime > 0 ? `${currentStats.averageReactionTime.toFixed(3)}s` : '-'}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
+                                <div className="text-sm text-gray-600 mb-1">最速反応</div>
+                                <div className="text-xl font-bold text-purple-600">
+                                    {currentStats.bestReactionTime > 0 ? `${currentStats.bestReactionTime.toFixed(3)}s` : '-'}
+                                </div>
                             </div>
                         </div>
 
