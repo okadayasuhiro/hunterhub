@@ -106,12 +106,8 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                     <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     {playCount !== undefined && (
-                        <div className="absolute bottom-0 right-0 hero-background px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105 overflow-hidden">
-                            {/* ヒーローパネルと同じグラデーションオーバーレイ */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-100/10 via-blue-300/40 to-transparent"></div>
-                            {/* 半透明オーバーレイ */}
-                            <div className="absolute inset-0 bg-black/20"></div>
-                            <span className="relative z-10 text-white">Total {playCount} plays</span>
+                        <div className="absolute bottom-0 right-0 px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105 text-white" style={{ backgroundColor: '#2f76ac' }}>
+                            Total {playCount} plays
                         </div>
                     )}
                 </div>
