@@ -307,18 +307,35 @@ const HomePage: React.FC = () => {
                     // プレイ回数を設定（クラウドから全ユーザーの総プレイ回数を取得）
                     try {
                         const hybridRankingService = HybridRankingService.getInstance();
+                        console.log(`🔍 HomePage: Getting reflex total play count...`);
                         const totalPlayCount = await hybridRankingService.getTotalPlayCount('reflex');
+                        console.log(`🔍 HomePage: reflex total play count from cloud:`, totalPlayCount);
                         setPlayCounts(prev => ({
                             ...prev,
                             reflex: totalPlayCount
                         }));
-                        console.log(`🔍 HomePage: reflex total play count from cloud:`, totalPlayCount);
                     } catch (error) {
                         console.error('Failed to get reflex total play count from cloud:', error);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            reflex: 0
-                        }));
+                        console.error('Error details:', error);
+                        // フォールバック: LocalStorageから取得
+                        try {
+                            const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
+                            const allReflexScores = allScores.filter((score: any) => 
+                                score.gameType === 'reflex'
+                            );
+                            const fallbackCount = allReflexScores.length;
+                            console.log(`🔍 HomePage: reflex fallback count from localStorage:`, fallbackCount);
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                reflex: fallbackCount
+                            }));
+                        } catch (fallbackError) {
+                            console.error('Fallback also failed:', fallbackError);
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                reflex: 0
+                            }));
+                        }
                     }
                 }
 
@@ -348,10 +365,23 @@ const HomePage: React.FC = () => {
                         console.log(`🔍 HomePage: target total play count from cloud:`, totalPlayCount);
                     } catch (error) {
                         console.error('Failed to get target total play count from cloud:', error);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            target: 0
-                        }));
+                        // フォールバック: LocalStorageから取得
+                        try {
+                            const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
+                            const allTargetScores = allScores.filter((score: any) => 
+                                score.gameType === 'target'
+                            );
+                            const fallbackCount = allTargetScores.length;
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                target: fallbackCount
+                            }));
+                        } catch (fallbackError) {
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                target: 0
+                            }));
+                        }
                     }
                 }
 
@@ -383,10 +413,23 @@ const HomePage: React.FC = () => {
                         console.log(`🔍 HomePage: sequence total play count from cloud:`, totalPlayCount);
                     } catch (error) {
                         console.error('Failed to get sequence total play count from cloud:', error);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            sequence: 0
-                        }));
+                        // フォールバック: LocalStorageから取得
+                        try {
+                            const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
+                            const allSequenceScores = allScores.filter((score: any) => 
+                                score.gameType === 'sequence'
+                            );
+                            const fallbackCount = allSequenceScores.length;
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                sequence: fallbackCount
+                            }));
+                        } catch (fallbackError) {
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                sequence: 0
+                            }));
+                        }
                     }
                 }
             } catch (error) {
