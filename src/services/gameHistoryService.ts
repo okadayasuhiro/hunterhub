@@ -1,10 +1,19 @@
 // ゲーム履歴管理サービス（DynamoDB + LocalStorage ハイブリッド）
 import { generateClient } from 'aws-amplify/api';
+import { Amplify } from 'aws-amplify';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import { UserIdentificationService } from './userIdentificationService';
 
-const client = generateClient();
+// Amplify設定チェック
+const getClient = () => {
+    try {
+        return generateClient();
+    } catch (error) {
+        console.error('Amplify has not been configured. Please call Amplify.configure() before using this service.');
+        throw error;
+    }
+};
 
 // GraphQL mutations and queries
 const CREATE_GAME_HISTORY = `
@@ -83,7 +92,7 @@ export class GameHistoryService {
         displayName
       };
 
-      const result = await client.graphql({
+      const result = await getClient().graphql({
         query: CREATE_GAME_HISTORY,
         variables: { input }
       });
@@ -113,7 +122,7 @@ export class GameHistoryService {
 
       console.log(`📖 Loading ${gameType} game history from cloud...`);
 
-      const result = await client.graphql({
+      const result = await getClient().graphql({
         query: LIST_GAME_HISTORIES,
         variables: {
           filter: {

@@ -152,8 +152,24 @@ export class CloudRankingService {
 
       const gameScores = result.data?.listGameScores?.items || [];
       
-      // スコアでソート（ゲームタイプに応じて）
+      // デバッグ: 生データの確認
+      console.log(`🔍 Debug: Raw scores count for ${gameType}:`, gameScores.length);
+      console.log(`🔍 Debug: Raw scores sample:`, gameScores.slice(0, 3).map(s => ({
+        userId: s.userId.substring(0, 8),
+        score: s.score,
+        displayName: s.displayName
+      })));
+      
+      // 全スコアをソート（同一ユーザーの複数スコアも含む）
       const sortedScores = this.sortScoresByGameType(gameScores as GameScore[], gameType);
+      
+      // デバッグ: ソート後の全スコアの確認
+      console.log(`🔍 Debug: All sorted scores count for ${gameType}:`, sortedScores.length);
+      console.log(`🔍 Debug: Top 10 sorted scores sample:`, sortedScores.slice(0, 10).map(s => ({
+        userId: s.userId.substring(0, 8),
+        score: s.score,
+        displayName: s.displayName
+      })));
       
       // 全ユーザーのUserProfileを一括取得
       const userIds = sortedScores.slice(0, limit).map(score => score.userId);
@@ -213,15 +229,17 @@ export class CloudRankingService {
         };
       });
 
-      // 現在ユーザーのランクを検索
+      // 現在ユーザーのランクを検索（ユーザー別最高スコアで計算）
+      const bestScores = this.getBestScorePerUser(gameScores as GameScore[]);
       const userRank = rankings.find(entry => entry.isCurrentUser) || null;
 
-
+      // 総プレイヤー数はユニークプレイヤー数
+      const totalPlayers = bestScores.length;
 
       return {
         rankings,
         userRank,
-        totalPlayers: sortedScores.length,
+        totalPlayers,
         lastUpdated: new Date().toISOString()
       };
 
@@ -235,6 +253,64 @@ export class CloudRankingService {
         totalPlayers: 0,
         lastUpdated: new Date().toISOString()
       };
+    }
+  }
+
+  /**
+   * 特定スコアでの順位を計算（結果画面用）
+   */
+  public async getCurrentScoreRank(gameType: string, currentScore: number): Promise<{rank: number, totalPlayers: number} | null> {
+    try {
+      const userId = await this.userService.getCurrentUserId();
+      
+      const filter: ModelGameScoreFilterInput = {
+        gameType: { eq: gameType }
+      };
+
+      const result = await this.client.graphql({
+        query: listGameScores,
+        variables: { 
+          filter,
+          limit: 1000
+        }
+      });
+
+      const gameScores = result.data?.listGameScores?.items || [];
+      
+      // 全スコアから現在スコアより良いスコアの数を数える
+      const betterScoresCount = gameScores.filter(score => score.score < currentScore).length;
+      
+      // 順位は「自分より良いスコア数 + 1」
+      const rank = betterScoresCount + 1;
+      // 総順位数：全スコア数 + 現在のスコア（1つ）
+      const totalPlayers = gameScores.length + 1;
+      
+      // 詳細デバッグ: 現在スコア周辺のスコアを確認
+      const sortedAllScores = gameScores.sort((a, b) => a.score - b.score);
+      const currentScoreIndex = sortedAllScores.findIndex(score => score.score >= currentScore);
+      const surroundingScores = sortedAllScores.slice(Math.max(0, currentScoreIndex - 3), currentScoreIndex + 4);
+      
+      console.log(`🔍 Debug: Current score rank calculation:`, {
+        currentScore,
+        betterScoresCount,
+        rank,
+        totalPlayers,
+        gameType,
+        totalScoresCount: gameScores.length,
+        userId: userId.substring(0, 8),
+        surroundingScores: surroundingScores.map((s, i) => ({
+          index: Math.max(0, currentScoreIndex - 3) + i + 1,
+          score: s.score,
+          userId: s.userId.substring(0, 8),
+          isCurrentScore: s.score === currentScore ? '← CURRENT' : ''
+        }))
+      });
+      
+      return { rank, totalPlayers };
+
+    } catch (error) {
+      console.error('Failed to calculate current score rank:', error);
+      return null;
     }
   }
 
@@ -362,17 +438,9 @@ export class CloudRankingService {
         userScores.set(score.userId, score);
       } else {
         // より良いスコアの場合は更新
-        const gameType = score.gameType;
-        if (gameType === 'sequence') {
-          // sequence: 大きいほど良い
-          if (score.score > existing.score) {
-            userScores.set(score.userId, score);
-          }
-        } else {
-          // reflex, target: 小さいほど良い
-          if (score.score < existing.score) {
-            userScores.set(score.userId, score);
-          }
+        // reflex, target, sequence: 全て小さいほど良い（時間ベース）
+        if (score.score < existing.score) {
+          userScores.set(score.userId, score);
         }
       }
     });

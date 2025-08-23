@@ -18,6 +18,8 @@ const formatDateTime = (timestamp: string): string => {
 interface GameRankingTableProps {
     gameType: 'reflex' | 'target' | 'sequence';
     limit?: number;
+    highlightCurrentUser?: boolean; // 現在ユーザーを赤色でハイライトするかどうか
+    currentGameScore?: number; // 今回のゲーム結果スコア（この値と一致する行のみ赤くハイライト）
 }
 
 interface ExtendedRankingEntry extends RankingEntry {
@@ -100,7 +102,7 @@ const UserIcon: React.FC<{
 
 
 
-const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 10 }) => {
+const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 10, highlightCurrentUser = false, currentGameScore }) => {
     const [rankingData, setRankingData] = useState<RankingData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -280,7 +282,9 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                         {/* 名前 */}
                         <div className="flex-1 min-w-0 px-2">
                             <div className={`font-medium relative group ${
-                                entry.isCurrentUser ? 'text-blue-700' : 'text-gray-800'
+                                entry.isCurrentUser 
+                                    ? (currentGameScore !== undefined && entry.score === currentGameScore ? 'text-red-700' : 'text-blue-700')
+                                    : 'text-gray-800'
                             }`}>
                                 <div 
                                     className="truncate max-w-[180px] lg:max-w-[220px] inline-block cursor-help"
@@ -293,7 +297,9 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                                         : entry.displayName}
                                 </div>
                                 {entry.isCurrentUser && (
-                                    <span className="text-xs text-blue-600 ml-2">(あなた)</span>
+                                    <span className={`text-xs ml-2 ${
+                                        currentGameScore !== undefined && entry.score === currentGameScore ? 'text-red-600' : 'text-blue-600'
+                                    }`}>(あなた)</span>
                                 )}
                                 
                                 {/* ホバーツールチップ */}
@@ -315,7 +321,9 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                         {/* スコア */}
                         <div className="w-20 flex-shrink-0 text-right">
                             <div className={`text-lg font-bold ${
-                                entry.isCurrentUser ? 'text-blue-600' : 'text-gray-800'
+                                entry.isCurrentUser 
+                                    ? (currentGameScore !== undefined && entry.score === currentGameScore ? 'text-red-600' : 'text-blue-600')
+                                    : 'text-gray-800'
                             }`}>
                                 {formatScore(entry.score, gameType)}
                             </div>
@@ -347,14 +355,18 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                                 {/* ユーザー名（優先表示） */}
                                 <div className="flex-1 min-w-0">
                                     <div className={`font-medium text-sm ${
-                                        entry.isCurrentUser ? 'text-blue-700' : 'text-gray-800'
+                                        entry.isCurrentUser 
+                                            ? (currentGameScore !== undefined && entry.score === currentGameScore ? 'text-red-700' : 'text-blue-700')
+                                            : 'text-gray-800'
                                     }`}>
                                         <div className="truncate">
                                             {entry.isCurrentUser && entry.isXLinked && entry.xDisplayName 
                                                 ? entry.xDisplayName 
                                                 : entry.displayName}
                                             {entry.isCurrentUser && (
-                                                <span className="text-xs text-blue-600 ml-1">(あなた)</span>
+                                                <span className={`text-xs ml-1 ${
+                                                    currentGameScore !== undefined && entry.score === currentGameScore ? 'text-red-600' : 'text-blue-600'
+                                                }`}>(あなた)</span>
                                             )}
                                         </div>
                                     </div>
@@ -364,7 +376,9 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                             {/* スコア */}
                             <div className="flex-shrink-0 ml-2">
                                 <div className={`text-lg font-bold ${
-                                    entry.isCurrentUser ? 'text-blue-600' : 'text-gray-800'
+                                    entry.isCurrentUser 
+                                        ? (currentGameScore !== undefined && entry.score === currentGameScore ? 'text-red-600' : 'text-blue-600')
+                                        : 'text-gray-800'
                                 }`}>
                                     {formatScore(entry.score, gameType)}
                                 </div>

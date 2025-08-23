@@ -200,8 +200,8 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                                         <span className="text-xs text-gray-500">{lastResult.date}</span>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div>
+                                <div className={`${lastResult.secondaryStat ? 'grid grid-cols-2 gap-3' : 'flex justify-center'}`}>
+                                    <div className={`${!lastResult.secondaryStat ? 'text-center' : ''}`}>
                                         <p className="text-xs text-gray-500">{lastResult.primaryStat}</p>
                                         <p className="text-lg font-bold text-blue-600">{lastResult.primaryValue}</p>
                                     </div>
@@ -296,18 +296,29 @@ const HomePage: React.FC = () => {
                         reflex: {
                             primaryStat: '平均反応時間',
                             primaryValue: `${(reflexLatest.averageTime / 1000).toFixed(3)}s`,
-                            secondaryStat: '成功率',
-                            secondaryValue: `${Math.round(reflexLatest.successRate)}%`,
                             date: new Date(reflexLatest.date).toLocaleDateString('ja-JP')
                         }
                     }));
                     
-                    // プレイ回数を設定
-                    const reflexHistory = await gameHistoryService.getGameHistory<ReflexGameHistory>('reflex');
-                    setPlayCounts(prev => ({
-                        ...prev,
-                        reflex: reflexHistory.length
-                    }));
+                    // プレイ回数を設定（LocalStorageから正確な数を取得）
+                    try {
+                        const currentUserId = await UserIdentificationService.getInstance().getCurrentUserId();
+                        const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
+                        const userReflexScores = allScores.filter((score: any) => 
+                            score.userId === currentUserId && score.gameType === 'reflex'
+                        );
+                        setPlayCounts(prev => ({
+                            ...prev,
+                            reflex: userReflexScores.length
+                        }));
+                        console.log(`🔍 HomePage: reflex play count from localStorage:`, userReflexScores.length);
+                    } catch (error) {
+                        console.error('Failed to get reflex play count from localStorage:', error);
+                        setPlayCounts(prev => ({
+                            ...prev,
+                            reflex: 0
+                        }));
+                    }
                 }
 
                 // ターゲット追跡ゲームの最新記録（回避策：全履歴から最新を取得）
@@ -325,11 +336,25 @@ const HomePage: React.FC = () => {
                         }
                     }));
                     
-                    // プレイ回数を設定（既に取得済みのhistoryを使用）
-                    setPlayCounts(prev => ({
-                        ...prev,
-                        target: targetHistory.length
-                    }));
+                    // プレイ回数を設定（LocalStorageから正確な数を取得）
+                    try {
+                        const currentUserId = await UserIdentificationService.getInstance().getCurrentUserId();
+                        const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
+                        const userTargetScores = allScores.filter((score: any) => 
+                            score.userId === currentUserId && score.gameType === 'target'
+                        );
+                        setPlayCounts(prev => ({
+                            ...prev,
+                            target: userTargetScores.length
+                        }));
+                        console.log(`🔍 HomePage: target play count from localStorage:`, userTargetScores.length);
+                    } catch (error) {
+                        console.error('Failed to get target play count from localStorage:', error);
+                        setPlayCounts(prev => ({
+                            ...prev,
+                            target: 0
+                        }));
+                    }
                 }
 
                 // 数字順序ゲームの最新記録（回避策：全履歴から最新を取得）
@@ -349,11 +374,25 @@ const HomePage: React.FC = () => {
                         }
                     }));
                     
-                    // プレイ回数を設定（既に取得済みのhistoryを使用）
-                    setPlayCounts(prev => ({
-                        ...prev,
-                        sequence: sequenceHistory.length
-                    }));
+                    // プレイ回数を設定（LocalStorageから正確な数を取得）
+                    try {
+                        const currentUserId = await UserIdentificationService.getInstance().getCurrentUserId();
+                        const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
+                        const userSequenceScores = allScores.filter((score: any) => 
+                            score.userId === currentUserId && score.gameType === 'sequence'
+                        );
+                        setPlayCounts(prev => ({
+                            ...prev,
+                            sequence: userSequenceScores.length
+                        }));
+                        console.log(`🔍 HomePage: sequence play count from localStorage:`, userSequenceScores.length);
+                    } catch (error) {
+                        console.error('Failed to get sequence play count from localStorage:', error);
+                        setPlayCounts(prev => ({
+                            ...prev,
+                            sequence: 0
+                        }));
+                    }
                 }
             } catch (error) {
                 console.error('Failed to load last results:', error);

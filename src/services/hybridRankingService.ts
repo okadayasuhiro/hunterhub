@@ -193,6 +193,44 @@ export class HybridRankingService {
   }
 
   /**
+   * 特定スコアでの順位を計算（結果画面用）
+   */
+  public async getCurrentScoreRank(gameType: string, currentScore: number): Promise<{rank: number, totalPlayers: number} | null> {
+    console.log('🎯 Calculating current score rank for:', gameType, 'score:', currentScore);
+
+    // 1. クラウドから計算を試行
+    if (this.config.useCloud) {
+      try {
+        const result = await this.cloudService.getCurrentScoreRank(gameType, currentScore);
+        if (result) {
+          console.log('✅ Current score rank calculated from cloud');
+          return result;
+        }
+      } catch (error) {
+        console.error('❌ Cloud current score rank calculation failed:', error);
+      }
+    }
+
+    // 2. ローカルから計算（フォールバック）
+    try {
+      // ローカルランキングを取得して手動計算
+      const localRankings = await this.localService.getRankings(gameType, 1000);
+      
+      // 現在スコアより良いスコアの数を数える
+      const betterScoresCount = localRankings.rankings.filter(entry => entry.score < currentScore).length;
+      
+      const rank = betterScoresCount + 1;
+      const totalPlayers = localRankings.rankings.length + 1; // 全スコア数 + 現在のスコア
+      
+      console.log('✅ Current score rank calculated from local (fallback)');
+      return { rank, totalPlayers };
+    } catch (error) {
+      console.error('❌ Local current score rank calculation also failed:', error);
+      return null;
+    }
+  }
+
+  /**
    * 全ゲームのトップ1位プレイヤーを取得（ハイブリッドモード）
    */
   public async getAllTopPlayers(): Promise<{

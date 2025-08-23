@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Crosshair } from 'lucide-react';
+import { Crosshair, Target, Hash, Clock, Trophy } from 'lucide-react';
 import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { TargetTrackingHistory, TargetResult } from '../types/game';
@@ -263,35 +263,38 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         return (
             <div className="flex-1">
                 <div className="min-h-screen" style={{ backgroundColor: '#ecf6ff' }}>
-                    <div className="py-16 px-4">
+                    <div className="py-4 px-4">
                         <div className="max-w-3xl mx-auto">
                             {/* ヘッダー */}
-                            <div className="text-center mb-12">
-                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                            <div className="text-right mb-4">
+                                <h1 className="text-sm font-medium text-gray-500">
                                     ターゲット追跡
                                 </h1>
                             </div>
 
                             {/* ルール説明 */}
-                            <div className="bg-white rounded-lg p-8 mb-12 shadow-sm border border-blue-100">
-                                <h2 className="text-2xl font-medium text-gray-800 mb-6">ルール</h2>
-                                <div className="space-y-4 text-gray-600">
-                                    <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">1</span>
+                            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border border-gray-200">
+                                <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">ルール</h2>
+                                <div className="space-y-3 text-gray-700">
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <Target className="w-3 h-3" />
+                                        </div>
                                         <p>画面に現れる赤いターゲットをできるだけ早くクリック</p>
                                     </div>
-                                    <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">2</span>
-                                        <p>10個のターゲットを順番に撃ち抜く</p>
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <Hash className="w-3 h-3" />
+                                        </div>
+                                        <p><span className="font-semibold text-blue-600">10個のターゲット</span>を順番に撃ち抜く</p>
                                     </div>
-                                    <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">3</span>
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <Clock className="w-3 h-3" />
+                                        </div>
                                         <p>各ターゲットの反応時間と総合時間を測定</p>
                                     </div>
-                                    <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">4</span>
-                                        <p>結果に応じてハンターランクが決定</p>
-                                    </div>
+
                                 </div>
                             </div>
 
@@ -317,16 +320,16 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                             )}
 
                             {/* ボタン */}
-                            <div className="flex gap-4 justify-center">
+                            <div className="flex flex-col gap-3 items-center">
                                 <button
                                     onClick={handleStartGame}
-                                    className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
+                                    className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                 >
                                     ゲーム開始
                                 </button>
                                 <button
                                     onClick={handleBack}
-                                    className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+                                    className="w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
                                 >
                                     戻る
                                 </button>
@@ -421,16 +424,16 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                             </div>
 
                             {/* ボタン */}
-                            <div className="flex gap-4 justify-center">
+                            <div className="flex flex-col gap-3 items-center">
                                 <button
                                     onClick={resetGame}
-                                    className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
+                                    className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                 >
                                     もう一度
                                 </button>
                                 <button
                                     onClick={handleBack}
-                                    className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+                                    className="w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
                                 >
                                     メニューに戻る
                                 </button>

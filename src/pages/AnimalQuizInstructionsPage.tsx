@@ -71,16 +71,16 @@ const AnimalQuizInstructionsPage: React.FC = () => {
             )}
 
             {/* ボタン */}
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-col gap-3 items-center">
               <button
                 onClick={handleStartGame}
-                className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
+                className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
               >
                 クイズ開始
               </button>
               <button
                 onClick={handleBack}
-                className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+                className="w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
               >
                 戻る
               </button>

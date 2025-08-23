@@ -141,10 +141,10 @@ const AnimalQuizResultPage: React.FC = () => {
         </div>
 
         {/* アクションボタン */}
-        <div className="flex flex-col md:flex-row gap-4 justify-center">
+        <div className="flex flex-col gap-3 items-center">
           <button
             onClick={handleRetry}
-            className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
+            className="w-full max-w-xs bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
           >
             <RotateCcw className="w-5 h-5 mr-2" />
             もう一度挑戦
@@ -152,7 +152,7 @@ const AnimalQuizResultPage: React.FC = () => {
           
           <button
             onClick={handleBackToHome}
-            className="bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 px-6 rounded-lg shadow-lg border-2 border-gray-300 transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
+            className="w-full max-w-40 bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 px-6 rounded-lg shadow-lg border-2 border-gray-300 transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
           >
             <Home className="w-5 h-5 mr-2" />
             ホームに戻る

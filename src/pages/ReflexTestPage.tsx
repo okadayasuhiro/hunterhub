@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Zap } from 'lucide-react';
+import { Zap, MousePointer, RotateCcw, AlertTriangle, Trophy } from 'lucide-react';
 import type { TestResult, ReflexGameHistory } from '../types/game';
 import { getReflexHunterRank, STORAGE_KEYS, calculateWeightedScore, REFLEX_SCORING } from '../types/game';
 import { useGameHistory } from '../hooks/useGameHistory';
@@ -41,7 +41,21 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     const [isXLinked, setIsXLinked] = useState<boolean | null>(null);
     const [displayName, setDisplayName] = useState<string>('');
     
+    // ランキング情報の追跡
+    const [currentRank, setCurrentRank] = useState<number | null>(null);
+    const [totalPlayers, setTotalPlayers] = useState<number>(0);
+    
+    // ランキングテーブル更新用
+    const [rankingUpdateKey, setRankingUpdateKey] = useState<number>(0);
+    
+
+    
     const userService = UserIdentificationService.getInstance();
+    
+    // gameState変更を監視（デバッグ用）
+    useEffect(() => {
+        console.log('🎮 Game state changed to:', gameState);
+    }, [gameState]);
     
     // X連携状態を初期化時とゲーム完了時に確認
     useEffect(() => {
@@ -87,31 +101,63 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
     // タイマーをクリアする関数
     const clearAllTimers = useCallback(() => {
+        console.log('🧹 Clearing all timers...');
         if (testTimerRef.current) {
+            console.log('❌ Clearing testTimer ID:', testTimerRef.current);
             clearTimeout(testTimerRef.current);
             testTimerRef.current = null;
         }
         if (nextTestTimerRef.current) {
+            console.log('❌ Clearing nextTestTimer ID:', nextTestTimerRef.current);
             clearTimeout(nextTestTimerRef.current);
             nextTestTimerRef.current = null;
         }
+        console.log('✅ All timers cleared');
     }, []);
+    
+    // コンポーネントアンマウント時のクリーンアップ
+    useEffect(() => {
+        return () => {
+            console.log('🧹 Component unmounting, clearing all timers...');
+            clearAllTimers();
+        };
+    }, [clearAllTimers]);
 
     const startSingleTest = useCallback(() => {
+        console.log('🎯 Starting single test...');
         clearAllTimers();
+        
+        // 安全性チェック: タイマーが確実にクリアされているか確認
+        if (testTimerRef.current !== null) {
+            console.warn('⚠️ Warning: testTimer was not properly cleared!');
+            clearTimeout(testTimerRef.current);
+            testTimerRef.current = null;
+        }
+        
         setGameState('ready');
         const randomWait = Math.random() * 3000 + 2000;
+        console.log(`⏰ Setting timer for ${randomWait.toFixed(0)}ms to change to 'go' state`);
 
         testTimerRef.current = setTimeout(() => {
-            setGameState('go');
-            setStartTime(Date.now());
+            console.log('🔴 Timer executed! Changing to GO state');
+            // 追加の安全性チェック: タイマーが実際に実行されているか確認
+            if (testTimerRef.current !== null) {
+                setGameState('go');
+                setStartTime(Date.now());
+                testTimerRef.current = null; // 実行後にクリア
+            } else {
+                console.error('❌ Error: Timer executed but ref was already null!');
+            }
         }, randomWait);
+        
+        console.log('✅ Timer set with ID:', testTimerRef.current);
     }, [clearAllTimers]);
 
     const startTestSequence = useCallback(() => {
         setIsTestRunning(true);
         setCurrentRound(1);
         setResults([]);
+
         startSingleTest();
     }, [startSingleTest]);
 
@@ -234,13 +280,48 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             setResults(prev => [...prev, newResult]);
             setGameState('clicked');
 
-            nextTestTimerRef.current = setTimeout(() => {
+            nextTestTimerRef.current = setTimeout(async () => {
                 if (currentRound >= MAX_TESTS) {
                     // 5回連続成功でゲーム完了
                     const finalResults = [...results, newResult];
+                    const avgTime = finalResults.reduce((sum, r) => sum + r.time, 0) / finalResults.length;
+                    
+                    // まずゲーム履歴を保存
                     saveGameHistory(finalResults);
                     setGameState('finished');
                     setIsTestRunning(false);
+                    
+                    // 少し待ってから現在スコアでの順位を取得（保存処理完了後）
+                    setTimeout(async () => {
+                        try {
+                            console.log('Fetching current score rank after game completion...');
+                            const rankingService = HybridRankingService.getInstance();
+                            
+                            // 現在のプレイスコア（DynamoDBに保存されるのと同じ形式）で順位を計算
+                            const { averageSuccessTime } = calculateWeightedScore(finalResults);
+                            console.log('Current play score (averageSuccessTime):', averageSuccessTime);
+                            
+                            const rankResult = await rankingService.getCurrentScoreRank('reflex', averageSuccessTime);
+                            console.log('Current score rank result:', rankResult);
+                            
+                            if (rankResult) {
+                                console.log('Current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                                setCurrentRank(rankResult.rank);
+                                setTotalPlayers(rankResult.totalPlayers);
+                                
+                                                // 10位以内の場合、ランキングテーブルを強制更新
+                if (rankResult.rank <= 10) {
+                    console.log('🏆 Top 10 rank achieved! Updating ranking table...');
+                    setRankingUpdateKey(prev => prev + 1);
+                }
+                            } else {
+                                console.log('No current score rank found');
+                            }
+                        } catch (error) {
+                            console.error('Failed to get current score rank:', error);
+                        }
+                    }, 1000);
+                    
                     navigate('/reflex/result');
                 } else {
                     setCurrentRound(prev => prev + 1);
@@ -365,38 +446,95 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         )
         : null;
 
+    // 結果画面で現在スコアでの順位を再取得（条件分岐外でuseEffectを定義）
+    useEffect(() => {
+        const fetchCurrentScoreRank = async () => {
+            if (mode === 'result' && results.length > 0 && !currentRank) {
+                try {
+                    console.log('Fetching current score rank on result page...');
+                    const rankingService = HybridRankingService.getInstance();
+                    
+                    // 現在のプレイスコア（平均反応時間）で順位を計算
+                    const validResults = results.filter(r => r.success && r.time > 0);
+                    if (validResults.length > 0) {
+                        const { averageSuccessTime } = calculateWeightedScore(results);
+                        console.log('Result page current play score (averageSuccessTime):', averageSuccessTime);
+                        
+                        const rankResult = await rankingService.getCurrentScoreRank('reflex', averageSuccessTime);
+                        console.log('Result page current score rank result:', rankResult);
+                        
+                        if (rankResult) {
+                            console.log('Result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                            setCurrentRank(rankResult.rank);
+                            setTotalPlayers(rankResult.totalPlayers);
+                        } else {
+                            console.log('No current score rank found on result page');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to get current score rank on result page:', error);
+                }
+            }
+        };
+        
+        fetchCurrentScoreRank();
+    }, [mode, results, currentRank]);
+
+    // 結果データの初期化（mode=resultの場合のみ）
+    useEffect(() => {
+        if (mode === 'result' && results.length === 0) {
+            const dummyResults: TestResult[] = [
+                { time: 250, round: 1, success: true, reactionTime: 250 },
+                { time: 300, round: 2, success: true, reactionTime: 300 },
+                { time: 0, round: 3, success: false, reactionTime: 0 },
+                { time: 280, round: 4, success: true, reactionTime: 280 },
+                { time: 320, round: 5, success: true, reactionTime: 320 }
+            ];
+            // ダミーデータを設定（テスト用）
+            setResults(dummyResults);
+        }
+    }, [mode, results.length]);
+
     // modeに応じて画面を切り替え
     if (mode === 'instructions') {
         return (
             <div className="flex-1">
                 <div className="min-h-screen">
-                    <div className="py-16 px-4">
+                    <div className="py-4 px-4">
                         <div className="max-w-3xl mx-auto">
                             {/* ヘッダー */}
-                            <div className="text-center mb-12">
-                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                            <div className="text-right mb-4">
+                                <h1 className="text-sm font-medium text-gray-500">
                                     反射神経テスト
                                 </h1>
                             </div>
 
                             {/* ルール説明 */}
-                            <div className="bg-white rounded-lg p-8 mb-12 shadow-sm border border-blue-100">
-                                <h2 className="text-2xl font-medium text-gray-800 mb-6">ルール</h2>
-                                <div className="space-y-4 text-gray-600">
-                                    <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">1</span>
-                                        <p>画面が緑色から赤色に変わったら、できるだけ早くクリック</p>
+                            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border border-gray-200">
+                                <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">ルール</h2>
+                                <div className="space-y-3 text-gray-700">
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <MousePointer className="w-3 h-3" />
+                                        </div>
+                                        <p>画面が<span className="text-green-600 font-medium">緑色</span>から<span className="text-red-600 font-medium">赤色</span>に変わったら、できるだけ早くクリック</p>
                                     </div>
-                                    <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">2</span>
-                                        <p><strong>5回連続で成功する必要があります</strong></p>
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <RotateCcw className="w-3 h-3" />
+                                        </div>
+                                        <p><span className="font-semibold text-blue-600">5回連続</span>で成功する必要があります</p>
                                     </div>
-                                    <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-red-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">3</span>
-                                        <p><strong>赤になる前にクリックするとフライングで即ゲーム終了</strong></p>
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <AlertTriangle className="w-3 h-3" />
+                                        </div>
+                                        <p><span className="font-semibold text-red-600">赤になる前</span>にクリックするとフライングで即ゲーム終了</p>
                                     </div>
-                                    <div className="flex items-start">
-                                        <span className="inline-block w-6 h-6 bg-blue-500 text-white rounded-full text-sm flex items-center justify-center mr-3 mt-0.5">4</span>
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <Trophy className="w-3 h-3" />
+                                        </div>
                                         <p>5回連続成功時の平均反応時間でランクが決定</p>
                                     </div>
                                 </div>
@@ -406,34 +544,30 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             {bestRecord && (
                                 <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border border-blue-100">
                                     <h3 className="text-lg font-medium text-gray-800 mb-4 text-center">ベスト記録</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-2 gap-6">
                                         <div className="text-center">
                                             <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                            <div className="text-xl font-bold text-blue-600">{bestRecord.averageTime}ms</div>
+                                            <div className="text-xl font-bold text-blue-600">{(bestRecord.averageTime / 1000).toFixed(3)}秒</div>
                                         </div>
                                         <div className="text-center">
                                             <div className="text-sm text-gray-600 mb-1">最速記録</div>
-                                            <div className="text-xl font-bold text-green-600">{bestRecord.bestTime}ms</div>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className="text-sm text-gray-600 mb-1">成功率</div>
-                                            <div className="text-xl font-bold text-purple-600">{bestRecord.successRate}%</div>
+                                            <div className="text-xl font-bold text-green-600">{(bestRecord.bestTime / 1000).toFixed(3)}秒</div>
                                         </div>
                                     </div>
                                 </div>
                             )}
 
                             {/* ボタン */}
-                            <div className="flex gap-4 justify-center">
+                            <div className="flex flex-col gap-3 items-center">
                                 <button
                                     onClick={handleStartGame}
-                                    className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
+                                    className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                 >
                                     テスト開始
                                 </button>
                                 <button
                                     onClick={handleBack}
-                                    className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+                                    className="w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
                                 >
                                     戻る
                                 </button>
@@ -452,77 +586,45 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
     if (mode === 'result') {
         
-        // 結果データが空の場合はダミーデータを追加
-        if (results.length === 0) {
-            const dummyResults: TestResult[] = [
-                { time: 250, round: 1, success: true, reactionTime: 250 },
-                { time: 300, round: 2, success: true, reactionTime: 300 },
-                { time: 0, round: 3, success: false, reactionTime: 0 },
-                { time: 280, round: 4, success: true, reactionTime: 280 },
-                { time: 320, round: 5, success: true, reactionTime: 320 }
-            ];
-            // ダミーデータを設定（テスト用）
-            setResults(dummyResults);
-        }
-        
         return (
             <>
             <div className="flex-1">
                 <div className="min-h-screen">
-                    <div className="py-16 px-4">
+                    <div className="py-8 px-4">
                         <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
-                            <div className="text-center mb-12">
-                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                            <div className="text-center mb-6">
+                                <h1 className="text-xl font-bold text-gray-800">
                                     テスト完了
                                 </h1>
                             </div>
 
-                            {/* 結果表示 */}
-                            <div className="bg-white rounded-lg p-8 mb-12 shadow-sm border border-blue-100">
-                                <h2 className="text-2xl font-medium text-gray-800 mb-6 text-center">最終結果</h2>
-
-                                {/* 統計カード */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-2xl mx-auto">
-                                    <div className="bg-blue-50 rounded-lg p-6 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-2">ランキングスコア</div>
-                                        <div className="text-3xl font-bold text-red-600">
-                                            {results.length === MAX_TESTS && results.every(r => r.success) && currentWeightedScore > 0 
-                                                ? `${currentWeightedScore}ms` 
-                                                : '失格'}
+                            {/* コンパクト結果表示 */}
+                            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border border-blue-100">
+                                <div className="grid grid-cols-2 gap-6 mb-6">
+                                    <div className="text-center">
+                                        <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
+                                        <div className="text-2xl font-bold text-green-600">{(averageTime / 1000).toFixed(3)}秒</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-sm text-gray-600 mb-1">最速記録</div>
+                                        <div className="text-2xl font-bold text-purple-600">{(bestTime / 1000).toFixed(3)}秒</div>
+                                    </div>
+                                </div>
+                                
+                                {/* ランキング表示 */}
+                                {currentRank && totalPlayers > 0 && (
+                                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
+                                        <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                        <div className="text-xl font-bold">
+                                            {currentRank}位 / {totalPlayers}位
                                         </div>
                                     </div>
-                                    <div className="bg-blue-50 rounded-lg p-6 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-2">平均反応時間</div>
-                                        <div className="text-3xl font-bold text-green-600">{averageTime}ms</div>
-                                    </div>
-                                    <div className="bg-blue-50 rounded-lg p-6 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-2">最速記録</div>
-                                        <div className="text-3xl font-bold text-purple-600">{bestTime}ms</div>
-                                    </div>
-                                </div>
+                                )}
+                            </div>
 
-                                {/* 各回の結果 */}
-                                <div className="mb-8">
-                                    <h3 className="text-lg font-medium text-gray-800 mb-4">各回の結果</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                                        {results.map((result, index) => (
-                                            <div key={index} className={`rounded-lg p-3 text-center border ${result.success
-                                                ? 'bg-green-50 border-green-200'
-                                                : 'bg-red-50 border-red-200'
-                                                }`}>
-                                                <div className="text-sm text-gray-600 mb-1">{result.round}回</div>
-                                                <div className={`text-lg font-medium ${result.success ? 'text-green-700' : 'text-red-700'
-                                                    }`}>
-                                                    {result.success ? `${result.time}ms` : 'フライング'}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* ハンターランク - 非表示（ロジックは保持） */}
-                                {false && (
+                            {/* ハンターランク - 非表示（ロジックは保持） */}
+                            {false && (
                                     <div className="text-center border-t border-blue-200 pt-8">
                                         <div className="text-lg text-gray-600 mb-4">ハンターランク</div>
                                         {results.length === MAX_TESTS && averageTime > 0 ? (
@@ -544,7 +646,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                                                 {getReflexHunterRank(averageTime).rank}
                                                             </div>
                                                             <div className="text-sm text-blue-100 mt-1">
-                                                                {averageTime}ms平均
+                                                                {(averageTime / 1000).toFixed(3)}秒平均
                                                             </div>
                                                         </div>
                                                     </div>
@@ -560,8 +662,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                             </div>
                                         )}
                                     </div>
-                                )}
-                            </div>
+                            )}
 
                             {/* ボタン */}
                             <div className="flex flex-col gap-4 justify-center">
@@ -607,7 +708,12 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
                                 {/* ランキング表示 */}
                                 <div className="mt-12">
-                                    <GameRankingTable gameType="reflex" limit={10} />
+                                    <GameRankingTable 
+                                        gameType="reflex" 
+                                        limit={10} 
+                                        key={`ranking-${rankingUpdateKey}`}
+                                        currentGameScore={averageTime}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -633,11 +739,11 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         <>
         <div className="flex-1">
             <div className="min-h-screen">
-                <div className="py-8 px-4">
+                <div className="py-4 px-4">
                     <div className="max-w-4xl mx-auto">
                         {/* ヘッダー */}
-                        <div className="text-center mb-6">
-                            <h1 className="text-2xl font-bold text-gray-800">反射神経テスト</h1>
+                        <div className="text-right mb-2">
+                                                            <h1 className="text-sm font-medium text-gray-500 font-bold">反射神経テスト</h1>
                         </div>
 
                         {/* 進捗表示 */}
@@ -657,11 +763,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                     style={{ width: `${(results.length / MAX_TESTS) * 100}%` }}
                                 ></div>
                             </div>
-                            <div className="mt-2 text-right">
-                                <span className="text-xs text-gray-500">
-                                    {results.length === MAX_TESTS ? '完了！' : `残り ${MAX_TESTS - results.length} 回`}
-                                </span>
-                            </div>
+
                         </div>
 
                         {/* ゲームエリア */}
@@ -687,24 +789,20 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                 {gameState === 'ready' && '画面が赤くなったらクリック！'}
                                 {gameState === 'go' && 'クリック！'}
                                 {gameState === 'clicked' && currentResult && (
-                                    currentResult.success ? `${currentResult.time}ms` : 'フライング！'
+                                    currentResult.success ? `${(currentResult.time / 1000).toFixed(3)}秒` : 'フライング！'
                                 )}
                             </div>
                         </div>
 
                         {/* リアルタイム結果表示 */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <div className="grid grid-cols-2 gap-6 mb-8">
                             <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
                                 <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                <div className="text-xl font-bold text-green-600">{averageTime > 0 ? `${averageTime}ms` : '-'}</div>
+                                <div className="text-xl font-bold text-green-600">{averageTime > 0 ? `${(averageTime / 1000).toFixed(3)}秒` : '-'}</div>
                             </div>
                             <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
                                 <div className="text-sm text-gray-600 mb-1">最速記録</div>
-                                <div className="text-xl font-bold text-purple-600">{bestTime > 0 ? `${bestTime}ms` : '-'}</div>
-                            </div>
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">成功率</div>
-                                <div className="text-xl font-bold text-orange-600">{results.length > 0 ? `${successRate}%` : '-'}</div>
+                                <div className="text-xl font-bold text-purple-600">{bestTime > 0 ? `${(bestTime / 1000).toFixed(3)}秒` : '-'}</div>
                             </div>
                         </div>
 
