@@ -280,21 +280,26 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <Target className="w-3 h-3" />
                                         </div>
-                                        <p>画面に現れる赤いターゲットをできるだけ早くクリック</p>
+                                        <p>画面に現れる赤いターゲットをできるだけ早くタップしてください</p>
                                     </div>
                                     <div className="flex items-center">
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <Hash className="w-3 h-3" />
                                         </div>
-                                        <p><span className="font-semibold text-blue-600">10個のターゲット</span>を順番に撃ち抜く</p>
+                                        <p>ゲームは全部で10回です。</p>
                                     </div>
                                     <div className="flex items-center">
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <Clock className="w-3 h-3" />
                                         </div>
-                                        <p>各ターゲットの反応時間と総合時間を測定</p>
+                                        <p>各ターゲットの反応時間と総合時間を測定します</p>
                                     </div>
-
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <Trophy className="w-3 h-3" />
+                                        </div>
+                                        <p>10回目のトライが終了した時点の合計時間で、ランキングが決定します</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -351,76 +356,36 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     if (mode === 'result') {
         return (
             <div className="flex-1">
-                <div className="min-h-screen" style={{ backgroundColor: '#ecf6ff' }}>
-                    <div className="py-16 px-4">
+                <div className="min-h-screen">
+                    <div className="py-8 px-4">
                         <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
-                            <div className="text-center mb-12">
-                                <h1 className="text-2xl font-bold text-gray-800 mb-4">
-                                    ゲーム完了
+                            <div className="text-center mb-6">
+                                <h1 className="text-xl font-bold text-gray-800">
+                                    テスト完了
                                 </h1>
                             </div>
 
-                            {/* 結果表示 */}
-                            <div className="bg-white rounded-lg p-8 mb-12 shadow-sm border border-blue-100">
-                                <h2 className="text-2xl font-medium text-gray-800 mb-6 text-center">最終結果</h2>
-
-                                {/* 統計カード */}
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
+                            {/* コンパクト結果表示 */}
+                            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border border-blue-100">
+                                <div className="grid grid-cols-2 gap-6 mb-6">
+                                    <div className="text-center">
                                         <div className="text-sm text-gray-600 mb-1">総合時間</div>
-                                        <div className="text-2xl font-bold text-blue-600">{currentStats.totalTime.toFixed(2)}s</div>
+                                        <div className="text-2xl font-bold text-green-600">{currentStats.totalTime.toFixed(2)}秒</div>
                                     </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
+                                    <div className="text-center">
                                         <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                        <div className="text-2xl font-bold text-green-600">{currentStats.averageReactionTime.toFixed(3)}s</div>
-                                    </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-1">最速反応</div>
-                                        <div className="text-2xl font-bold text-purple-600">{currentStats.bestReactionTime.toFixed(3)}s</div>
-                                    </div>
-                                    <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                        <div className="text-sm text-gray-600 mb-1">命中率</div>
-                                        <div className="text-2xl font-bold text-orange-600">{currentStats.accuracy}%</div>
+                                        <div className="text-2xl font-bold text-purple-600">{currentStats.averageReactionTime.toFixed(3)}秒</div>
                                     </div>
                                 </div>
-
-                                {/* ハンターランク - 非表示（ロジックは保持） */}
-                                {false && (
-                                    <div className="text-center border-t border-blue-200 pt-8">
-                                        <div className="text-lg text-gray-600 mb-4">ハンターランク</div>
-                                        {currentStats.averageReactionTime > 0 ? (
-                                            <div className="inline-block">
-                                                <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 shadow-lg">
-                                                    <div className="flex items-center justify-center space-x-4">
-                                                        <div className="text-center">
-                                                            <div className="text-sm text-blue-100 mb-1">ランク順位</div>
-                                                            <div className="text-3xl font-bold text-white">
-                                                                #{getHunterRank(currentStats.averageReactionTime).number}
-                                                            </div>
-                                                            <div className="text-xs text-blue-100">
-                                                                / {getHunterRank(currentStats.averageReactionTime).total}
-                                                            </div>
-                                                        </div>
-                                                        <div className="w-px h-12 bg-white opacity-30"></div>
-                                                        <div className="text-center">
-                                                            <div className="text-xl font-bold text-white">
-                                                                {getHunterRank(currentStats.averageReactionTime).rank}
-                                                            </div>
-                                                            <div className="text-sm text-blue-100 mt-1">
-                                                                {currentStats.averageReactionTime.toFixed(3)}s平均
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="inline-block px-6 py-3 bg-gray-400 text-white rounded-lg text-lg font-medium">
-                                                ランク判定不可
-                                            </div>
-                                        )}
+                                
+                                {/* ランキング表示 */}
+                                <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
+                                    <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                    <div className="text-xl font-bold">
+                                        ランキング登録完了
                                     </div>
-                                )}
+                                </div>
                             </div>
 
                             {/* ボタン */}

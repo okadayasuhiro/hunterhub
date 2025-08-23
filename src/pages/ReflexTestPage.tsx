@@ -603,12 +603,12 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             <>
             <div className="flex-1">
                 <div className="min-h-screen">
-                    <div className="py-8 px-4">
+                    <div className="py-4 px-4">
                         <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
-                            <div className="text-center mb-6">
-                                <h1 className="text-xl font-bold text-gray-800">
-                                    テスト完了
+                            <div className="text-center mb-4">
+                                <h1 className="text-m font-bold text-gray-800">
+                                    テスト完了です！お疲れ様でした！
                                 </h1>
                             </div>
 

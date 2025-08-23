@@ -397,21 +397,26 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <Hash className="w-3 h-3" />
                                         </div>
-                                        <p>画面上にランダムに配置された数字を<span className="font-semibold text-blue-600">小さい順</span>にクリックします</p>
+                                        <p>画面上にランダムに配置された数字を<span className="font-semibold text-blue-600">小さい順</span>にタップしてください</p>
                                     </div>
                                     <div className="flex items-center">
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <Medal className="w-3 h-3" />
                                         </div>
-                                        <p>レベル1は2個、レベル2は3個...レベル7は8個の数字</p>
+                                        <p>レベルが上がるにつれて、数字の数が増えていきます</p>
                                     </div>
                                     <div className="flex items-center">
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <Crown className="w-3 h-3" />
                                         </div>
-                                        <p><span className="font-semibold text-blue-600">レベル7</span>をクリアすると完全制覇！</p>
+                                        <p><span className="font-semibold text-blue-600">レベル7</span>をクリアすると終了です</p>
                                     </div>
-
+                                    <div className="flex items-center">
+                                        <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
+                                            <Trophy className="w-3 h-3" />
+                                        </div>
+                                        <p>レベル7が終了した時点の合計時間で、ランキングが決定します</p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -466,144 +471,47 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
     if (mode === 'result') {
         return (
             <div className="flex-1">
-                <div className="min-h-screen" style={{ backgroundColor: '#ecf6ff' }}>
-                    <div className="py-16 px-4">
-                        <div className="max-w-3xl mx-auto">
+                <div className="min-h-screen">
+                    <div className="py-8 px-4">
+                        <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
-                            <div className="text-center mb-12">
-                                <h1 className="text-2xl font-light text-gray-800 mb-4">
-                                    {level === 7 ? '完全制覇！' : 'ゲーム終了'}
+                            <div className="text-center mb-6">
+                                <h1 className="text-xl font-bold text-gray-800">
+                                    テスト完了
                                 </h1>
                             </div>
 
-                            {/* 結果表示 */}
-                            <div className="bg-white rounded-lg p-8 mb-12 shadow-sm border border-blue-100">
-                                <h2 className="text-2xl font-medium text-gray-800 mb-6 text-center">最終結果</h2>
-
+                            {/* コンパクト結果表示 */}
+                            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm border border-blue-100">
                                 {level === 7 && finalTime !== null ? (
-                                    // 完全制覇時の時間ベースランク表示
+                                    // 完全制覇時の表示
                                     <>
-                                        <div className="text-center mb-8">
-                                            <div className="text-sm text-gray-600 mb-2">完了時間</div>
-                                            <div className="text-5xl font-bold text-purple-600 mb-4 flex items-center justify-center">
-                                                <Clock size={40} className="mr-2" />
-                                                {formatTime(finalTime)}
-                                            </div>
-                                            <div className="text-lg text-gray-500">全レベル完全制覇！</div>
-                                        </div>
-
-                                        {/* 統計情報表示 */}
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                                            <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                                <div className="text-sm text-gray-600 mb-1">平均クリック間隔</div>
-                                                <div className="text-2xl font-bold text-blue-600">{currentAverageInterval.toFixed(2)}s</div>
-                                            </div>
-                                            <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
+                                        <div className="grid grid-cols-2 gap-6 mb-6">
+                                            <div className="text-center">
                                                 <div className="text-sm text-gray-600 mb-1">完了時間</div>
                                                 <div className="text-2xl font-bold text-green-600">{formatTime(finalTime)}</div>
                                             </div>
-                                            <div className="bg-blue-50 rounded-lg p-4 text-center border border-blue-200">
-                                                <div className="text-sm text-gray-600 mb-1">成功クリック率</div>
-                                                <div className="text-2xl font-bold text-purple-600">{currentSuccessRate}%</div>
+                                            <div className="text-center">
+                                                <div className="text-sm text-gray-600 mb-1">平均クリック間隔</div>
+                                                <div className="text-2xl font-bold text-purple-600">{currentAverageInterval.toFixed(2)}秒</div>
                                             </div>
                                         </div>
-
-                                        {/* ランク表示 - 非表示（ロジックは保持） */}
-                                        {false && (
-                                            <div className="text-center border-t border-blue-200 pt-8">
-                                                <div className="inline-block">
-                                                    {(() => {
-                                                        const rankInfo = getRankFromTime(finalTime || 0);
-                                                        const safeTime = finalTime ?? 0;
-                                                        const isNewBest = !bestRecord || (safeTime > 0 && safeTime < (bestRecord?.completionTime || Infinity));
-                                                        return (
-                                                            <div className={`text-white rounded-lg p-6 shadow-lg ${isNewBest
-                                                                ? 'bg-gradient-to-r from-yellow-500 to-orange-600'
-                                                                : 'bg-gradient-to-r from-purple-500 to-blue-600'
-                                                                }`}>
-                                                                {isNewBest && (
-                                                                    <div className="text-sm font-medium mb-2 opacity-90">
-                                                                        🎉 NEW BEST RECORD! 🎉
-                                                                    </div>
-                                                                )}
-                                                                <div className="text-3xl font-bold mb-2">
-                                                                    #{rankInfo.rank} {rankInfo.title}
-                                                                </div>
-                                                                <div className="text-sm opacity-90">
-                                                                    完了時間: {formatTime(finalTime || 0)}
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })()}
-                                                </div>
+                                        
+                                        {/* ランキング表示 */}
+                                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
+                                            <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                            <div className="text-xl font-bold">
+                                                全レベル完全制覇！
                                             </div>
-                                        )}
-
-                                        {/* ベスト記録比較 */}
-                                        {bestRecord && bestRecord.averageClickInterval !== undefined && finalTime !== bestRecord.completionTime && (
-                                            <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-                                                <div className="text-center">
-                                                    <div className="text-sm text-gray-600 mb-2">ベスト記録</div>
-                                                    <div className="grid grid-cols-3 gap-4">
-                                                        <div>
-                                                            <div className="text-lg font-bold text-gray-700">{bestRecord.averageClickInterval.toFixed(2)}s</div>
-                                                            <div className="text-xs text-gray-500">平均間隔</div>
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-lg font-bold text-gray-700">{formatTime(bestRecord.completionTime)}</div>
-                                                            <div className="text-xs text-gray-500">完了時間</div>
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-lg font-bold text-gray-700">{bestRecord.successClickRate}%</div>
-                                                            <div className="text-xs text-gray-500">成功率</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
+                                        </div>
                                     </>
                                 ) : (
                                     // 途中終了時の表示
-                                    <div className="text-center space-y-6">
-                                        <div>
-                                            <div className="text-sm text-gray-600 mb-2">到達レベル</div>
-                                            <div className="text-4xl font-bold text-blue-600 mb-2">レベル {level}</div>
-                                            <div className="text-sm text-gray-500">
-                                                {`${level + 1}個の数字まで挑戦`}
-                                            </div>
+                                    <div className="text-center py-8">
+                                        <div className="text-lg text-gray-600 mb-2">ゲーム終了</div>
+                                        <div className="text-sm text-gray-500">
+                                            レベル {level} で終了しました
                                         </div>
-                                        {finalTime !== null && (
-                                            <div>
-                                                <div className="text-sm text-gray-600 mb-2">プレイ時間</div>
-                                                <div className="text-3xl font-bold text-purple-600 flex items-center justify-center">
-                                                    <Clock size={24} className="mr-2" />
-                                                    {formatTime(finalTime)}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* ベスト記録表示 */}
-                                        {bestRecord && bestRecord.averageClickInterval !== undefined && (
-                                            <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-                                                <div className="text-center">
-                                                    <div className="text-sm text-gray-600 mb-2">ベスト記録</div>
-                                                    <div className="grid grid-cols-3 gap-4">
-                                                        <div>
-                                                            <div className="text-lg font-bold text-gray-700">{bestRecord.averageClickInterval.toFixed(2)}s</div>
-                                                            <div className="text-xs text-gray-500">平均間隔</div>
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-lg font-bold text-gray-700">{formatTime(bestRecord.completionTime)}</div>
-                                                            <div className="text-xs text-gray-500">完了時間</div>
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-lg font-bold text-gray-700">{bestRecord.successClickRate}%</div>
-                                                            <div className="text-xs text-gray-500">成功率</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
                                 )}
                             </div>
@@ -642,28 +550,23 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                 <div className="py-8 px-4">
                     <div className="max-w-4xl mx-auto">
                         {/* ヘッダー */}
-                        <div className="text-center mb-8">
-                            <h1 className="text-2xl font-light text-gray-800 mb-2">数字順序ゲーム</h1>
-                            <div className="text-lg text-gray-600">レベル {level} - 次の数字: {nextNumber}</div>
+                        <div className="text-right mb-4">
+                            <h1 className="text-sm font-medium text-gray-500">数字順序ゲーム</h1>
                         </div>
 
-                        {/* ステータス */}
-                        <div className="grid grid-cols-3 gap-4 mb-8">
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">平均クリック間隔</div>
-                                <div className="text-2xl font-bold text-blue-600">{currentAverageInterval.toFixed(2)}s</div>
+                        {/* プログレスバー */}
+                        <div className="bg-white rounded-lg p-4 mb-8 shadow-sm border border-blue-100">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium text-gray-700">進捗</span>
+                                <span className="text-sm text-gray-500">レベル {level}/7</span>
                             </div>
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">成功クリック率</div>
-                                <div className="text-2xl font-bold text-green-600">{currentSuccessRate}%</div>
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                                <div 
+                                    className="bg-blue-500 h-3 rounded-full transition-all duration-300"
+                                    style={{ width: `${(level / 7) * 100}%` }}
+                                ></div>
                             </div>
-                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">経過時間</div>
-                                <div className="text-2xl font-bold text-purple-600 flex items-center justify-center">
-                                    <Clock size={20} className="mr-1" />
-                                    {formatTime(currentTime)}
-                                </div>
-                            </div>
+
                         </div>
 
 
@@ -723,17 +626,18 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                             </div>
                         </div>
 
-                        {/* 進捗表示 */}
-                        <div className="bg-white rounded-lg p-4 shadow-sm border border-blue-100">
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="text-sm text-gray-600">レベル進捗</span>
-                                <span className="text-sm text-gray-600">{nextNumber - 1} / {level + 1}</span>
+                        {/* 各種指標 */}
+                        <div className="grid grid-cols-2 gap-4 mb-8">
+                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
+                                <div className="text-sm text-gray-600 mb-1">平均クリック間隔</div>
+                                <div className="text-xl font-bold text-blue-600">{currentAverageInterval.toFixed(2)}s</div>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                    className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                    style={{ width: `${((nextNumber - 1) / (level + 1)) * 100}%` }}
-                                ></div>
+                            <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
+                                <div className="text-sm text-gray-600 mb-1">経過時間</div>
+                                <div className="text-xl font-bold text-purple-600 flex items-center justify-center">
+                                    <Clock size={18} className="mr-1" />
+                                    {formatTime(currentTime)}
+                                </div>
                             </div>
                         </div>
                     </div>

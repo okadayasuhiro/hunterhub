@@ -300,20 +300,19 @@ const HomePage: React.FC = () => {
                         }
                     }));
                     
-                    // プレイ回数を設定（LocalStorageから正確な数を取得）
+                    // プレイ回数を設定（全ユーザーの総プレイ回数を取得）
                     try {
-                        const currentUserId = await UserIdentificationService.getInstance().getCurrentUserId();
                         const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
-                        const userReflexScores = allScores.filter((score: any) => 
-                            score.userId === currentUserId && score.gameType === 'reflex'
+                        const allReflexScores = allScores.filter((score: any) => 
+                            score.gameType === 'reflex'
                         );
                         setPlayCounts(prev => ({
                             ...prev,
-                            reflex: userReflexScores.length
+                            reflex: allReflexScores.length
                         }));
-                        console.log(`🔍 HomePage: reflex play count from localStorage:`, userReflexScores.length);
+                        console.log(`🔍 HomePage: reflex total play count from localStorage:`, allReflexScores.length);
                     } catch (error) {
-                        console.error('Failed to get reflex play count from localStorage:', error);
+                        console.error('Failed to get reflex total play count from localStorage:', error);
                         setPlayCounts(prev => ({
                             ...prev,
                             reflex: 0
@@ -336,20 +335,19 @@ const HomePage: React.FC = () => {
                         }
                     }));
                     
-                    // プレイ回数を設定（LocalStorageから正確な数を取得）
+                    // プレイ回数を設定（全ユーザーの総プレイ回数を取得）
                     try {
-                        const currentUserId = await UserIdentificationService.getInstance().getCurrentUserId();
                         const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
-                        const userTargetScores = allScores.filter((score: any) => 
-                            score.userId === currentUserId && score.gameType === 'target'
+                        const allTargetScores = allScores.filter((score: any) => 
+                            score.gameType === 'target'
                         );
                         setPlayCounts(prev => ({
                             ...prev,
-                            target: userTargetScores.length
+                            target: allTargetScores.length
                         }));
-                        console.log(`🔍 HomePage: target play count from localStorage:`, userTargetScores.length);
+                        console.log(`🔍 HomePage: target total play count from localStorage:`, allTargetScores.length);
                     } catch (error) {
-                        console.error('Failed to get target play count from localStorage:', error);
+                        console.error('Failed to get target total play count from localStorage:', error);
                         setPlayCounts(prev => ({
                             ...prev,
                             target: 0
@@ -374,20 +372,19 @@ const HomePage: React.FC = () => {
                         }
                     }));
                     
-                    // プレイ回数を設定（LocalStorageから正確な数を取得）
+                    // プレイ回数を設定（全ユーザーの総プレイ回数を取得）
                     try {
-                        const currentUserId = await UserIdentificationService.getInstance().getCurrentUserId();
                         const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
-                        const userSequenceScores = allScores.filter((score: any) => 
-                            score.userId === currentUserId && score.gameType === 'sequence'
+                        const allSequenceScores = allScores.filter((score: any) => 
+                            score.gameType === 'sequence'
                         );
                         setPlayCounts(prev => ({
                             ...prev,
-                            sequence: userSequenceScores.length
+                            sequence: allSequenceScores.length
                         }));
-                        console.log(`🔍 HomePage: sequence play count from localStorage:`, userSequenceScores.length);
+                        console.log(`🔍 HomePage: sequence total play count from localStorage:`, allSequenceScores.length);
                     } catch (error) {
-                        console.error('Failed to get sequence play count from localStorage:', error);
+                        console.error('Failed to get sequence total play count from localStorage:', error);
                         setPlayCounts(prev => ({
                             ...prev,
                             sequence: 0
