@@ -227,6 +227,7 @@ export class GameHistoryService {
       displayName
     };
 
+    const client = getClient();
     const result = await client.graphql({
       query: CREATE_GAME_HISTORY,
       variables: { input }

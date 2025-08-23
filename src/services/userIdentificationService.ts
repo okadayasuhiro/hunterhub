@@ -422,6 +422,14 @@ export class UserIdentificationService {
   }
 
   /**
+   * Xディスプレイ名を取得
+   */
+  public async getXDisplayName(): Promise<string | undefined> {
+    await this.getCurrentUserId();
+    return this.currentUser?.xDisplayName;
+  }
+
+  /**
    * X連携を解除
    */
   public async unlinkXAccount(): Promise<void> {

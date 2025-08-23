@@ -17,6 +17,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
     const [displayName, setDisplayName] = useState<string>('');
     const [isXLinked, setIsXLinked] = useState<boolean>(false);
     const [xProfileImageUrl, setXProfileImageUrl] = useState<string>('');
+    const [xDisplayName, setXDisplayName] = useState<string>('');
     const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
     const [showHamburgerMenu, setShowHamburgerMenu] = useState<boolean>(false);
     const [gameStats, setGameStats] = useState<{[key: string]: {playCount: number, rank: number | null}}>({});
@@ -71,9 +72,11 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                 const name = await userService.getDisplayName();
                 const linked = await userService.isXLinked();
                 const profileImageUrl = await userService.getXProfileImageUrl();
+                const xName = linked ? await userService.getXDisplayName() : '';
                 setDisplayName(name);
                 setIsXLinked(linked);
                 setXProfileImageUrl(profileImageUrl || '');
+                setXDisplayName(xName || '');
             } catch (error) {
                 console.error('Failed to load user info:', error);
             }
@@ -101,6 +104,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
             setDisplayName(newName);
             setIsXLinked(false);
             setXProfileImageUrl(''); // プロフィール画像もクリア
+            setXDisplayName(''); // Xディスプレイ名もクリア
             
             // ランキング表示を確実に更新するため、少し遅延してページリフレッシュ
             setTimeout(() => {
@@ -383,12 +387,21 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                     </div>
 
                     {/* ナビゲーション部分 */}
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
                         {/* ユーザーメニュー */}
                         <div className="relative">
                             <button
                                 onClick={() => setShowUserMenu(!showUserMenu)}
-                                className="flex items-center justify-center w-10 h-10 glass-light text-slate-700 rounded-full hover:bg-white/30 transition-all duration-200 relative"
+                                className="flex items-center justify-center text-white transition-all duration-200 relative"
+                                style={{ 
+                                    width: '60px',
+                                    height: '58px',
+                                    marginTop: '-9px',
+                                    marginBottom: '-9px',
+                                    backgroundColor: isXLinked ? 'transparent' : '#6b7280'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = isXLinked ? 'rgba(255, 255, 255, 0.1)' : '#4b5563'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = isXLinked ? 'transparent' : '#6b7280'}
                                 title={displayName}
                             >
                                 {isXLinked && xProfileImageUrl ? (
@@ -404,29 +417,25 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                                                 target.style.display = 'none';
                                                 const parent = target.parentElement;
                                                 if (parent) {
-                                                    parent.innerHTML = '<div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
+                                                    parent.innerHTML = '<div class="w-8 h-8 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
                                                 }
                                             }}
                                         />
                                     </div>
                                 ) : (
                                     // X未連携：人形アイコンを表示
-                                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                                        <User className="w-4 h-4 text-gray-600" />
-                                    </div>
-                                )}
-                                {isXLinked && (
-                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                        <ExternalLink className="w-2 h-2 text-white" />
+                                    <div className="w-8 h-8 flex items-center justify-center">
+                                        <User className="w-4 h-4 text-white" />
                                     </div>
                                 )}
                             </button>
 
+
                             {/* ユーザーメニュードロップダウン */}
                             {showUserMenu && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[10001]">
+                                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[10001]">
                                     <div className="px-4 py-2 text-xs text-gray-500 border-b">
-                                        {isXLinked ? 'X連携中' : 'ハンター名'}
+                                        {isXLinked ? (xDisplayName || 'X連携中') : displayName}
                                     </div>
                                     <button
                                         onClick={(e) => {
@@ -434,11 +443,29 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                                             e.stopPropagation();
                                             handleXLink();
                                         }}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                        className="w-full text-left px-4 py-2 text-sm flex items-center transition-colors duration-200 bg-black text-white hover:bg-gray-800"
                                     >
                                         <ExternalLink className="w-4 h-4 mr-2" />
-                                        {isXLinked ? 'X連携を解除' : 'Xと連携（テスト）'}
+                                        {isXLinked ? 'X連携を解除' : 'Xと連携'}
                                     </button>
+                                    
+                                    {/* X連携の説明文 */}
+                                    {!isXLinked ? (
+                                        <div className="px-4 py-3 text-xs text-gray-600 bg-gray-50 border-t">
+                                            <p className="mb-2">
+                                                X連携すると、アイコンとXのディスプレイ名を取得します。ランキングの名前がXの名前に変わります。
+                                            </p>
+                                            <p className="text-gray-600">
+                                                それ以外の情報にはアクセスしませんので、ご安心ください。また、解除はいつでも可能です。
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <div className="px-4 py-3 text-xs text-gray-600 bg-gray-50 border-t">
+                                            <p className="text-gray-600">
+                                                X連携を解除しても、過去の記録は削除されませんので、ご安心ください。
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -454,7 +481,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                         )}
 
                         {/* ハンバーガーメニュー */}
-                        <div className="relative -mr-4">
+                        <div className="relative">
                             <button
                                 onClick={() => setShowHamburgerMenu(!showHamburgerMenu)}
                                 className="flex items-center justify-center text-white transition-all duration-200"
