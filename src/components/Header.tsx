@@ -391,7 +391,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                             alt="HunterHub" 
                             className="h-8"
                         />
-                        <span className="ml-3 text-sm font-bold" style={{ color: '#1d4f74' }}>
+                        <span className="ml-3 text-xs font-bold" style={{ color: '#1d4f74' }}>
                             あなたの狩猟感覚を<br />オンラインでトレーニング
                         </span>
                     </div>
