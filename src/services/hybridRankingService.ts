@@ -398,25 +398,45 @@ export class HybridRankingService {
    * 全ユーザーの総プレイ回数を取得
    */
   public async getTotalPlayCount(gameType: string): Promise<number> {
+    console.log(`🔍 HybridRankingService: Getting total play count for ${gameType}`);
+    console.log(`🔍 HybridRankingService: useCloud=${this.config.useCloud}, fallbackToLocal=${this.config.fallbackToLocal}`);
+    
     try {
       if (this.config.useCloud) {
+        console.log(`🔍 HybridRankingService: Attempting to get total play count from cloud for ${gameType}`);
         // クラウドから全ユーザーの総プレイ回数を取得
         const cloudResult = await this.cloudService.getRankings(gameType, 10000); // 大きな数で全データ取得
+        console.log(`🔍 HybridRankingService: Cloud result for ${gameType}:`, {
+          totalCount: cloudResult.totalCount,
+          rankingsLength: cloudResult.rankings.length,
+          totalPlayers: cloudResult.totalPlayers
+        });
         return cloudResult.totalCount || 0;
       } else {
+        console.log(`🔍 HybridRankingService: Getting total play count from local for ${gameType}`);
         // ローカルから取得（フォールバック）
         const localResult = await this.localService.getRankings(gameType, 10000);
+        console.log(`🔍 HybridRankingService: Local result for ${gameType}:`, localResult.rankings.length);
         return localResult.rankings.length;
       }
     } catch (error) {
-      console.error('Failed to get total play count from cloud, falling back to local:', error);
+      console.error(`❌ HybridRankingService: Failed to get total play count for ${gameType} from cloud:`, error);
+      console.error('Error details:', error);
       
       if (this.config.fallbackToLocal) {
-        // フォールバック: ローカルから取得
-        const localResult = await this.localService.getRankings(gameType, 10000);
-        return localResult.rankings.length;
+        console.log(`🔄 HybridRankingService: Falling back to local for ${gameType}`);
+        try {
+          // フォールバック: ローカルから取得
+          const localResult = await this.localService.getRankings(gameType, 10000);
+          console.log(`✅ HybridRankingService: Local fallback result for ${gameType}:`, localResult.rankings.length);
+          return localResult.rankings.length;
+        } catch (localError) {
+          console.error(`❌ HybridRankingService: Local fallback also failed for ${gameType}:`, localError);
+          return 0;
+        }
       }
       
+      console.log(`⚠️ HybridRankingService: No fallback configured, returning 0 for ${gameType}`);
       return 0;
     }
   }

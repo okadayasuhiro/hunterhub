@@ -305,16 +305,24 @@ const HomePage: React.FC = () => {
                         const hybridRankingService = HybridRankingService.getInstance();
                         console.log(`🔍 HomePage: Getting reflex total play count...`);
                         const totalPlayCount = await hybridRankingService.getTotalPlayCount('reflex');
-                        console.log(`🔍 HomePage: reflex total play count from cloud:`, totalPlayCount);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            reflex: totalPlayCount
-                        }));
+                        console.log(`🔍 HomePage: reflex total play count result:`, totalPlayCount);
+                        
+                        if (totalPlayCount > 0) {
+                            console.log(`✅ HomePage: Successfully got reflex play count: ${totalPlayCount}`);
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                reflex: totalPlayCount
+                            }));
+                        } else {
+                            console.warn(`⚠️ HomePage: Got 0 play count for reflex, trying fallback`);
+                            throw new Error('Zero play count returned from cloud');
+                        }
                     } catch (error) {
-                        console.error('Failed to get reflex total play count from cloud:', error);
+                        console.error('❌ HomePage: Failed to get reflex total play count from cloud:', error);
                         console.error('Error details:', error);
                         // フォールバック: LocalStorageから取得
                         try {
+                            console.log(`🔄 HomePage: Attempting localStorage fallback for reflex`);
                             const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
                             const allReflexScores = allScores.filter((score: any) => 
                                 score.gameType === 'reflex'
@@ -326,7 +334,7 @@ const HomePage: React.FC = () => {
                                 reflex: fallbackCount
                             }));
                         } catch (fallbackError) {
-                            console.error('Fallback also failed:', fallbackError);
+                            console.error('❌ HomePage: Fallback also failed:', fallbackError);
                             setPlayCounts(prev => ({
                                 ...prev,
                                 reflex: 0
@@ -353,26 +361,38 @@ const HomePage: React.FC = () => {
                     // プレイ回数を設定（クラウドから全ユーザーの総プレイ回数を取得）
                     try {
                         const hybridRankingService = HybridRankingService.getInstance();
+                        console.log(`🔍 HomePage: Getting target total play count...`);
                         const totalPlayCount = await hybridRankingService.getTotalPlayCount('target');
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            target: totalPlayCount
-                        }));
-                        console.log(`🔍 HomePage: target total play count from cloud:`, totalPlayCount);
+                        console.log(`🔍 HomePage: target total play count result:`, totalPlayCount);
+                        
+                        if (totalPlayCount > 0) {
+                            console.log(`✅ HomePage: Successfully got target play count: ${totalPlayCount}`);
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                target: totalPlayCount
+                            }));
+                        } else {
+                            console.warn(`⚠️ HomePage: Got 0 play count for target, trying fallback`);
+                            throw new Error('Zero play count returned from cloud');
+                        }
                     } catch (error) {
-                        console.error('Failed to get target total play count from cloud:', error);
+                        console.error('❌ HomePage: Failed to get target total play count from cloud:', error);
+                        console.error('Error details:', error);
                         // フォールバック: LocalStorageから取得
                         try {
+                            console.log(`🔄 HomePage: Attempting localStorage fallback for target`);
                             const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
                             const allTargetScores = allScores.filter((score: any) => 
                                 score.gameType === 'target'
                             );
                             const fallbackCount = allTargetScores.length;
+                            console.log(`🔍 HomePage: target fallback count from localStorage:`, fallbackCount);
                             setPlayCounts(prev => ({
                                 ...prev,
                                 target: fallbackCount
                             }));
                         } catch (fallbackError) {
+                            console.error('❌ HomePage: Fallback also failed:', fallbackError);
                             setPlayCounts(prev => ({
                                 ...prev,
                                 target: 0
@@ -401,26 +421,38 @@ const HomePage: React.FC = () => {
                     // プレイ回数を設定（クラウドから全ユーザーの総プレイ回数を取得）
                     try {
                         const hybridRankingService = HybridRankingService.getInstance();
+                        console.log(`🔍 HomePage: Getting sequence total play count...`);
                         const totalPlayCount = await hybridRankingService.getTotalPlayCount('sequence');
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            sequence: totalPlayCount
-                        }));
-                        console.log(`🔍 HomePage: sequence total play count from cloud:`, totalPlayCount);
+                        console.log(`🔍 HomePage: sequence total play count result:`, totalPlayCount);
+                        
+                        if (totalPlayCount > 0) {
+                            console.log(`✅ HomePage: Successfully got sequence play count: ${totalPlayCount}`);
+                            setPlayCounts(prev => ({
+                                ...prev,
+                                sequence: totalPlayCount
+                            }));
+                        } else {
+                            console.warn(`⚠️ HomePage: Got 0 play count for sequence, trying fallback`);
+                            throw new Error('Zero play count returned from cloud');
+                        }
                     } catch (error) {
-                        console.error('Failed to get sequence total play count from cloud:', error);
+                        console.error('❌ HomePage: Failed to get sequence total play count from cloud:', error);
+                        console.error('Error details:', error);
                         // フォールバック: LocalStorageから取得
                         try {
+                            console.log(`🔄 HomePage: Attempting localStorage fallback for sequence`);
                             const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
                             const allSequenceScores = allScores.filter((score: any) => 
                                 score.gameType === 'sequence'
                             );
                             const fallbackCount = allSequenceScores.length;
+                            console.log(`🔍 HomePage: sequence fallback count from localStorage:`, fallbackCount);
                             setPlayCounts(prev => ({
                                 ...prev,
                                 sequence: fallbackCount
                             }));
                         } catch (fallbackError) {
+                            console.error('❌ HomePage: Fallback also failed:', fallbackError);
                             setPlayCounts(prev => ({
                                 ...prev,
                                 sequence: 0
