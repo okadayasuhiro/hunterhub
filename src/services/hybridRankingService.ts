@@ -393,4 +393,31 @@ export class HybridRankingService {
       isCurrentUser: cloudEntry.isCurrentUser
     };
   }
+
+  /**
+   * 全ユーザーの総プレイ回数を取得
+   */
+  public async getTotalPlayCount(gameType: string): Promise<number> {
+    try {
+      if (this.config.useCloud) {
+        // クラウドから全ユーザーの総プレイ回数を取得
+        const cloudResult = await this.cloudService.getRankings(gameType, 10000); // 大きな数で全データ取得
+        return cloudResult.totalCount || 0;
+      } else {
+        // ローカルから取得（フォールバック）
+        const localResult = this.localService.getRankings(gameType, 10000);
+        return localResult.entries.length;
+      }
+    } catch (error) {
+      console.error('Failed to get total play count from cloud, falling back to local:', error);
+      
+      if (this.config.fallbackToLocal) {
+        // フォールバック: ローカルから取得
+        const localResult = this.localService.getRankings(gameType, 10000);
+        return localResult.entries.length;
+      }
+      
+      return 0;
+    }
+  }
 }
