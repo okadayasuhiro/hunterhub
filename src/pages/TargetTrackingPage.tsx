@@ -27,6 +27,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     const [isTargetClickable, setIsTargetClickable] = useState(true);
     const [currentRank, setCurrentRank] = useState<number | null>(null);
     const [totalPlayers, setTotalPlayers] = useState<number>(0);
+    const [actualTotalTime, setActualTotalTime] = useState<number | null>(null);
 
     // タイマーIDを管理するためのref
     const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -111,6 +112,10 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         setCurrentTargetNumber(1);
         setTargetResults([]);
         setElapsedTime(0);
+        // 順位情報をリセット
+        setCurrentRank(null);
+        setTotalPlayers(0);
+        setActualTotalTime(null);
         navigate('/target/game');
     };
 
@@ -134,7 +139,39 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         setIsTargetClickable(true); // 新しいターゲット出現時にクリック可能にする
     }, [generateRandomPosition]);
 
-
+    // 結果画面で現在のプレイスコアの順位を取得
+    useEffect(() => {
+        const fetchCurrentScoreRank = async () => {
+            // 条件チェックをuseEffect内部に移動（currentRankの条件を削除）
+            if (mode !== 'result' || targetResults.length === 0 || !actualTotalTime) {
+                return;
+            }
+            
+            try {
+                console.log('Fetching current score rank on target result page...');
+                const rankingService = HybridRankingService.getInstance();
+                
+                // 現在のプレイスコア（保存時と同じ実際のゲーム時間）で順位を計算
+                const totalTimeMs = Math.floor(actualTotalTime * 1000); // 保存時と同じ形式に変換
+                console.log('Target result page current play score (actualTotalTime):', actualTotalTime, 'ms:', totalTimeMs);
+                
+                const rankResult = await rankingService.getCurrentScoreRank('target', totalTimeMs);
+                console.log('Target result page current score rank result:', rankResult);
+                
+                if (rankResult) {
+                    console.log('Target result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                    setCurrentRank(rankResult.rank);
+                    setTotalPlayers(rankResult.totalPlayers);
+                } else {
+                    console.log('No current score rank found on target result page');
+                }
+            } catch (error) {
+                console.error('Failed to get current score rank on target result page:', error);
+            }
+        };
+        
+        fetchCurrentScoreRank();
+    }, [mode, targetResults, actualTotalTime]);
 
     // ターゲットクリック処理
     const handleTargetClick = (e: React.MouseEvent) => {
@@ -174,6 +211,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         setGameState('finished');
 
         const totalTime = (Date.now() - gameStartTime) / 1000;
+        setActualTotalTime(totalTime); // 結果画面で使用するために保存
         const averageReactionTime = finalResults.length > 0
             ? finalResults.reduce((sum, result) => sum + result.reactionTime, 0) / finalResults.length
             : 0;
@@ -207,11 +245,16 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                 targetCount: finalResults.length
             });
             console.log('✅ Target tracking score submitted to cloud:', totalTimeMs, 'ms (total time)');
+            
+            // スコア保存完了後に少し待機してから画面遷移（クラウド同期のため）
+            setTimeout(() => {
+                navigate('/target/result');
+            }, 1000);
         } catch (error) {
             console.error('❌ Failed to submit target tracking score to cloud:', error);
+            // エラーの場合でも画面遷移
+            navigate('/target/result');
         }
-
-        navigate('/target/result');
     };
 
     // ゲームリセット
@@ -270,7 +313,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                             {/* ヘッダー */}
                             <div className="text-right mb-4">
                                 <h1 className="text-sm font-medium text-gray-500">
-                                    ターゲット追跡
+                                    ターゲット追跡トレーニング
                                 </h1>
                             </div>
 
@@ -353,37 +396,6 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         );
     }
 
-    // 結果画面で現在のプレイスコアの順位を取得
-    useEffect(() => {
-        const fetchCurrentScoreRank = async () => {
-            if (mode === 'result' && targetResults.length > 0 && !currentRank) {
-                try {
-                    console.log('Fetching current score rank on target result page...');
-                    const rankingService = HybridRankingService.getInstance();
-                    
-                    // 現在のプレイスコア（総合時間）で順位を計算
-                    const totalTime = targetResults.reduce((sum, result) => sum + result.reactionTime, 0);
-                    console.log('Target result page current play score (totalTime):', totalTime);
-                    
-                    const rankResult = await rankingService.getCurrentScoreRank('target', totalTime);
-                    console.log('Target result page current score rank result:', rankResult);
-                    
-                    if (rankResult) {
-                        console.log('Target result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
-                        setCurrentRank(rankResult.rank);
-                        setTotalPlayers(rankResult.totalPlayers);
-                    } else {
-                        console.log('No current score rank found on target result page');
-                    }
-                } catch (error) {
-                    console.error('Failed to get current score rank on target result page:', error);
-                }
-            }
-        };
-        
-        fetchCurrentScoreRank();
-    }, [mode, targetResults, currentRank]);
-
     if (mode === 'result') {
         return (
             <div className="flex-1">
@@ -393,7 +405,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                             {/* ヘッダー */}
                             <div className="text-center mb-6">
                                 <h1 className="text-xl font-bold text-gray-800">
-                                    テスト完了
+                                    トレーニング完了です！お疲れ様でした！
                                 </h1>
                             </div>
 
@@ -402,11 +414,11 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                 <div className="grid grid-cols-2 gap-6 mb-6">
                                     <div className="text-center">
                                         <div className="text-sm text-gray-600 mb-1">総合時間</div>
-                                        <div className="text-2xl font-bold text-green-600">{currentStats.totalTime.toFixed(2)}秒</div>
+                                        <div className="text-2xl font-bold text-green-600">{currentStats.totalTime.toFixed(4)}s</div>
                                     </div>
                                     <div className="text-center">
                                         <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                        <div className="text-2xl font-bold text-purple-600">{currentStats.averageReactionTime.toFixed(3)}秒</div>
+                                        <div className="text-2xl font-bold text-purple-600">{currentStats.averageReactionTime.toFixed(3)}s</div>
                                     </div>
                                 </div>
                                 

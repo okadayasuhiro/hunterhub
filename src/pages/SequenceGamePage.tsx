@@ -267,6 +267,40 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         }
     }, [gameArea, level, gameState, generateNumbers, mode]);
 
+    // 結果画面で現在のプレイスコアの順位を取得
+    useEffect(() => {
+        const fetchCurrentScoreRank = async () => {
+            // 条件チェックをuseEffect内部に移動（currentRankの条件を削除）
+            if (mode !== 'result' || level !== 7 || finalTime === null) {
+                return;
+            }
+            
+            try {
+                console.log('Fetching current score rank on sequence result page...');
+                const rankingService = HybridRankingService.getInstance();
+                
+                // 現在のプレイスコア（完了時間）で順位を計算
+                const completionTimeMs = finalTime;
+                console.log('Sequence result page current play score (completionTime):', completionTimeMs);
+                
+                const rankResult = await rankingService.getCurrentScoreRank('sequence', completionTimeMs);
+                console.log('Sequence result page current score rank result:', rankResult);
+                
+                if (rankResult) {
+                    console.log('Sequence result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                    setCurrentRank(rankResult.rank);
+                    setTotalPlayers(rankResult.totalPlayers);
+                } else {
+                    console.log('No current score rank found on sequence result page');
+                }
+            } catch (error) {
+                console.error('Failed to get current score rank on sequence result page:', error);
+            }
+        };
+        
+        fetchCurrentScoreRank();
+    }, [mode, level, finalTime]);
+
     const startGame = () => {
         setGameState('countdown');
         setCountdown(3);
@@ -282,6 +316,9 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         setSuccessfulClicks(0);
         setCurrentAverageInterval(0);
         setCurrentSuccessRate(100);
+        // 順位情報をリセット
+        setCurrentRank(null);
+        setTotalPlayers(0);
     };
 
     // ゲームエリアクリック処理（ミスクリック検出用）
@@ -306,7 +343,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         }
     };
 
-    const handleNumberClick = (clickedNumber: number) => {
+    const handleNumberClick = async (clickedNumber: number) => {
         const currentClickTime = Date.now();
         setTotalClicks(prev => prev + 1);
 
@@ -340,9 +377,23 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                             : 0;
                         const finalSuccessRate = Math.round(((successfulClicks + 1) / (totalClicks + 1)) * 100);
 
-                        saveGameHistory(completionTime, true, finalAverageInterval, finalSuccessRate);
+                        // スコア保存完了を待ってから画面遷移
+                        try {
+                            await saveGameHistory(completionTime, true, finalAverageInterval, finalSuccessRate);
+                            console.log('✅ Sequence game history saved, navigating to result');
+                            
+                            // スコア保存完了後に少し待機してから画面遷移（クラウド同期のため）
+                            setTimeout(() => {
+                                navigate('/sequence/result');
+                            }, 1000);
+                        } catch (error) {
+                            console.error('❌ Failed to save sequence game history:', error);
+                            // エラーの場合でも画面遷移
+                            navigate('/sequence/result');
+                        }
+                    } else {
+                        navigate('/sequence/result');
                     }
-                    navigate('/sequence/result');
                 } else {
                     // 次のレベルに即座に進む
                     setLevel(prev => prev + 1);
@@ -387,7 +438,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                             {/* ヘッダー */}
                             <div className="text-right mb-4">
                                 <h1 className="text-sm font-medium text-gray-500">
-                                    数字順序ゲーム
+                                    カウントアップ・トレーニング
                                 </h1>
                             </div>
 
@@ -470,37 +521,6 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         );
     }
 
-    // 結果画面で現在のプレイスコアの順位を取得
-    useEffect(() => {
-        const fetchCurrentScoreRank = async () => {
-            if (mode === 'result' && level === 7 && finalTime !== null && !currentRank) {
-                try {
-                    console.log('Fetching current score rank on sequence result page...');
-                    const rankingService = HybridRankingService.getInstance();
-                    
-                    // 現在のプレイスコア（完了時間）で順位を計算
-                    const completionTimeMs = finalTime;
-                    console.log('Sequence result page current play score (completionTime):', completionTimeMs);
-                    
-                    const rankResult = await rankingService.getCurrentScoreRank('sequence', completionTimeMs);
-                    console.log('Sequence result page current score rank result:', rankResult);
-                    
-                    if (rankResult) {
-                        console.log('Sequence result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
-                        setCurrentRank(rankResult.rank);
-                        setTotalPlayers(rankResult.totalPlayers);
-                    } else {
-                        console.log('No current score rank found on sequence result page');
-                    }
-                } catch (error) {
-                    console.error('Failed to get current score rank on sequence result page:', error);
-                }
-            }
-        };
-        
-        fetchCurrentScoreRank();
-    }, [mode, level, finalTime, currentRank]);
-
     if (mode === 'result') {
         return (
             <div className="flex-1">
@@ -510,7 +530,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                             {/* ヘッダー */}
                             <div className="text-center mb-6">
                                 <h1 className="text-xl font-bold text-gray-800">
-                                    テスト完了
+                                    トレーニング完了です！お疲れ様でした！
                                 </h1>
                             </div>
 
@@ -533,14 +553,14 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                         {/* ランキング表示 */}
                                         {currentRank && totalPlayers > 0 ? (
                                             <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
-                                                <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                                <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                                 <div className="text-xl font-bold">
                                                     {currentRank}位 / {totalPlayers}位
                                                 </div>
                                             </div>
                                         ) : (
                                             <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
-                                                <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                                <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                                 <div className="text-xl font-bold">
                                                     全レベル完全制覇！
                                                 </div>

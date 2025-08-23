@@ -213,16 +213,23 @@ export class HybridRankingService {
 
     // 2. ローカルから計算（フォールバック）
     try {
-      // ローカルランキングを取得して手動計算
-      const localRankings = await this.localService.getRankings(gameType, 1000);
+      // ローカルから指定ゲームタイプの全スコアを取得して手動計算
+      const gameScores = this.localService.getAllGameScores(gameType);
       
       // 現在スコアより良いスコアの数を数える
-      const betterScoresCount = localRankings.rankings.filter(entry => entry.score < currentScore).length;
+      const betterScoresCount = gameScores.filter(score => score.score < currentScore).length;
       
       const rank = betterScoresCount + 1;
-      const totalPlayers = localRankings.rankings.length + 1; // 全スコア数 + 現在のスコア
+      const totalPlayers = gameScores.length + 1; // 全スコア数 + 現在のスコア
       
-      console.log('✅ Current score rank calculated from local (fallback)');
+      console.log('✅ Current score rank calculated from local (fallback)', {
+        gameType,
+        currentScore,
+        betterScoresCount,
+        rank,
+        totalPlayers,
+        totalGameScores: gameScores.length
+      });
       return { rank, totalPlayers };
     } catch (error) {
       console.error('❌ Local current score rank calculation also failed:', error);

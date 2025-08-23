@@ -95,6 +95,14 @@ export class LocalRankingService {
   }
 
   /**
+   * 指定ゲームタイプの全スコアを取得（順位計算用）
+   */
+  public getAllGameScores(gameType: string): GameScore[] {
+    const allScores = this.getAllScores();
+    return allScores.filter(score => score.gameType === gameType);
+  }
+
+  /**
    * ユーザーごとの最高スコアを計算
    */
   private calculateUserBestScores(gameScores: GameScore[]): GameScore[] {

@@ -273,8 +273,8 @@ export class CloudRankingService {
       const result = await this.client.graphql({
         query: listGameScores,
         variables: { 
-          filter,
-          limit: 1000
+          filter
+          // limitを削除して全データを取得
         }
       });
 

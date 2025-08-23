@@ -157,6 +157,9 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         setIsTestRunning(true);
         setCurrentRound(1);
         setResults([]);
+        // 順位情報をリセット
+        setCurrentRank(null);
+        setTotalPlayers(0);
 
         startSingleTest();
     }, [startSingleTest]);
@@ -298,10 +301,10 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             const rankingService = HybridRankingService.getInstance();
                             
                             // 現在のプレイスコア（DynamoDBに保存されるのと同じ形式）で順位を計算
-                            const { averageSuccessTime } = calculateWeightedScore(finalResults);
-                            console.log('Current play score (averageSuccessTime):', averageSuccessTime);
+                            const { averageSuccessTime, weightedScore } = calculateWeightedScore(finalResults);
+                            console.log('Current play score (averageSuccessTime):', averageSuccessTime, 'weightedScore:', weightedScore);
                             
-                            const rankResult = await rankingService.getCurrentScoreRank('reflex', averageSuccessTime);
+                            const rankResult = await rankingService.getCurrentScoreRank('reflex', weightedScore);
                             console.log('Current score rank result:', rankResult);
                             
                             if (rankResult) {
@@ -449,7 +452,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     // 結果画面で現在スコアでの順位を再取得（条件分岐外でuseEffectを定義）
     useEffect(() => {
         const fetchCurrentScoreRank = async () => {
-            if (mode === 'result' && results.length > 0 && !currentRank) {
+            if (mode === 'result' && results.length > 0) {
                 try {
                     console.log('Fetching current score rank on result page...');
                     const rankingService = HybridRankingService.getInstance();
@@ -457,10 +460,10 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                     // 現在のプレイスコア（平均反応時間）で順位を計算
                     const validResults = results.filter(r => r.success && r.time > 0);
                     if (validResults.length > 0) {
-                        const { averageSuccessTime } = calculateWeightedScore(results);
-                        console.log('Result page current play score (averageSuccessTime):', averageSuccessTime);
+                        const { averageSuccessTime, weightedScore } = calculateWeightedScore(results);
+                        console.log('Result page current play score (averageSuccessTime):', averageSuccessTime, 'weightedScore:', weightedScore);
                         
-                        const rankResult = await rankingService.getCurrentScoreRank('reflex', averageSuccessTime);
+                        const rankResult = await rankingService.getCurrentScoreRank('reflex', weightedScore);
                         console.log('Result page current score rank result:', rankResult);
                         
                         if (rankResult) {
@@ -478,7 +481,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         };
         
         fetchCurrentScoreRank();
-    }, [mode, results, currentRank]);
+    }, [mode, results]);
 
     // 結果データの初期化（mode=resultの場合のみ）
     useEffect(() => {
@@ -505,7 +508,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             {/* ヘッダー */}
                             <div className="text-right mb-4">
                                 <h1 className="text-sm font-medium text-gray-500">
-                                    反射神経テスト
+                                    反射神経トレーニング
                                 </h1>
                             </div>
 
@@ -608,7 +611,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             {/* ヘッダー */}
                             <div className="text-center mb-4">
                                 <h1 className="text-m font-bold text-gray-800">
-                                    テスト完了です！お疲れ様でした！
+                                    トレーニング完了です！お疲れ様でした！
                                 </h1>
                             </div>
 

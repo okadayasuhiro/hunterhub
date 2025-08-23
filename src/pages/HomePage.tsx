@@ -518,7 +518,7 @@ const HomePage: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <GameCard
-                            title="反射神経テスト"
+                            title="反射神経トレーニング"
                             description="緑から赤への色変化に素早く反応して、クリックしてください。赤になる前にクリックするとフライング！"
                             icon={<></>}
                             path="/reflex/instructions"
@@ -528,7 +528,7 @@ const HomePage: React.FC = () => {
                             topPlayer={topPlayers.reflex}
                         />
                         <GameCard
-                            title="ターゲット追跡"
+                            title="ターゲット追跡トレーニング"
                             description="画面上の標的を順番にクリック！10個のターゲットを順番に撃ち抜き、反応時間と総合時間を測定します。"
                             icon={<></>}
                             path="/target/instructions"
@@ -538,7 +538,7 @@ const HomePage: React.FC = () => {
                             topPlayer={topPlayers.target}
                         />
                         <GameCard
-                            title="数字順序ゲーム"
+                            title="カウントアップ・トレーニング"
                             description="画面上にランダムに配置された数字を小さい順にクリックします！反応時間と総合時間を競います。"
                             icon={<></>}
                             path="/sequence/instructions"
