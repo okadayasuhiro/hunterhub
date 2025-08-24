@@ -69,10 +69,10 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
     const [currentAverageInterval, setCurrentAverageInterval] = useState(0);
     const [currentSuccessRate, setCurrentSuccessRate] = useState(100);
 
-    // ゲーム履歴の状態を追加
+    // トレーニング履歴の状態を追加
     const [gameHistory, setGameHistory] = useState<SequenceGameHistory[]>([]);
 
-    // ローカルストレージからゲーム履歴を読み込み
+    // ローカルストレージからトレーニング履歴を読み込み
     useEffect(() => {
         const savedHistory = localStorage.getItem('sequenceGameHistory');
         if (savedHistory) {
@@ -92,7 +92,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         checkXLinkStatus();
     }, []);
 
-    // 平均クリック間隔を計算
+    // 平均タップ間隔を計算
     const calculateAverageInterval = useCallback(() => {
         if (clickTimes.length < 2) return 0;
         const intervals = [];
@@ -108,7 +108,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         setCurrentSuccessRate(totalClicks > 0 ? Math.round((successfulClicks / totalClicks) * 100) : 100);
     }, [clickTimes, totalClicks, successfulClicks, calculateAverageInterval]);
 
-    // ゲーム履歴を保存
+    // トレーニング履歴を保存
     const saveGameHistory = useCallback(async (completionTime: number, completed: boolean, avgInterval: number, successRate: number) => {
         const rankInfo = getRankFromTime(completionTime);
 
@@ -122,7 +122,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
             completed
         };
 
-        // ゲーム履歴の状態更新（表示用）
+        // トレーニング履歴の状態更新（表示用）
         const updatedHistory = [newGameResult, ...gameHistory].slice(0, 10);
         setGameHistory(updatedHistory);
         
@@ -381,13 +381,13 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         setTotalPlayers(0);
     };
 
-    // ゲームエリアクリック処理（ミスクリック検出用）
+    // トレーニングエリアタップ処理（ミスタップ検出用）
     const handleGameAreaClick = (event: React.MouseEvent<HTMLDivElement>) => {
         const rect = event.currentTarget.getBoundingClientRect();
         const clickX = event.clientX - rect.left;
         const clickY = event.clientY - rect.top;
 
-        // クリックした位置が数字ボタンの範囲内かチェック
+        // タップした位置が数字ボタンの範囲内かチェック
         const clickedButton = numbers.find(num => {
             const distance = Math.sqrt(
                 Math.pow(clickX - (num.x + 30), 2) + Math.pow(clickY - (num.y + 30), 2)
@@ -398,7 +398,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         if (clickedButton) {
             handleNumberClick(clickedButton.number);
         } else {
-            // ミスクリック（空白部分をクリック）
+            // ミスタップ（空白部分をタップ）
             setTotalClicks(prev => prev + 1);
         }
     };
@@ -408,7 +408,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         setTotalClicks(prev => prev + 1);
 
         if (clickedNumber === nextNumber) {
-            // 正解クリック
+            // 正解タップ
             setSuccessfulClicks(prev => prev + 1);
             setClickTimes(prev => [...prev, currentClickTime]);
 
@@ -463,7 +463,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                 setNextNumber(prev => prev + 1);
             }
         }
-        // 間違った数字をクリックした場合は何もしない（ミスクリックとしてカウント済み）
+        // 間違った数字をタップした場合は何もしない（ミスタップとしてカウント済み）
     };
 
     const resetGame = () => {
@@ -539,7 +539,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                     <h3 className="text-lg font-medium text-gray-800 mb-4 text-center">ベスト記録</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         <div className="text-center">
-                                            <div className="text-sm text-gray-600 mb-1">平均クリック間隔</div>
+                                            <div className="text-sm text-gray-600 mb-1">平均タップ間隔</div>
                                             <div className="text-xl font-bold text-blue-600">{bestRecord.averageClickInterval.toFixed(2)}s</div>
                                         </div>
                                         <div className="text-center">
@@ -547,7 +547,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                             <div className="text-xl font-bold text-green-600">{formatTime(bestRecord.completionTime)}</div>
                                         </div>
                                         <div className="text-center">
-                                            <div className="text-sm text-gray-600 mb-1">成功クリック率</div>
+                                            <div className="text-sm text-gray-600 mb-1">成功タップ率</div>
                                             <div className="text-xl font-bold text-purple-600">{bestRecord.successClickRate}%</div>
                                         </div>
                                     </div>
@@ -560,7 +560,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                     onClick={handleStartGame}
                                     className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                 >
-                                    ゲーム開始
+                                    トレーニング開始
                                 </button>
                                 <button
                                     onClick={handleBack}
@@ -605,7 +605,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="text-2xl font-bold text-green-600">{formatTime(finalTime)}</div>
                                             </div>
                                             <div className="text-center">
-                                                <div className="text-sm text-gray-600 mb-1">平均クリック間隔</div>
+                                                <div className="text-sm text-gray-600 mb-1">平均タップ間隔</div>
                                                 <div className="text-2xl font-bold text-purple-600">{currentAverageInterval.toFixed(2)}秒</div>
                                             </div>
                                         </div>
@@ -656,12 +656,12 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            const shareText = `ハントレで数字順序ゲームをプレイしました！\n全レベル完全制覇！\n完了時間: ${finalTime?.toFixed(2)}秒`;
+                                                            const shareText = `ハントレで数字順序トレーニングをプレイしました！\n全レベル完全制覇！\n完了時間: ${finalTime?.toFixed(2)}秒`;
                                                             const shareUrl = window.location.origin;
                                                             
                                                             if (navigator.share) {
                                                                 navigator.share({
-                                                                    title: 'ハントレ - 数字順序ゲーム結果',
+                                                                    title: 'ハントレ - 数字順序トレーニング結果',
                                                                     text: shareText,
                                                                     url: shareUrl
                                                                 });
@@ -684,7 +684,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                 ) : (
                                     // 途中終了時の表示
                                     <div className="text-center py-8">
-                                        <div className="text-lg text-gray-600 mb-2">ゲーム終了</div>
+                                        <div className="text-lg text-gray-600 mb-2">トレーニング終了</div>
                                         <div className="text-sm text-gray-500">
                                             レベル {level} で終了しました
                                         </div>
@@ -775,7 +775,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
 
 
 
-                        {/* ゲームエリア */}
+                        {/* トレーニングエリア */}
                         <div className="bg-white rounded-lg shadow-sm border border-blue-100 mb-8">
                             <div
                                 className="relative bg-gray-50 rounded-lg overflow-hidden cursor-pointer"
@@ -789,7 +789,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 {countdown === 0 ? 'START!' : countdown}
                                             </div>
                                             <div className="text-xl text-gray-600">
-                                                {countdown === 0 ? 'ゲーム開始！' : 'ゲーム開始まで...'}
+                                                {countdown === 0 ? 'トレーニング開始！' : 'トレーニング開始まで...'}
                                             </div>
                                         </div>
                                     </div>
@@ -833,7 +833,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                         {/* 各種指標 */}
                         <div className="grid grid-cols-2 gap-4 mb-8">
                             <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
-                                <div className="text-sm text-gray-600 mb-1">平均クリック間隔</div>
+                                <div className="text-sm text-gray-600 mb-1">平均タップ間隔</div>
                                 <div className="text-xl font-bold text-blue-600">{currentAverageInterval.toFixed(2)}s</div>
                             </div>
                             <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">

@@ -76,7 +76,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
 
     const handleClick = () => {
         if (isComingSoon) {
-            // Coming Soonの場合はクリック無効
+            // Coming Soonの場合はタップ無効
             return;
         }
         navigate(path);
@@ -236,7 +236,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                 
                 <div className="mt-6">
                     <button className="w-full px-8 py-3 bg-blue-500 text-white rounded-lg text-sm font-medium group-hover:bg-blue-600 transition-all duration-300 shadow-md group-hover:shadow-lg">
-                        開始する
+                        トレーニングする
                     </button>
                 </div>
             </div>
@@ -397,7 +397,7 @@ const HomePage: React.FC = () => {
                         sequence: {
                             primaryStat: '完了時間',
                             primaryValue: `${sequenceLatest.completionTime.toFixed(3)}s`, // 修正: 既に秒単位
-                            secondaryStat: '平均クリック間隔',
+                            secondaryStat: '平均タップ間隔',
                             secondaryValue: `${sequenceLatest.averageClickInterval.toFixed(3)}s`,
                             date: new Date(sequenceLatest.date).toLocaleDateString('ja-JP')
                         }
@@ -489,7 +489,7 @@ const HomePage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <GameCard
                             title="反射神経トレーニング"
-                            description="緑から赤への色変化に素早く反応して、クリックしてください。赤になる前にクリックするとフライング！"
+                            description="緑から赤への色変化に素早く反応して、タップしてください。赤になる前にタップするとフライング！"
                             icon={<></>}
                             path="/reflex/instructions"
                             lastResult={lastResults.reflex}
@@ -499,7 +499,7 @@ const HomePage: React.FC = () => {
                         />
                         <GameCard
                             title="ターゲット追跡トレーニング"
-                            description="画面上の標的を順番にクリック！10個のターゲットを順番に撃ち抜き、反応時間と総合時間を測定します。"
+                            description="画面上の標的を順番にタップ！10個のターゲットを順番に撃ち抜き、反応時間と総合時間を測定します。"
                             icon={<></>}
                             path="/target/instructions"
                             lastResult={lastResults.target}
@@ -509,7 +509,7 @@ const HomePage: React.FC = () => {
                         />
                         <GameCard
                             title="カウントアップ・トレーニング"
-                            description="画面上にランダムに配置された数字を小さい順にクリックします！反応時間と総合時間を競います。"
+                            description="画面上にランダムに配置された数字を小さい順にタップします！反応時間と総合時間を競います。"
                             icon={<></>}
                             path="/sequence/instructions"
                             lastResult={lastResults.sequence}
@@ -520,10 +520,25 @@ const HomePage: React.FC = () => {
                         <GameCard
                             title="狩猟鳥獣クイズ（獣類）"
                             description={
-                                <>
-                                    狩猟鳥獣（獣類）は20種類。それらの狩猟動物を識別するクイズトレーニングです。画像を見て動物名を選択します。狩猟免許の取得に必要な知識を身につけましょう。<br />
-                                    なお、ノイヌ、ノネコ、シベリアイタチは除外。ユキウサギ、ノウサギは一つとして扱っていますので、合計16問です。
-                                </>
+                                <div className="space-y-3">
+                                    <p className="text-gray-700 leading-relaxed">
+                                        画像を見て狩猟動物を識別するクイズトレーニング。
+                                        <span className="font-semibold text-blue-600">狩猟免許の取得</span>に必要な知識を身につけましょう。
+                                    </p>
+                                    <div className="flex items-center justify-between bg-green-50 rounded-lg px-3 py-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-2xl">🎯</span>
+                                            <span className="font-medium text-green-700">全16問</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-2xl">📚</span>
+                                            <span className="text-sm text-green-600">4択選択式</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-gray-500 leading-relaxed">
+                                        ※ノイヌ、ノネコ、シベリアイタチは除外。ユキウサギ・ノウサギは統合。
+                                    </p>
+                                </div>
                             }
                             icon={<></>}
                             path="/animal-quiz/instructions"

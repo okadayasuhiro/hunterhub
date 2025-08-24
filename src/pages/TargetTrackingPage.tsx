@@ -45,7 +45,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     const TOTAL_TARGETS = 10;
     const TARGET_SIZE = 60;
 
-    // ゲーム履歴はGameHistoryServiceで管理（LocalStorageは不要）
+    // トレーニング履歴はGameHistoryServiceで管理（LocalStorageは不要）
 
     // X連携状態を初期化時に確認
     useEffect(() => {
@@ -59,7 +59,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         checkXLinkStatus();
     }, []);
 
-    // ゲームエリアサイズの設定
+    // トレーニングエリアサイズの設定
     useEffect(() => {
         const updateGameArea = () => {
             setGameArea({
@@ -173,7 +173,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                 console.log('Fetching current score rank on target result page...');
                 const rankingService = HybridRankingService.getInstance();
                 
-                // 現在のプレイスコア（保存時と同じ実際のゲーム時間）で順位を計算
+                // 現在のプレイスコア（保存時と同じ実際のトレーニング時間）で順位を計算
                 const totalTimeMs = Math.floor(actualTotalTime * 1000); // 保存時と同じ形式に変換
                 console.log('Target result page current play score (actualTotalTime):', actualTotalTime, 'ms:', totalTimeMs);
                 
@@ -216,7 +216,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         setTargetResults(prev => [...prev, newResult]);
 
         if (currentTargetNumber >= TOTAL_TARGETS) {
-            // ゲーム終了
+            // トレーニング終了
             endGame([...targetResults, newResult]);
         } else {
             // 次のターゲット
@@ -228,7 +228,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         }
     };
 
-    // ゲーム終了処理
+    // トレーニング終了処理
     const endGame = async (finalResults: TargetResult[]) => {
         setGameState('finished');
 
@@ -247,7 +247,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
             targetResults: finalResults
         };
 
-        // ゲーム履歴の状態更新（表示用）
+        // トレーニング履歴の状態更新（表示用）
         const updatedHistory = [newGameResult, ...gameHistory].slice(0, 10);
         setGameHistory(updatedHistory);
         
@@ -279,7 +279,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         }
     };
 
-    // ゲームリセット
+    // トレーニングリセット
     const resetGame = () => {
         setGameState('countdown');
         setCountdown(3);
@@ -292,7 +292,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
 
     // X連携モーダル関連の関数
     const showXLinkModalOnClick = () => {
-        // 最新のゲーム結果を取得
+        // 最新のトレーニング結果を取得
         const latestScore = actualTotalTime ? Math.floor(actualTotalTime * 1000) : 0;
         
         setXLinkModalData({
@@ -390,7 +390,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <Hash className="w-3 h-3" />
                                         </div>
-                                        <p>ゲームは全部で10回です。</p>
+                                        <p>トレーニングは全部で10回です。</p>
                                     </div>
                                     <div className="flex items-center">
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
@@ -434,7 +434,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                     onClick={handleStartGame}
                                     className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                 >
-                                    ゲーム開始
+                                    トレーニング開始
                                 </button>
                                 <button
                                     onClick={handleBack}
@@ -485,7 +485,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                 {/* ランキング表示 */}
                                 {currentRank && totalPlayers > 0 ? (
                                     <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
-                                        <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                        <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                         <div className="text-xl font-bold">
                                             {currentRank}位 / {totalPlayers}位
                                         </div>
@@ -494,12 +494,12 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="mt-3 flex justify-center gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const shareText = `ハントレでターゲット追跡ゲームをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
                                                     const shareUrl = window.location.origin;
                                                     
                                                     if (navigator.share) {
                                                         navigator.share({
-                                                            title: 'ハントレ - ターゲット追跡ゲーム結果',
+                                                            title: 'ハントレ - ターゲット追跡トレーニング結果',
                                                             text: shareText,
                                                             url: shareUrl
                                                         });
@@ -519,7 +519,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                     </div>
                                 ) : (
                                     <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
-                                        <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                        <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                         <div className="text-xl font-bold">
                                             ランキング登録完了
                                         </div>
@@ -528,12 +528,12 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="mt-3 flex justify-center gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const shareText = `ハントレでターゲット追跡ゲームをプレイしました！\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
                                                     const shareUrl = window.location.origin;
                                                     
                                                     if (navigator.share) {
                                                         navigator.share({
-                                                            title: 'ハントレ - ターゲット追跡ゲーム結果',
+                                                            title: 'ハントレ - ターゲット追跡トレーニング結果',
                                                             text: shareText,
                                                             url: shareUrl
                                                         });
@@ -644,7 +644,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                             </div>
                         </div>
 
-                        {/* ゲームエリア */}
+                        {/* トレーニングエリア */}
                         <div className="bg-white rounded-lg shadow-sm border border-blue-100 mb-8">
                             <div
                                 className="relative bg-gray-50 rounded-lg overflow-hidden"

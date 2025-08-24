@@ -66,7 +66,7 @@ export const ANIMAL_QUIZ_DATA: AnimalData[] = [
   },
   {
     id: '10_usagi',
-    name: 'ウサギ',
+    name: '　ノウサギ・ユキウサギ',
     imageFile: '/images/quiz_animals/10_usagi.png',
     correctAnswers: ['ユキウサギ', 'ゆきうさぎ', 'ノウサギ', 'のうさぎ', 'ウサギ', 'うさぎ', '兎', '雪兎', '野兎', 'ユキウサギ', 'ノウサギ'],
     description: 'ウサギ（ユキウサギ・ノウサギ）は日本の山地に生息する野生のウサギです。季節によって毛色が変化し、素早い動きで天敵から逃れます。狩猟では小型獣として人気があります。'

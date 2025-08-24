@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
         { name: '反射神経', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
         { name: 'ターゲット追跡', path: '/target/instructions', gameType: 'target', showStats: true },
         { name: 'カウントアップ', path: '/sequence/instructions', gameType: 'sequence', showStats: true },
-        { name: '狩猟動物クイズ', path: '/animal-quiz/instructions', gameType: 'quiz', showStats: false },
+        { name: '狩猟鳥獣（獣類）クイズ', path: '/animal-quiz/instructions', gameType: 'quiz', showStats: false },
         { name: '狩猟動物診断', path: '/diagnosis', gameType: 'diagnosis', showStats: false },
     ];
 
@@ -275,7 +275,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                                                 {gameStats[game.gameType] ? (
                                                     gameStats[game.gameType].playCount > 0 ? (
                                                         <>
-                                                            <span>{gameStats[game.gameType].playCount}plays</span>
+                                                            <span>{gameStats[game.gameType].playCount} plays</span>
                                                             {gameStats[game.gameType].rank && (
                                                                 <span className="text-yellow-200 font-medium">
                                                                     {gameStats[game.gameType].rank}位

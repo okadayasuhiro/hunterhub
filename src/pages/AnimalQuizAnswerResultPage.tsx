@@ -113,12 +113,10 @@ const AnimalQuizAnswerResultPage: React.FC = () => {
                 {gameState.currentQuestionIndex + 1 >= gameState.questions.length ? (
                   <>
                     結果を見る
-                    <ArrowRight className="w-5 h-5 ml-2" />
                   </>
                 ) : (
                   <>
                     次の問題へ
-                    <ArrowRight className="w-5 h-5 ml-2" />
                   </>
                 )}
               </button>

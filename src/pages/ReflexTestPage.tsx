@@ -562,7 +562,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <MousePointer className="w-3 h-3" />
                                         </div>
-                                        <p>画面が<span className="text-green-600 font-medium">緑色</span>から<span className="text-red-600 font-medium">赤色</span>に変わったら、できるだけ早くクリック</p>
+                                        <p>画面が<span className="text-green-600 font-medium">緑色</span>から<span className="text-red-600 font-medium">赤色</span>に変わったら、できるだけ早くタップ</p>
                                     </div>
                                     <div className="flex items-center">
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
@@ -574,7 +574,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                                             <AlertTriangle className="w-3 h-3" />
                                         </div>
-                                        <p><span className="font-semibold text-red-600">赤になる前</span>にクリックするとフライングで即ゲーム終了</p>
+                                        <p><span className="font-semibold text-red-600">赤になる前</span>にタップするとフライングで即トレーニング終了</p>
                                     </div>
                                     <div className="flex items-center">
                                         <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
@@ -884,8 +884,8 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                         {countdown === 0 ? 'START!' : countdown}
                                     </div>
                                 )}
-                                {gameState === 'ready' && '画面が赤くなったらクリック！'}
-                                {gameState === 'go' && 'クリック！'}
+                                {gameState === 'ready' && '画面が赤くなったらタップ！'}
+                                {gameState === 'go' && 'タップ！'}
                                 {gameState === 'clicked' && currentResult && (
                                     currentResult.success ? `${(currentResult.time / 1000).toFixed(5)}秒` : 'フライング！'
                                 )}
