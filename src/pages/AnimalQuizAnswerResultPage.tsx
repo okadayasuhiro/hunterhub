@@ -71,11 +71,11 @@ const AnimalQuizAnswerResultPage: React.FC = () => {
 
             {/* 動物画像 */}
             <div className="flex justify-center mb-4">
-              <div className="bg-gray-100 rounded-lg p-3 shadow-inner">
+              <div className="bg-gray-100 rounded-lg p-4 shadow-inner">
                 <img
                   src={questionResult.question.animal.imageFile}
                   alt={questionResult.question.animal.name}
-                  className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg"
+                  className="w-48 h-48 object-cover rounded-lg"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = '/images/placeholder-animal.png';
