@@ -54,28 +54,28 @@ const AnimalQuizAnswerResultPage: React.FC = () => {
         {/* 結果カード */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
           {/* 結果表示 */}
-          <div className="text-center mb-8">
-            <div className="mb-6">
+          <div className="text-center mb-6">
+            <div className="mb-4">
               {isCorrect ? (
-                <div className="flex flex-col items-center">
-                  <CheckCircle className="w-12 h-12 text-green-500 mb-3" />
-                  <h2 className="text-2xl font-bold text-green-600">正解！</h2>
+                <div className="flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-green-500 mr-2" />
+                  <h2 className="text-xl font-bold text-green-600">正解！</h2>
                 </div>
               ) : (
-                <div className="flex flex-col items-center">
-                  <XCircle className="w-12 h-12 text-red-500 mb-3" />
-                  <h2 className="text-2xl font-bold text-red-600">不正解</h2>
+                <div className="flex items-center justify-center">
+                  <XCircle className="w-8 h-8 text-red-500 mr-2" />
+                  <h2 className="text-xl font-bold text-red-600">不正解</h2>
                 </div>
               )}
             </div>
 
             {/* 動物画像 */}
-            <div className="flex justify-center mb-6">
-              <div className="bg-gray-100 rounded-lg p-4 shadow-inner">
+            <div className="flex justify-center mb-4">
+              <div className="bg-gray-100 rounded-lg p-3 shadow-inner">
                 <img
                   src={questionResult.question.animal.imageFile}
                   alt={questionResult.question.animal.name}
-                  className="w-48 h-48 object-cover rounded-lg"
+                  className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = '/images/placeholder-animal.png';
@@ -85,7 +85,7 @@ const AnimalQuizAnswerResultPage: React.FC = () => {
             </div>
 
             {/* 回答情報 */}
-            <div className="bg-gray-50 rounded-lg p-6 mb-6">
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">正解</p>
@@ -104,36 +104,36 @@ const AnimalQuizAnswerResultPage: React.FC = () => {
               </div>
             </div>
 
+            {/* 次へボタン */}
+            <div className="text-center mb-4">
+              <button
+                onClick={handleNextQuestion}
+                className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center mx-auto"
+              >
+                {gameState.currentQuestionIndex + 1 >= gameState.questions.length ? (
+                  <>
+                    結果を見る
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                ) : (
+                  <>
+                    次の問題へ
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
+              </button>
+            </div>
+
             {/* 解説 */}
-            <div className="bg-blue-50 rounded-lg p-6 text-left">
-              <h3 className="text-lg font-bold text-blue-800 mb-3">
+            <div className="bg-blue-50 rounded-lg p-4 text-left">
+              <h3 className="text-base font-bold text-blue-800 mb-2">
                 {questionResult.question.animal.name} について
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm text-gray-700 leading-relaxed">
                 {questionResult.question.animal.description}
               </p>
             </div>
           </div>
-        </div>
-
-        {/* 次へボタン */}
-        <div className="text-center">
-          <button
-            onClick={handleNextQuestion}
-            className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center mx-auto"
-          >
-            {gameState.currentQuestionIndex + 1 >= gameState.questions.length ? (
-              <>
-                結果を見る
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </>
-            ) : (
-              <>
-                次の問題へ
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </>
-            )}
-          </button>
         </div>
       </div>
     </div>
