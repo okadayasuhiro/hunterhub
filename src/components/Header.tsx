@@ -389,7 +389,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                         <img 
                             src="/images/logo-w.png" 
                             alt="ハントレ" 
-                            className="h-9"
+                            className="h-10"
                         />
                         <span className="ml-3 text-xs font-bold" style={{ color: '#1d4f74' }}>
                             あなたの狩猟感覚を<br />オンラインでトレーニング

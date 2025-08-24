@@ -522,21 +522,19 @@ const HomePage: React.FC = () => {
                             description={
                                 <div className="space-y-3">
                                     <p className="text-gray-700 leading-relaxed">
-                                        画像を見て狩猟動物を識別するクイズトレーニング。
+                                    狩猟鳥獣（獣類）は20種類。それらの画像を見て狩猟動物を識別するクイズトレーニング。
                                         <span className="font-semibold text-blue-600">狩猟免許の取得</span>に必要な知識を身につけましょう。
                                     </p>
                                     <div className="flex items-center justify-between bg-green-50 rounded-lg px-3 py-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-2xl">🎯</span>
                                             <span className="font-medium text-green-700">全16問</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <span className="text-2xl">📚</span>
                                             <span className="text-sm text-green-600">4択選択式</span>
                                         </div>
                                     </div>
                                     <p className="text-xs text-gray-500 leading-relaxed">
-                                        ※ノイヌ、ノネコ、シベリアイタチは除外。ユキウサギ・ノウサギは統合。
+                                        ※ノイヌ、ノネコ、シベリアイタチは除外。ユキウサギ・ノウサギはひとつにしたため、全部で16問です。
                                     </p>
                                 </div>
                             }
