@@ -135,7 +135,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                                         <span className="text-md font-bold text-yellow-700">
                                             {title.includes('反射神経')
                                                 ? `${((topPlayer?.score || 0) / 1000).toFixed(5)}s`
-                                                : title.includes('ターゲット') || title.includes('数字')
+                                                : title.includes('ターゲット') || title.includes('カウントアップ')
                                                 ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
                                                 : `${topPlayer?.score}`
                                             }
@@ -167,7 +167,7 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                                         <span className="text-md font-bold text-yellow-700">
                                             {title.includes('反射神経')
                                                 ? `${((topPlayer?.score || 0) / 1000).toFixed(5)}s`
-                                                : title.includes('ターゲット') || title.includes('数字')
+                                                : title.includes('ターゲット') || title.includes('カウントアップ')
                                                 ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
                                                 : `${topPlayer?.score}`
                                             }
