@@ -71,8 +71,8 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
     
 
     
-    // 診断系ゲームかどうかを判定（ランキング・記録を表示しない）
-    const isDiagnosisGame = title.includes('診断');
+    // 診断系ゲーム・クイズ系ゲームかどうかを判定（ランキング・記録を表示しない）
+    const isDiagnosisGame = title.includes('診断') || title.includes('クイズ');
 
     const handleClick = () => {
         if (isComingSoon) {
