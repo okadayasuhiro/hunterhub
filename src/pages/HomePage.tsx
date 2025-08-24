@@ -473,9 +473,10 @@ const HomePage: React.FC = () => {
                 {/* 半透明黒オーバーレイでテキスト可読性UP */}
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="relative z-10 max-w-4xl mx-auto text-center">
-                    <p className="text-xl md:text-2xl text-white font-light mb-4 drop-shadow-lg font-bold">
-                        狩猟ハンターのトレーニング<br />ハンター達のための遊び場
-                    </p>
+                    <h1 className="text-2xl md:text-3xl text-white font-bold mb-4 drop-shadow-lg">
+                        <span className="text-yellow-300">遊び</span>が<span className="text-blue-300">トレーニング</span>になる<br />
+                        ハンターのためのオンライントレーニングフィールド
+                    </h1>
                 </div>
             </div>
 
