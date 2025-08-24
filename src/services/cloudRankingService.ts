@@ -206,9 +206,9 @@ export class CloudRankingService {
       }
 
       // ランキング形式に変換
-      const rankings: CloudRankingEntry[] = sortedScores.slice(0, limit).map((score, index) => {
-        let finalDisplayName = score.displayName || `ユーザー${score.userId.substring(0, 6)}`;
-        let finalUsername = score.displayName || undefined;
+      const rankings: CloudRankingEntry[] = await Promise.all(sortedScores.slice(0, limit).map(async (score, index) => {
+        let finalDisplayName = `ユーザー${score.userId.substring(0, 6)}`;
+        let finalUsername = undefined;
 
         // 現在ユーザーの場合はUserService（LocalStorage）を最優先
         if (score.userId === userId) {
@@ -217,15 +217,29 @@ export class CloudRankingService {
               finalDisplayName = currentUserXDisplayName;
               finalUsername = currentUserXDisplayName;
             }
+          } else {
+            // X連携解除時はUserServiceからハンター名を取得
+            try {
+              const hunterName = await this.userService.getHunterName();
+              finalDisplayName = hunterName || `ユーザー${score.userId.substring(0, 6)}`;
+            } catch (error) {
+              finalDisplayName = `ユーザー${score.userId.substring(0, 6)}`;
+            }
           }
-          // 現在ユーザーがX連携解除している場合は、DynamoDBデータを無視
-          // finalDisplayNameとfinalUsernameは初期値のまま（ハンターXXXX形式）
         } else {
-          // 他のユーザーの場合のみDynamoDBからX連携情報を取得
+          // 他のユーザーの場合：現在のUserProfile状態を優先
           const userProfile = userProfiles.get(score.userId);
           if (userProfile?.xLinked && userProfile.xDisplayName) {
+            // 現在X連携中の場合はX名を表示
             finalDisplayName = userProfile.xDisplayName;
             finalUsername = userProfile.xDisplayName;
+          } else if (userProfile?.username) {
+            // X連携していない、または解除済みの場合はusernameを表示
+            finalDisplayName = userProfile.username;
+          } else {
+            // UserProfileが見つからない場合は過去のdisplayNameを使用（フォールバック）
+            finalDisplayName = score.displayName || `ユーザー${score.userId.substring(0, 6)}`;
+            finalUsername = score.displayName || undefined;
           }
         }
 
@@ -238,7 +252,7 @@ export class CloudRankingService {
           timestamp: score.timestamp,
           isCurrentUser: score.userId === userId
         };
-      });
+      }));
 
       // 現在ユーザーのランクを検索（ユーザー別最高スコアで計算）
       const bestScores = this.getBestScorePerUser(gameScores as GameScore[]);
