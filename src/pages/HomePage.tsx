@@ -512,23 +512,23 @@ const HomePage: React.FC = () => {
                             playCount={playCounts.sequence}
                             topPlayer={topPlayers.sequence}
                         />
+                        <GameCard
+                            title="狩猟鳥獣クイズ（獣類）"
+                            description="16種の狩猟動物を識別するクイズゲーム。画像を見て動物名をテキスト入力で回答してください。"
+                            icon={<></>}
+                            path="/animal-quiz/instructions"
+                            lastResult={undefined}
+                            imageSrc="/src/assets/images/panel5.png"
+                            playCount={0}
+                            topPlayer={undefined}
+                            />
                     </div>
 
                     {/* 新しいゲーム（開発中） */}
                     <div className="mt-12">
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <GameCard
-                                title="狩猟動物クイズ"
-                                description="16種の狩猟動物を識別するクイズゲーム。画像を見て動物名をテキスト入力で回答してください。"
-                                icon={<></>}
-                                path="/animal-quiz/instructions"
-                                lastResult={undefined}
-                                imageSrc="/src/assets/images/panel5.png"
-                                playCount={0}
-                                topPlayer={undefined}
-                                isComingSoon={false}
-                            />
+
                             <GameCard
                                 title="動物識別記憶"
                                 description="瞬間的に表示される動物を正確に識別・記憶するゲームです。狩猟知識と記憶力を同時に鍛えます。"
