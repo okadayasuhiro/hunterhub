@@ -5,6 +5,8 @@ import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { SequenceGameHistory, NumberButton } from '../types/game';
 import GameRankingTable from '../components/GameRankingTable';
+import XLinkPromptModal from '../components/XLinkPromptModal';
+import { UserIdentificationService } from '../services/userIdentificationService';
 
 interface SequenceGamePageProps {
     mode: 'instructions' | 'game' | 'result';
@@ -54,6 +56,14 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
     const [clickTimes, setClickTimes] = useState<number[]>([]);
     const [currentRank, setCurrentRank] = useState<number | null>(null);
     const [totalPlayers, setTotalPlayers] = useState<number>(0);
+
+    // X連携関連のstate
+    const [isXLinked, setIsXLinked] = useState<boolean | null>(null);
+    const [displayName, setDisplayName] = useState<string>('');
+    const [showXLinkModal, setShowXLinkModal] = useState(false);
+    const [xLinkModalData, setXLinkModalData] = useState<{ gameType: string; score: number; playerName: string } | null>(null);
+
+    const userService = UserIdentificationService.getInstance();
     const [totalClicks, setTotalClicks] = useState(0);
     const [successfulClicks, setSuccessfulClicks] = useState(0);
     const [currentAverageInterval, setCurrentAverageInterval] = useState(0);
@@ -68,6 +78,18 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         if (savedHistory) {
             setGameHistory(JSON.parse(savedHistory));
         }
+    }, []);
+
+    // X連携状態を初期化時に確認
+    useEffect(() => {
+        const checkXLinkStatus = async () => {
+            const linked = await userService.isXLinked();
+            const name = await userService.getDisplayName();
+            setIsXLinked(linked);
+            setDisplayName(name);
+        };
+        
+        checkXLinkStatus();
     }, []);
 
     // 平均クリック間隔を計算
@@ -183,6 +205,33 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         navigate('/');
     };
 
+    // X連携モーダル関連の関数
+    const showXLinkModalOnClick = () => {
+        const latestScore = finalTime ? Math.floor(finalTime * 1000) : 0;
+        
+        setXLinkModalData({
+            gameType: 'sequence',
+            score: latestScore,
+            playerName: displayName || 'プレイヤー'
+        });
+        setShowXLinkModal(true);
+    };
+
+    const handleXLinkClose = () => {
+        setShowXLinkModal(false);
+        setXLinkModalData(null);
+    };
+
+    const handleXLink = async () => {
+        setShowXLinkModal(false);
+        setXLinkModalData(null);
+        
+        const linked = await userService.isXLinked();
+        const name = await userService.getDisplayName();
+        setIsXLinked(linked);
+        setDisplayName(name);
+    };
+
     const handleStartGame = () => {
         startGame();
         navigate('/sequence/game');
@@ -280,8 +329,10 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                 const rankingService = HybridRankingService.getInstance();
                 
                 // 現在のプレイスコア（完了時間）で順位を計算
-                const completionTimeMs = finalTime;
-                console.log('Sequence result page current play score (completionTime):', completionTimeMs);
+                // DynamoDBにはミリ秒で保存されているので、秒をミリ秒に変換
+                const completionTimeMs = finalTime ? Math.floor(finalTime * 1000) : 0;
+                console.log('Sequence result page current play score (completionTime):', finalTime, 'seconds');
+                console.log('Sequence result page current play score (completionTimeMs):', completionTimeMs, 'milliseconds');
                 
                 const rankResult = await rankingService.getCurrentScoreRank('sequence', completionTimeMs);
                 console.log('Sequence result page current score rank result:', rankResult);
@@ -529,7 +580,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                         <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
                             <div className="text-center mb-6">
-                                <h1 className="text-xl font-bold text-gray-800">
+                                <h1 className="text-m font-bold text-gray-800">
                                     トレーニング完了です！お疲れ様でした！
                                 </h1>
                             </div>
@@ -562,12 +613,12 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            const shareText = `ハントレで数字順序ゲームをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n完了時間: ${finalTime?.toFixed(2)}秒`;
+                                                            const shareText = `ハントレでカウントアップ・トレーニングをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n完了時間: ${finalTime?.toFixed(2)}秒`;
                                                             const shareUrl = window.location.origin;
                                                             
                                                             if (navigator.share) {
                                                                 navigator.share({
-                                                                    title: 'ハントレ - 数字順序ゲーム結果',
+                                                                    title: 'ハントレ - カウントアップ・トレーニング結果',
                                                                     text: shareText,
                                                                     url: shareUrl
                                                                 });
@@ -642,7 +693,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                 </button>
                                 <button
                                     onClick={handleBack}
-                                    className="w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+                                    className="w-full max-w-60 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
                                 >
                                     メニューに戻る
                                 </button>
@@ -651,6 +702,33 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                             {/* ランキング表示 */}
                             <div className="mt-12">
                                 <GameRankingTable gameType="sequence" limit={10} />
+                                
+                                {/* X連携促進ブロック（X未連携の場合のみ表示） */}
+                                {isXLinked === false && (
+                                    <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                        <div className="text-center space-y-3">
+                                            <button
+                                                onClick={showXLinkModalOnClick}
+                                                className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all duration-200 shadow-lg flex items-center justify-center mx-auto"
+                                            >
+                                                {/* 公式Xロゴ */}
+                                                <svg 
+                                                    width="16" 
+                                                    height="16" 
+                                                    viewBox="0 0 24 24" 
+                                                    fill="currentColor"
+                                                    className="mr-2"
+                                                >
+                                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                                </svg>
+                                                連携
+                                            </button>
+                                            <div className="text-sm text-gray-600 leading-relaxed text-left">
+                                                <p>X連携するとXのディスプレイ名とアイコンがランキングに掲載されます。なお、それ以外の情報は取得していません。また、いつでも解除可能です。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -661,19 +739,20 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
 
     // mode === 'game'
     return (
+        <>
         <div className="flex-1">
             <div className="min-h-screen" style={{ backgroundColor: '#ecf6ff' }}>
                 <div className="py-8 px-4">
                     <div className="max-w-4xl mx-auto">
                         {/* ヘッダー */}
                         <div className="text-right mb-4">
-                            <h1 className="text-sm font-medium text-gray-500">数字順序ゲーム</h1>
+                            <h1 className="text-sm font-medium text-gray-500">カウントアップ・トレーニング</h1>
                         </div>
 
                         {/* プログレスバー */}
                         <div className="bg-white rounded-lg p-4 mb-8 shadow-sm border border-blue-100">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-700">進捗</span>
+                                <span className="text-sm font-medium text-gray-700">トレーニング進行状況</span>
                                 <span className="text-sm text-gray-500">レベル {level}/7</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-3">
@@ -760,6 +839,17 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                 </div>
             </div>
         </div>
+
+        {/* X連携促進モーダル */}
+        <XLinkPromptModal
+            isOpen={showXLinkModal && xLinkModalData !== null}
+            onClose={handleXLinkClose}
+            onLinkX={handleXLink}
+            gameType={xLinkModalData?.gameType || ''}
+            score={xLinkModalData?.score || 0}
+            playerName={xLinkModalData?.playerName || ''}
+        />
+        </>
     );
 };
 

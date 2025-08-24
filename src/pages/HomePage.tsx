@@ -47,7 +47,7 @@ const NoticeSection: React.FC<{ notices: Notice[] }> = ({ notices }) => {
     }
 
     return (
-        <div className="py-3 px-4 border-b border-slate-200/60" style={{ backgroundColor: '#01204E' }}>
+        <div className="py-3 px-4 border-b border-slate-200/60" style={{ backgroundColor: '#021D40' }}>
             <div className="max-w-6xl mx-auto">
                 <div className="space-y-1.5">
                     {notices.slice(0, 2).map((notice) => (
@@ -248,14 +248,14 @@ const HomePage: React.FC = () => {
     const notices: Notice[] = [
         {
             id: '1',
-            date: '09.22',
+            date: '09.21',
             title: 'ハントレをリリースしました！',
             type: 'event'
         },
         {
             id: '2',
-            date: '09.21',
-            title: '新規ゲームを追加しました',
+            date: '09.23',
+            title: '新規トレーニングメニューを追加しました',
             type: 'update'
         }
     ];
@@ -468,7 +468,7 @@ const HomePage: React.FC = () => {
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="relative z-10 max-w-4xl mx-auto text-center">
                     <p className="text-xl md:text-2xl text-white font-light mb-4 drop-shadow-lg font-bold">
-                        狩猟者の息抜きと、狩猟を楽しむ<br />人達のためのお遊びサイト
+                        狩猟ハンターのトレーニング<br />ハンター達のための遊び場
                     </p>
                 </div>
             </div>

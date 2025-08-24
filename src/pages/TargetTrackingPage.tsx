@@ -5,6 +5,8 @@ import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { TargetTrackingHistory, TargetResult } from '../types/game';
 import GameRankingTable from '../components/GameRankingTable';
+import XLinkPromptModal from '../components/XLinkPromptModal';
+import { UserIdentificationService } from '../services/userIdentificationService';
 
 interface TargetTrackingPageProps {
     mode: 'instructions' | 'game' | 'result';
@@ -29,13 +31,33 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     const [totalPlayers, setTotalPlayers] = useState<number>(0);
     const [actualTotalTime, setActualTotalTime] = useState<number | null>(null);
 
+    // X連携関連のstate
+    const [isXLinked, setIsXLinked] = useState<boolean | null>(null);
+    const [displayName, setDisplayName] = useState<string>('');
+    const [showXLinkModal, setShowXLinkModal] = useState(false);
+    const [xLinkModalData, setXLinkModalData] = useState<{ gameType: string; score: number; playerName: string } | null>(null);
+
     // タイマーIDを管理するためのref
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+    const userService = UserIdentificationService.getInstance();
 
     const TOTAL_TARGETS = 10;
     const TARGET_SIZE = 60;
 
     // ゲーム履歴はGameHistoryServiceで管理（LocalStorageは不要）
+
+    // X連携状態を初期化時に確認
+    useEffect(() => {
+        const checkXLinkStatus = async () => {
+            const linked = await userService.isXLinked();
+            const name = await userService.getDisplayName();
+            setIsXLinked(linked);
+            setDisplayName(name);
+        };
+        
+        checkXLinkStatus();
+    }, []);
 
     // ゲームエリアサイズの設定
     useEffect(() => {
@@ -268,6 +290,36 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         navigate('/target/game');
     };
 
+    // X連携モーダル関連の関数
+    const showXLinkModalOnClick = () => {
+        // 最新のゲーム結果を取得
+        const latestScore = actualTotalTime ? Math.floor(actualTotalTime * 1000) : 0;
+        
+        setXLinkModalData({
+            gameType: 'target',
+            score: latestScore,
+            playerName: displayName || 'プレイヤー'
+        });
+        setShowXLinkModal(true);
+    };
+
+    const handleXLinkClose = () => {
+        setShowXLinkModal(false);
+        setXLinkModalData(null);
+    };
+
+    const handleXLink = async () => {
+        // X連携処理は XLinkPromptModal 内で実行される
+        setShowXLinkModal(false);
+        setXLinkModalData(null);
+        
+        // X連携状態を更新
+        const linked = await userService.isXLinked();
+        const name = await userService.getDisplayName();
+        setIsXLinked(linked);
+        setDisplayName(name);
+    };
+
     // パフォーマンスランク取得
     const getHunterRank = (avgReactionTime: number): { rank: string; number: number; total: number } => {
         if (avgReactionTime <= 0.800) return { rank: 'ハンター・オブ・ザ・オリジン', number: 1, total: 12 };
@@ -398,13 +450,14 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
 
     if (mode === 'result') {
         return (
+            <>
             <div className="flex-1">
                 <div className="min-h-screen">
                     <div className="py-8 px-4">
                         <div className="max-w-4xl mx-auto">
                             {/* ヘッダー */}
                             <div className="text-center mb-6">
-                                <h1 className="text-xl font-bold text-gray-800">
+                                <h1 className="text-m font-bold text-gray-800">
                                     トレーニング完了です！お疲れ様でした！
                                 </h1>
                             </div>
@@ -414,7 +467,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                 <div className="grid grid-cols-2 gap-6 mb-6">
                                     <div className="text-center">
                                         <div className="text-sm text-gray-600 mb-1">総合時間</div>
-                                        <div className="text-2xl font-bold text-green-600">{currentStats.totalTime.toFixed(4)}s</div>
+                                        <div className="text-2xl font-bold text-green-600">{actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}s</div>
                                     </div>
                                     <div className="text-center">
                                         <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
@@ -434,7 +487,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="mt-3 flex justify-center gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const shareText = `ハントレでターゲット追跡ゲームをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n総合時間: ${currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareText = `ハントレでターゲット追跡ゲームをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
                                                     const shareUrl = window.location.origin;
                                                     
                                                     if (navigator.share) {
@@ -468,7 +521,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="mt-3 flex justify-center gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const shareText = `ハントレでターゲット追跡ゲームをプレイしました！\n総合時間: ${currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareText = `ハントレでターゲット追跡ゲームをプレイしました！\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
                                                     const shareUrl = window.location.origin;
                                                     
                                                     if (navigator.share) {
@@ -504,22 +557,60 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                 </button>
                                 <button
                                     onClick={handleBack}
-                                    className="w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
-                                >
-                                    メニューに戻る
-                                </button>
-                            </div>
+                                    className="w-full max-w-60 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+                                                >
+                    メニューに戻る
+                </button>
+            </div>
 
-                            {/* ランキング表示 */}
-                            <div className="mt-12">
-                                <GameRankingTable gameType="target" limit={10} />
+            {/* ランキング表示 */}
+            <div className="mt-12">
+                <GameRankingTable gameType="target" limit={10} />
+                
+                {/* X連携促進ブロック（X未連携の場合のみ表示） */}
+                {isXLinked === false && (
+                    <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="text-center space-y-3">
+                            <button
+                                onClick={showXLinkModalOnClick}
+                                className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all duration-200 shadow-lg flex items-center justify-center mx-auto"
+                            >
+                                {/* 公式Xロゴ */}
+                                <svg 
+                                    width="16" 
+                                    height="16" 
+                                    viewBox="0 0 24 24" 
+                                    fill="currentColor"
+                                    className="mr-2"
+                                >
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                                連携
+                            </button>
+                            <div className="text-sm text-gray-600 leading-relaxed text-left">
+                                <p>X連携するとXのディスプレイ名とアイコンがランキングに掲載されます。なお、それ以外の情報は取得していません。また、いつでも解除可能です。</p>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
-        );
-    }
+        </div>
+    </div>
+</div>
+</div>
+
+{/* X連携促進モーダル */}
+<XLinkPromptModal
+    isOpen={showXLinkModal && xLinkModalData !== null}
+    onClose={handleXLinkClose}
+    onLinkX={handleXLink}
+    gameType={xLinkModalData?.gameType || ''}
+    score={xLinkModalData?.score || 0}
+    playerName={xLinkModalData?.playerName || ''}
+/>
+</>
+);
+}
 
     // mode === 'game'
     return (
@@ -529,13 +620,13 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                     <div className="max-w-4xl mx-auto">
                         {/* ヘッダー */}
                         <div className="text-right mb-4">
-                            <h1 className="text-sm font-medium text-gray-500">ターゲット追跡</h1>
+                            <h1 className="text-sm font-medium text-gray-500">ターゲット追跡トレーニング</h1>
                         </div>
 
                         {/* プログレスバー */}
                         <div className="bg-white rounded-lg p-4 mb-8 shadow-sm border border-blue-100">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-700">進捗</span>
+                                <span className="text-sm font-medium text-gray-700">トレーニング進行状況</span>
                                 <span className="text-sm text-gray-500">{targetResults.length}/{TOTAL_TARGETS}</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-3">

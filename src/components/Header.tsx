@@ -26,9 +26,9 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
 
     // ゲームリスト定義（統計情報付き）
     const gameLinksWithStats = [
-        { name: '反射神経トレ', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
-        { name: 'ターゲット追跡トレ', path: '/target/instructions', gameType: 'target', showStats: true },
-        { name: 'カウントアップ・トレ', path: '/sequence/instructions', gameType: 'sequence', showStats: true },
+        { name: '反射神経', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
+        { name: 'ターゲット追跡', path: '/target/instructions', gameType: 'target', showStats: true },
+        { name: 'カウントアップ', path: '/sequence/instructions', gameType: 'sequence', showStats: true },
         { name: '狩猟動物クイズ', path: '/animal-quiz/instructions', gameType: 'quiz', showStats: false },
         { name: '狩猟動物診断', path: '/diagnosis', gameType: 'diagnosis', showStats: false },
     ];
