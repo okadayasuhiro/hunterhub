@@ -470,11 +470,52 @@ const HomePage: React.FC = () => {
             <div className="relative flex items-center justify-center py-12 px-4 min-h-[15vh] overflow-hidden hero-background">
                 {/* グラデーションオーバーレイ */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-100/10 via-blue-300/40 to-transparent"></div>
-                {/* 半透明黒オーバーレイでテキスト可読性UP */}
-                <div className="absolute inset-0 bg-black/20"></div>
+                {/* 上から下へのブラックグラデーション（下に向かって透明に） */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-transparent"></div>
+                {/* 薄いGlassmorphismレイヤー */}
+                <div className="absolute inset-0 border-0"></div>
                 <div className="relative z-10 max-w-4xl mx-auto text-center">
-                    <h1 className="text-2xl md:text-3xl text-white font-bold mb-4 drop-shadow-lg">
-                        <span className="text-yellow-300">狩猟感覚を、遊びながら鍛える</span><br />
+                    {/* パーティクル背景 */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        {/* 第1層 - 大きめパーティクル */}
+                        <div className="absolute w-3 h-3 bg-white/40 rounded-full animate-float top-1/4 left-1/4"></div>
+                        <div className="absolute w-2.5 h-2.5 bg-blue-200/50 rounded-full animate-float-delayed top-1/3 right-1/3"></div>
+                        <div className="absolute w-4 h-4 bg-white/30 rounded-full animate-float-slow top-2/3 left-1/2"></div>
+                        <div className="absolute w-2 h-2 bg-white/50 rounded-full animate-float top-1/2 right-1/4"></div>
+                        <div className="absolute w-3 h-3 bg-blue-100/40 rounded-full animate-float-delayed top-3/4 left-1/3"></div>
+                        <div className="absolute w-2 h-2 bg-white/60 rounded-full animate-float-slow top-1/6 right-1/2"></div>
+                        
+                        {/* 第2層 - 中サイズパーティクル */}
+                        <div className="absolute w-1.5 h-1.5 bg-white/50 rounded-full animate-float top-1/5 left-1/6"></div>
+                        <div className="absolute w-2 h-2 bg-blue-300/40 rounded-full animate-float-delayed top-2/5 right-1/5"></div>
+                        <div className="absolute w-1.5 h-1.5 bg-white/40 rounded-full animate-float-slow top-3/5 left-2/3"></div>
+                        <div className="absolute w-2 h-2 bg-white/45 rounded-full animate-float top-4/5 right-2/5"></div>
+                        <div className="absolute w-1.5 h-1.5 bg-blue-200/50 rounded-full animate-float-delayed top-1/8 left-3/4"></div>
+                        <div className="absolute w-2 h-2 bg-white/35 rounded-full animate-float-slow top-7/8 right-1/6"></div>
+                        
+                        {/* 第3層 - 小サイズパーティクル */}
+                        <div className="absolute w-1 h-1 bg-white/60 rounded-full animate-float top-1/10 left-1/10"></div>
+                        <div className="absolute w-1 h-1 bg-blue-100/50 rounded-full animate-float-delayed top-3/10 right-1/10"></div>
+                        <div className="absolute w-1 h-1 bg-white/45 rounded-full animate-float-slow top-5/10 left-4/5"></div>
+                        <div className="absolute w-1 h-1 bg-white/55 rounded-full animate-float top-7/10 right-4/5"></div>
+                        <div className="absolute w-1 h-1 bg-blue-200/45 rounded-full animate-float-delayed top-9/10 left-1/5"></div>
+                        <div className="absolute w-1 h-1 bg-white/50 rounded-full animate-float-slow top-2/10 right-3/5"></div>
+                        <div className="absolute w-1 h-1 bg-white/40 rounded-full animate-float top-4/10 left-3/5"></div>
+                        <div className="absolute w-1 h-1 bg-blue-300/40 rounded-full animate-float-delayed top-6/10 right-2/5"></div>
+                        <div className="absolute w-1 h-1 bg-white/65 rounded-full animate-float-slow top-8/10 left-4/5"></div>
+                        <div className="absolute w-1 h-1 bg-white/35 rounded-full animate-float top-1/12 right-1/8"></div>
+                        
+                        {/* 第4層 - 極小パーティクル */}
+                        <div className="absolute w-0.5 h-0.5 bg-white/70 rounded-full animate-float-delayed top-1/7 left-2/7"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-blue-100/60 rounded-full animate-float-slow top-2/7 right-2/7"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-white/50 rounded-full animate-float top-3/7 left-5/7"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-white/60 rounded-full animate-float-delayed top-4/7 right-5/7"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-blue-200/50 rounded-full animate-float-slow top-5/7 left-1/7"></div>
+                        <div className="absolute w-0.5 h-0.5 bg-white/55 rounded-full animate-float top-6/7 right-1/7"></div>
+                    </div>
+                    
+                    <h1 className="relative text-2xl md:text-3xl text-white font-bold mb-4 drop-shadow-lg">
+                        狩猟感覚を、遊びながら鍛える<br />
                         <span className="text-sm">ハンターのためのオンライントレーニング</span>
                     </h1>
                 </div>
