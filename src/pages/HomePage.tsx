@@ -30,7 +30,7 @@ interface Notice {
 
 interface GameCardProps {
     title: string;
-    description: string;
+    description: string | React.ReactNode;
     icon: React.ReactNode;
     path: string;
     lastResult?: LastResult;
@@ -514,7 +514,12 @@ const HomePage: React.FC = () => {
                         />
                         <GameCard
                             title="狩猟鳥獣クイズ（獣類）"
-                            description="16種の狩猟動物を識別するクイズゲーム。画像を見て動物名をテキスト入力で回答してください。"
+                            description={
+                                <>
+                                    20種の狩猟動物を識別するクイズゲーム。<br />
+                                    画像を見て動物名をテキスト入力で回答してください。
+                                </>
+                            }
                             icon={<></>}
                             path="/animal-quiz/instructions"
                             lastResult={undefined}
