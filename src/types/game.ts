@@ -140,13 +140,15 @@ export const calculateWeightedScore = (testResults: TestResult[]): {
     const successCount = successResults.length;
     const failureCount = failureResults.length;
     const averageSuccessTime = successCount > 0 
-        ? Math.round(successResults.reduce((sum, r) => sum + r.time, 0) / successCount)
+        ? successResults.reduce((sum, r) => sum + r.time, 0) / successCount
         : 0;
     
     // 加重平均スコア計算: (成功平均 × 成功回数 + ペナルティ × 失敗回数) / 総試行回数
     const weightedScore = testResults.length > 0
-        ? Math.round((averageSuccessTime * successCount + REFLEX_SCORING.FAILURE_PENALTY * failureCount) / testResults.length)
+        ? (averageSuccessTime * successCount + REFLEX_SCORING.FAILURE_PENALTY * failureCount) / testResults.length
         : REFLEX_SCORING.FAILURE_PENALTY;
+
+    console.log(`📊 Score calculation - averageSuccessTime: ${averageSuccessTime.toFixed(5)}ms, weightedScore: ${weightedScore.toFixed(5)}ms`);
     
     return {
         successCount,

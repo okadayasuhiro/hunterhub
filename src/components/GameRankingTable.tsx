@@ -201,7 +201,7 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
     const formatScore = (score: number, gameType: string): string => {
         switch (gameType) {
             case 'reflex':
-                return `${(score / 1000).toFixed(3)}s`;
+                return `${(score / 1000).toFixed(5)}s`;
             case 'target':
                 return `${(score / 1000).toFixed(3)}s`;
             case 'sequence':

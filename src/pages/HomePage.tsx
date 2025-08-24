@@ -47,15 +47,15 @@ const NoticeSection: React.FC<{ notices: Notice[] }> = ({ notices }) => {
     }
 
     return (
-        <div className="bg-slate-50/80 backdrop-blur-sm py-3 px-4 border-b border-slate-200/60">
+        <div className="py-3 px-4 border-b border-slate-200/60" style={{ backgroundColor: '#01204E' }}>
             <div className="max-w-6xl mx-auto">
                 <div className="space-y-1.5">
                     {notices.slice(0, 2).map((notice) => (
                         <div key={notice.id} className="flex items-center space-x-3">
-                            <span className="text-xs text-slate-500 font-medium whitespace-nowrap bg-slate-100 px-2 py-0.5 rounded-full">
+                            <span className="text-xs text-gray-300 font-medium whitespace-nowrap bg-gray-600 px-2 py-0.5 rounded-full">
                                 {notice.date}
                             </span>
-                            <span className="text-sm text-slate-700 font-medium">
+                            <span className="text-sm text-white font-medium">
                                 {notice.title}
                             </span>
                         </div>
@@ -133,7 +133,9 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                                         <Crown className="w-4 h-4 text-yellow-600 mr-2" />
                                         <span className="text-sm font-medium text-gray-700 mr-2">1位</span>
                                         <span className="text-md font-bold text-yellow-700">
-                                            {title.includes('反射神経') || title.includes('ターゲット') || title.includes('数字')
+                                            {title.includes('反射神経')
+                                                ? `${((topPlayer?.score || 0) / 1000).toFixed(5)}s`
+                                                : title.includes('ターゲット') || title.includes('数字')
                                                 ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
                                                 : `${topPlayer?.score}`
                                             }
@@ -163,7 +165,9 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                                             <span className="text-sm font-medium text-gray-700">1位</span>
                                         </div>
                                         <span className="text-md font-bold text-yellow-700">
-                                            {title.includes('反射神経') || title.includes('ターゲット') || title.includes('数字')
+                                            {title.includes('反射神経')
+                                                ? `${((topPlayer?.score || 0) / 1000).toFixed(5)}s`
+                                                : title.includes('ターゲット') || title.includes('数字')
                                                 ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
                                                 : `${topPlayer?.score}`
                                             }
@@ -245,7 +249,7 @@ const HomePage: React.FC = () => {
         {
             id: '1',
             date: '09.22',
-            title: 'huterhubをリリースしました',
+            title: 'ハントレをリリースしました！',
             type: 'event'
         },
         {
@@ -288,14 +292,14 @@ const HomePage: React.FC = () => {
                 console.log('🔍 Reflex latest game history:', reflexLatest);
                 if (reflexLatest) {
                     console.log('DEBUG Raw averageTime:', reflexLatest.averageTime);
-                    console.log('DEBUG Converted to seconds:', (reflexLatest.averageTime / 1000).toFixed(3));
+                    console.log('DEBUG Converted to seconds:', (reflexLatest.averageTime / 1000).toFixed(5));
                     console.log('DEBUG Success rate:', reflexLatest.successRate);
                     
                     setLastResults(prev => ({
                         ...prev,
                         reflex: {
                             primaryStat: '平均反応時間',
-                            primaryValue: `${(reflexLatest.averageTime / 1000).toFixed(3)}s`,
+                            primaryValue: `${(reflexLatest.averageTime / 1000).toFixed(5)}s`,
                             date: new Date(reflexLatest.date).toLocaleDateString('ja-JP')
                         }
                     }));
@@ -322,26 +326,13 @@ const HomePage: React.FC = () => {
                 } catch (error) {
                     console.error('❌ HomePage: Failed to get reflex total play count from cloud:', error);
                     console.error('Error details:', error);
-                    // フォールバック: LocalStorageから取得
-                    try {
-                        console.log(`🔄 HomePage: Attempting localStorage fallback for reflex`);
-                        const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
-                        const allReflexScores = allScores.filter((score: any) => 
-                            score.gameType === 'reflex'
-                        );
-                        const fallbackCount = allReflexScores.length;
-                        console.log(`🔍 HomePage: reflex fallback count from localStorage:`, fallbackCount);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            reflex: fallbackCount
-                        }));
-                    } catch (fallbackError) {
-                        console.error('❌ HomePage: Fallback also failed:', fallbackError);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            reflex: 0
-                        }));
-                    }
+                    
+                    // クラウドが0件の場合はLocalStorageに依存せず0を表示
+                    console.log(`🧹 HomePage: Cloud returned 0, showing 0 for reflex (ignoring localStorage)`);
+                    setPlayCounts(prev => ({
+                        ...prev,
+                        reflex: 0
+                    }));
                 }
 
                 // ターゲット追跡ゲームの最新記録（回避策：全履歴から最新を取得）
@@ -381,26 +372,13 @@ const HomePage: React.FC = () => {
                 } catch (error) {
                     console.error('❌ HomePage: Failed to get target total play count from cloud:', error);
                     console.error('Error details:', error);
-                    // フォールバック: LocalStorageから取得
-                    try {
-                        console.log(`🔄 HomePage: Attempting localStorage fallback for target`);
-                        const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
-                        const allTargetScores = allScores.filter((score: any) => 
-                            score.gameType === 'target'
-                        );
-                        const fallbackCount = allTargetScores.length;
-                        console.log(`🔍 HomePage: target fallback count from localStorage:`, fallbackCount);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            target: fallbackCount
-                        }));
-                    } catch (fallbackError) {
-                        console.error('❌ HomePage: Fallback also failed:', fallbackError);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            target: 0
-                        }));
-                    }
+                    
+                    // クラウドが0件の場合はLocalStorageに依存せず0を表示
+                    console.log(`🧹 HomePage: Cloud returned 0, showing 0 for target (ignoring localStorage)`);
+                    setPlayCounts(prev => ({
+                        ...prev,
+                        target: 0
+                    }));
                 }
 
                 // 数字順序ゲームの最新記録（回避策：全履歴から最新を取得）
@@ -442,26 +420,13 @@ const HomePage: React.FC = () => {
                 } catch (error) {
                     console.error('❌ HomePage: Failed to get sequence total play count from cloud:', error);
                     console.error('Error details:', error);
-                    // フォールバック: LocalStorageから取得
-                    try {
-                        console.log(`🔄 HomePage: Attempting localStorage fallback for sequence`);
-                        const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
-                        const allSequenceScores = allScores.filter((score: any) => 
-                            score.gameType === 'sequence'
-                        );
-                        const fallbackCount = allSequenceScores.length;
-                        console.log(`🔍 HomePage: sequence fallback count from localStorage:`, fallbackCount);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            sequence: fallbackCount
-                        }));
-                    } catch (fallbackError) {
-                        console.error('❌ HomePage: Fallback also failed:', fallbackError);
-                        setPlayCounts(prev => ({
-                            ...prev,
-                            sequence: 0
-                        }));
-                    }
+                    
+                    // クラウドが0件の場合はLocalStorageに依存せず0を表示
+                    console.log(`🧹 HomePage: Cloud returned 0, showing 0 for sequence (ignoring localStorage)`);
+                    setPlayCounts(prev => ({
+                        ...prev,
+                        sequence: 0
+                    }));
                 }
             } catch (error) {
                 console.error('Failed to load last results:', error);

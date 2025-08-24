@@ -158,6 +158,16 @@ export class CloudRankingService {
       console.log(`🔍 Debug: Raw scores sample:`, gameScores.slice(0, 3).map(s => ({
         userId: s.userId.substring(0, 8),
         score: s.score,
+        displayName: s.displayName,
+        timestamp: s.timestamp
+      })));
+      
+      // デバッグ: 最新のスコアを確認
+      const sortedByTime = gameScores.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      console.log(`🔍 Debug: Most recent scores for ${gameType}:`, sortedByTime.slice(0, 5).map(s => ({
+        userId: s.userId.substring(0, 8),
+        score: s.score,
+        timestamp: s.timestamp,
         displayName: s.displayName
       })));
       
@@ -237,11 +247,14 @@ export class CloudRankingService {
       // 総プレイヤー数はユニークプレイヤー数
       const totalPlayers = bestScores.length;
 
+      // プレイ回数は全期間のデータをカウント
+      console.log(`🔍 Debug: Total scores: ${gameScores.length}`);
+
       return {
         rankings,
         userRank,
         totalPlayers,
-        totalCount: gameScores.length, // 全プレイ回数
+        totalCount: gameScores.length, // 全期間のプレイ回数
         lastUpdated: new Date().toISOString()
       };
 
@@ -286,7 +299,7 @@ export class CloudRankingService {
       // 順位は「自分より良いスコア数 + 1」
       const rank = betterScoresCount + 1;
       // 総順位数：全スコア数 + 現在のスコア（1つ）
-      const totalPlayers = gameScores.length + 1;
+      const totalPlayers = gameScores.length;
       
       // 詳細デバッグ: 現在スコア周辺のスコアを確認
       const sortedAllScores = gameScores.sort((a, b) => a.score - b.score);
@@ -480,8 +493,8 @@ export class CloudRankingService {
 
       console.log('🎉 Migration completed successfully');
       
-      // 移行完了後、LocalStorageをバックアップとして保持
-      localStorage.setItem('hunterhub_global_scores_backup', localScores);
+      // 移行完了後、LocalStorageのバックアップは不要（DynamoDBが正式版）
+      console.log('ℹ️ LocalStorage backup skipped - DynamoDB is now the single source of truth');
       
     } catch (error) {
       console.error('❌ Migration failed:', error);

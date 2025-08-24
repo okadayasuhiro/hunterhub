@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Hash, Trophy, Clock, Medal, Crown } from 'lucide-react';
+import { Hash, Trophy, Clock, Medal, Crown, Share2 } from 'lucide-react';
 import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { SequenceGameHistory, NumberButton } from '../types/game';
@@ -557,12 +557,66 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="text-xl font-bold">
                                                     {currentRank}位 / {totalPlayers}位
                                                 </div>
+                                                
+                                                {/* シェアボタン */}
+                                                <div className="mt-3 flex justify-center gap-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            const shareText = `ハントレで数字順序ゲームをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n完了時間: ${finalTime?.toFixed(2)}秒`;
+                                                            const shareUrl = window.location.origin;
+                                                            
+                                                            if (navigator.share) {
+                                                                navigator.share({
+                                                                    title: 'ハントレ - 数字順序ゲーム結果',
+                                                                    text: shareText,
+                                                                    url: shareUrl
+                                                                });
+                                                            } else {
+                                                                // フォールバック: Xでシェア
+                                                                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                                window.open(twitterUrl, '_blank');
+                                                            }
+                                                        }}
+                                                        className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-colors duration-200"
+                                                        title="結果をシェア"
+                                                    >
+                                                        <Share2 className="w-4 h-4" />
+                                                        シェア
+                                                    </button>
+                                                </div>
                                             </div>
                                         ) : (
                                             <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
                                                 <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                                 <div className="text-xl font-bold">
                                                     全レベル完全制覇！
+                                                </div>
+                                                
+                                                {/* シェアボタン */}
+                                                <div className="mt-3 flex justify-center gap-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            const shareText = `ハントレで数字順序ゲームをプレイしました！\n全レベル完全制覇！\n完了時間: ${finalTime?.toFixed(2)}秒`;
+                                                            const shareUrl = window.location.origin;
+                                                            
+                                                            if (navigator.share) {
+                                                                navigator.share({
+                                                                    title: 'ハントレ - 数字順序ゲーム結果',
+                                                                    text: shareText,
+                                                                    url: shareUrl
+                                                                });
+                                                            } else {
+                                                                // フォールバック: Xでシェア
+                                                                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                                window.open(twitterUrl, '_blank');
+                                                            }
+                                                        }}
+                                                        className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-colors duration-200"
+                                                        title="結果をシェア"
+                                                    >
+                                                        <Share2 className="w-4 h-4" />
+                                                        シェア
+                                                    </button>
                                                 </div>
                                             </div>
                                         )}
@@ -584,7 +638,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                     onClick={resetGame}
                                     className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                 >
-                                    もう一度
+                                    もう一度トレーニングする
                                 </button>
                                 <button
                                     onClick={handleBack}

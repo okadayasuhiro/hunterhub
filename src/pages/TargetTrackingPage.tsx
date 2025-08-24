@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Crosshair, Target, Hash, Clock, Trophy } from 'lucide-react';
+import { Crosshair, Target, Hash, Clock, Trophy, Share2 } from 'lucide-react';
 import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { TargetTrackingHistory, TargetResult } from '../types/game';
@@ -429,12 +429,66 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="text-xl font-bold">
                                             {currentRank}位 / {totalPlayers}位
                                         </div>
+                                        
+                                        {/* シェアボタン */}
+                                        <div className="mt-3 flex justify-center gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    const shareText = `ハントレでターゲット追跡ゲームをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n総合時間: ${currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareUrl = window.location.origin;
+                                                    
+                                                    if (navigator.share) {
+                                                        navigator.share({
+                                                            title: 'ハントレ - ターゲット追跡ゲーム結果',
+                                                            text: shareText,
+                                                            url: shareUrl
+                                                        });
+                                                    } else {
+                                                        // フォールバック: Xでシェア
+                                                        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                        window.open(twitterUrl, '_blank');
+                                                    }
+                                                }}
+                                                className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-colors duration-200"
+                                                title="結果をシェア"
+                                            >
+                                                <Share2 className="w-4 h-4" />
+                                                シェア
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
                                         <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
                                         <div className="text-xl font-bold">
                                             ランキング登録完了
+                                        </div>
+                                        
+                                        {/* シェアボタン */}
+                                        <div className="mt-3 flex justify-center gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    const shareText = `ハントレでターゲット追跡ゲームをプレイしました！\n総合時間: ${currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareUrl = window.location.origin;
+                                                    
+                                                    if (navigator.share) {
+                                                        navigator.share({
+                                                            title: 'ハントレ - ターゲット追跡ゲーム結果',
+                                                            text: shareText,
+                                                            url: shareUrl
+                                                        });
+                                                    } else {
+                                                        // フォールバック: Xでシェア
+                                                        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                        window.open(twitterUrl, '_blank');
+                                                    }
+                                                }}
+                                                className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-colors duration-200"
+                                                title="結果をシェア"
+                                            >
+                                                <Share2 className="w-4 h-4" />
+                                                シェア
+                                            </button>
                                         </div>
                                     </div>
                                 )}
@@ -446,7 +500,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                     onClick={resetGame}
                                     className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                 >
-                                    もう一度
+                                    もう一度トレーニングする
                                 </button>
                                 <button
                                     onClick={handleBack}

@@ -26,9 +26,9 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
 
     // ゲームリスト定義（統計情報付き）
     const gameLinksWithStats = [
-        { name: '反射神経テスト', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
-        { name: 'ターゲット追跡', path: '/target/instructions', gameType: 'target', showStats: true },
-        { name: '数字順序ゲーム', path: '/sequence/instructions', gameType: 'sequence', showStats: true },
+        { name: '反射神経トレ', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
+        { name: 'ターゲット追跡トレ', path: '/target/instructions', gameType: 'target', showStats: true },
+        { name: 'カウントアップ・トレ', path: '/sequence/instructions', gameType: 'sequence', showStats: true },
         { name: '狩猟動物クイズ', path: '/animal-quiz/instructions', gameType: 'quiz', showStats: false },
         { name: '狩猟動物診断', path: '/diagnosis', gameType: 'diagnosis', showStats: false },
     ];
@@ -199,7 +199,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
     // SNSシェア処理
     const handleShareClick = (action: string) => {
         const url = window.location.origin;
-        const text = 'HunterHub - 狩猟者向け反射神経・集中力トレーニング';
+        const text = 'ハントレ - あなたの狩猟感覚をオンラインでトレーニング！ハンターの皆さまを支援する、トレーニングサイト';
         
         switch (action) {
             case 'shareX':
@@ -388,8 +388,8 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                     >
                         <img 
                             src="/images/logo-w.png" 
-                            alt="HunterHub" 
-                            className="h-8"
+                            alt="ハントレ" 
+                            className="h-9"
                         />
                         <span className="ml-3 text-xs font-bold" style={{ color: '#1d4f74' }}>
                             あなたの狩猟感覚を<br />オンラインでトレーニング

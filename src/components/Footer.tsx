@@ -8,7 +8,13 @@ const Footer: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     {/* アプリ情報 */}
                     <div className="text-center md:text-left">
-                        <h3 className="text-xl font-bold text-white mb-5">HunterHub</h3>
+                        <div className="mb-5">
+                            <img 
+                                src="/images/logo-w-w.png" 
+                                alt="ハントレ" 
+                                className="h-8 mx-auto md:mx-0"
+                            />
+                        </div>
                         <p className="text-gray-300 text-sm leading-relaxed">
                             反射神経と集中力を鍛える<br />
                             オンライントレーニングプラットフォーム
@@ -21,14 +27,14 @@ const Footer: React.FC = () => {
                 {/* ソーシャルシェア */}
                 <div className="mt-10 text-center">
                     <h4 className="text-white font-semibold mb-5">
-                        HunterHubをシェア
+                        ハントレをシェア
                     </h4>
                     <div className="flex justify-center space-x-4 mb-6">
                         {/* X (Twitter) */}
                         <button
                             onClick={() => {
                                 const url = encodeURIComponent(window.location.href);
-                                const text = encodeURIComponent('HunterHubで反射神経と集中力を鍛えよう！🎯 あなたのハンタースキルはどのレベル？');
+                                const text = encodeURIComponent('ハントレで反射神経と集中力を鍛えよう！🎯 あなたのハンタースキルはどのレベル？');
                                 window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
                             }}
                             className="bg-black hover:bg-gray-800 text-white p-3 rounded-lg transition-colors duration-200 flex items-center justify-center w-12 h-12"
@@ -57,7 +63,7 @@ const Footer: React.FC = () => {
                         <button
                             onClick={() => {
                                 const url = encodeURIComponent(window.location.href);
-                                const text = encodeURIComponent('HunterHubで反射神経と集中力を鍛えよう！');
+                                const text = encodeURIComponent('ハントレで反射神経と集中力を鍛えよう！');
                                 window.open(`https://social-plugins.line.me/lineit/share?url=${url}&text=${text}`, '_blank');
                             }}
                             className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg transition-colors duration-200 flex items-center justify-center w-12 h-12"
@@ -89,7 +95,7 @@ const Footer: React.FC = () => {
                 {/* コピーライト */}
                 <div className="border-t border-gray-700 mt-10 pt-8 text-center">
                     <p className="text-gray-400 text-sm">
-                        © 2024 HunterHub - あなたの反射神経と集中力を次のレベルへ
+                        © 2025 ハントレ All rights reserved.<br />狩猟時の反射神経と集中力をトレーニング
                     </p>
                 </div>
             </div>

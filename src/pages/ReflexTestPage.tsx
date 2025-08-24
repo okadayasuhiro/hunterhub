@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Zap, MousePointer, RotateCcw, AlertTriangle, Trophy } from 'lucide-react';
+import { Zap, MousePointer, RotateCcw, AlertTriangle, Trophy, Share2 } from 'lucide-react';
 import type { TestResult, ReflexGameHistory } from '../types/game';
 import { getReflexHunterRank, STORAGE_KEYS, calculateWeightedScore, REFLEX_SCORING } from '../types/game';
 import { useGameHistory } from '../hooks/useGameHistory';
@@ -139,11 +139,13 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         console.log(`⏰ Setting timer for ${randomWait.toFixed(0)}ms to change to 'go' state`);
 
         testTimerRef.current = setTimeout(() => {
-            console.log('🔴 Timer executed! Changing to GO state');
+            const goStateTime = performance.now();
+            console.log(`🔴 Timer executed! Changing to GO state at: ${goStateTime.toFixed(8)}ms`);
             // 追加の安全性チェック: タイマーが実際に実行されているか確認
             if (testTimerRef.current !== null) {
                 setGameState('go');
-                setStartTime(Date.now());
+                setStartTime(goStateTime);
+                console.log(`⏰ GO state set, startTime recorded: ${goStateTime.toFixed(8)}ms`);
                 testTimerRef.current = null; // 実行後にクリア
             } else {
                 console.error('❌ Error: Timer executed but ref was already null!');
@@ -191,9 +193,9 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     const saveGameHistory = useCallback(async (finalResults: TestResult[]) => {
         const validResults = finalResults.filter(r => r.success && r.time > 0);
         const avgTime = validResults.length > 0 ?
-            Math.round(validResults.reduce((sum, result) => sum + result.time, 0) / validResults.length) : 0;
+            validResults.reduce((sum, result) => sum + result.time, 0) / validResults.length : 0;
         const bestTime = validResults.length > 0 ? Math.min(...validResults.map(r => r.time)) : 0;
-        const successRate = finalResults.length > 0 ? Math.round((validResults.length / finalResults.length) * 100) : 0;
+        const successRate = finalResults.length > 0 ? (validResults.length / finalResults.length) * 100 : 0;
 
         // 加重平均スコア計算
         const { successCount, failureCount, averageSuccessTime, weightedScore } = calculateWeightedScore(finalResults);
@@ -255,25 +257,32 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         
 
         
-        // 旧ユーザー名登録システム（X連携していない場合のみ）
-        if (!isXLinked) {
-            const shouldShow = await shouldShowUsernameModal(isRecord);
-            if (shouldShow) {
-                setModalGameData({
-                    gameType: 'reflex',
-                    score: weightedScore,
-                    isNewRecord: isRecord
-                });
-                // X連携モーダルの後に表示するため、少し遅延
-                setTimeout(() => setShowUsernameModal(true), 1000);
-            }
-        }
+        // 旧ユーザー名登録システム - 自動表示を無効化
+        // スムーズな導線のため、「もう一度トレーニングする」時にモーダルが表示されないようにする
+        // if (!isXLinked) {
+        //     const shouldShow = await shouldShowUsernameModal(isRecord);
+        //     if (shouldShow) {
+        //         setModalGameData({
+        //             gameType: 'reflex',
+        //             score: weightedScore,
+        //             isNewRecord: isRecord
+        //         });
+        //         // X連携モーダルの後に表示するため、少し遅延
+        //         setTimeout(() => setShowUsernameModal(true), 1000);
+        //     }
+        // }
     }, [saveGameResult, isNewRecord, shouldShowUsernameModal]);
 
     const handleClick = useCallback(() => {
+        const clickTime = performance.now();
+        console.log(`🖱️ Click detected at: ${clickTime.toFixed(8)}ms`);
+        
         if (gameState === 'go') {
             clearAllTimers();
-            const reactionTime = Date.now() - startTime;
+            const reactionTime = clickTime - startTime;
+            console.log(`🎯 Reaction time recorded: ${reactionTime}ms (precision5: ${reactionTime.toFixed(5)}ms, precision8: ${reactionTime.toFixed(8)}ms)`);
+            console.log(`📊 Timing breakdown: Start=${startTime.toFixed(8)}ms, Click=${clickTime.toFixed(8)}ms, Diff=${reactionTime.toFixed(8)}ms`);
+            
             const newResult: TestResult = {
                 time: reactionTime,
                 round: currentRound,
@@ -419,6 +428,13 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
         setResults([]);
         setStartTime(0);
         setIsTestRunning(false);
+        
+        // モーダル状態をリセット（新記録モーダルが表示されないようにする）
+        setShowXLinkModal(false);
+        setXLinkModalData(null);
+        setShowUsernameModal(false);
+        setModalGameData(null);
+        
         navigate('/reflex/game');
     };
 
@@ -433,14 +449,31 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     const validResults = results.filter(r => r.success && r.time > 0);
     const currentResult = results.length > 0 ? results[results.length - 1] : null;
     const averageTime = validResults.length > 0 ?
-        Math.round(validResults.reduce((sum, result) => sum + result.time, 0) / validResults.length) : 0;
+        validResults.reduce((sum, result) => sum + result.time, 0) / validResults.length : 0;
     const bestTime = validResults.length > 0 ? Math.min(...validResults.map(r => r.time)) : 0;
-    const successRate = results.length > 0 ? Math.round((validResults.length / results.length) * 100) : 0;
     
-    // 現在の加重平均スコア計算
-    const currentWeightedScore = results.length > 0 ? calculateWeightedScore(results).weightedScore : 0;
-    const currentSuccessCount = results.filter(r => r.success).length;
-    const currentFailureCount = results.filter(r => !r.success).length;
+    // デバッグ: ゲーム中の平均時間計算ログ
+    useEffect(() => {
+        if (validResults.length > 0) {
+            console.log(`🎮 Game average calculation:`, {
+                validResults: validResults.map(r => ({ time: r.time, precision: r.time.toFixed(5) })),
+                sum: validResults.reduce((sum, result) => sum + result.time, 0),
+                count: validResults.length,
+                averageTime: averageTime,
+                averageTimePrecision: averageTime.toFixed(5)
+            });
+            console.log(`🖥️ Display values: averageTime=${averageTime}, display5=${(averageTime / 1000).toFixed(5)}, display6=${(averageTime / 1000).toFixed(6)}, bestTime=${bestTime}, bestDisplay5=${(bestTime / 1000).toFixed(5)}, bestDisplay6=${(bestTime / 1000).toFixed(6)}`);
+        }
+    }, [validResults.length, averageTime, bestTime]);
+    const successRate = results.length > 0 ? (validResults.length / results.length) * 100 : 0;
+    
+    // 現在の加重平均スコア計算（メモ化で最適化）
+    const currentWeightedScore = useMemo(() => {
+        return results.length > 0 ? calculateWeightedScore(results).weightedScore : 0;
+    }, [results]);
+    
+    const currentSuccessCount = useMemo(() => results.filter(r => r.success).length, [results]);
+    const currentFailureCount = useMemo(() => results.filter(r => !r.success).length, [results]);
 
     // ベスト記録計算（加重平均スコアが最も低い記録）
     const bestRecord = gameHistory.length > 0
@@ -550,11 +583,11 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="text-center">
                                             <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                            <div className="text-xl font-bold text-blue-600">{(bestRecord.averageTime / 1000).toFixed(3)}秒</div>
+                                            <div className="text-xl font-bold text-blue-600">{(bestRecord.averageTime / 1000).toFixed(5)}秒</div>
                                         </div>
                                         <div className="text-center">
                                             <div className="text-sm text-gray-600 mb-1">最速記録</div>
-                                            <div className="text-xl font-bold text-green-600">{(bestRecord.bestTime / 1000).toFixed(3)}秒</div>
+                                            <div className="text-xl font-bold text-green-600">{(bestRecord.bestTime / 1000).toFixed(5)}秒</div>
                                         </div>
                                     </div>
                                 </div>
@@ -566,7 +599,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                     onClick={handleStartGame}
                                     className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                 >
-                                    テスト開始
+                                    トレーニング開始
                                 </button>
                                 <button
                                     onClick={handleBack}
@@ -631,23 +664,50 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                         <div className="grid grid-cols-2 gap-6 mb-6">
                                             <div className="text-center">
                                                 <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                                <div className="text-2xl font-bold text-green-600">{(averageTime / 1000).toFixed(3)}秒</div>
+                                                <div className="text-2xl font-bold text-green-600">{(averageTime / 1000).toFixed(5)}秒</div>
                                             </div>
                                             <div className="text-center">
                                                 <div className="text-sm text-gray-600 mb-1">最速記録</div>
-                                                <div className="text-2xl font-bold text-purple-600">{(bestTime / 1000).toFixed(3)}秒</div>
+                                                <div className="text-2xl font-bold text-purple-600">{(bestTime / 1000).toFixed(5)}秒</div>
                                             </div>
                                         </div>
                                         
                                         {/* ランキング表示 */}
                                         {currentRank && totalPlayers > 0 && (
                                             <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
-                                                <div className="text-sm text-blue-100 mb-1">ゲーム結果！</div>
+                                                <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                                 <div className="text-xl font-bold">
                                                     {currentRank}位 / {totalPlayers}位
                                                 </div>
                                             </div>
                                         )}
+                                                                                        
+                                                {/* シェアボタン */}
+                                                <div className="mt-3 flex justify-center gap-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            const shareText = `ハントレで反射神経トレーニングをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n平均反応時間: ${(averageTime / 1000).toFixed(5)}秒`;
+                                                            const shareUrl = window.location.origin;
+                                                            
+                                                            if (navigator.share) {
+                                                                navigator.share({
+                                                                    title: 'ハントレ - 反射神経トレーニング結果',
+                                                                    text: shareText,
+                                                                    url: shareUrl
+                                                                });
+                                                            } else {
+                                                                // フォールバック: Xでシェア
+                                                                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                                window.open(twitterUrl, '_blank');
+                                                            }
+                                                        }}
+                                                        className="flex text-white items-center gap-1 px-3 py-1.5 bg-black/100 hover:bg-black/100 rounded-full text-sm font-medium transition-colors duration-200"
+                                                        title="結果をシェア"
+                                                    >
+                                                        <Share2 className="w-4 h-4" />
+                                                        シェア
+                                                    </button>
+                                                </div>
                                     </>
                                 )}
                             </div>
@@ -675,7 +735,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                                                 {getReflexHunterRank(averageTime).rank}
                                                             </div>
                                                             <div className="text-sm text-blue-100 mt-1">
-                                                                {(averageTime / 1000).toFixed(3)}秒平均
+                                                                {(averageTime / 1000).toFixed(5)}秒平均
                                                             </div>
                                                         </div>
                                                     </div>
@@ -694,42 +754,16 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             )}
 
                             {/* ボタン */}
-                            <div className="flex flex-col gap-4 justify-center">
-                                {/* X連携促進ボタン（X未連携の場合のみ表示） */}
-                                {isXLinked === false && (
-                                    <div className="text-center space-y-2">
-                                        <button
-                                            onClick={showXLinkModalOnClick}
-                                            className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all duration-200 shadow-lg flex items-center justify-center mx-auto"
-                                        >
-                                            {/* 公式Xロゴ */}
-                                            <svg 
-                                                width="16" 
-                                                height="16" 
-                                                viewBox="0 0 24 24" 
-                                                fill="currentColor"
-                                                className="mr-2"
-                                            >
-                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                                            </svg>
-                                            連携してランキングに名前を表示
-                                        </button>
-                                        <p className="text-xs text-gray-500">※ 連携しなくても引き続きプレイできます</p>
-
-                                    </div>
-                                )}
-                                
-                                {/* 既存のボタン */}
-                                <div className="flex gap-4 justify-center">
+                            <div className="flex flex-col gap-3 items-center">
                                     <button
                                         onClick={resetTest}
-                                        className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
+                                        className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
                                     >
-                                        もう一度
+                                        もう一度トレーニングする
                                     </button>
                                     <button
                                         onClick={handleBack}
-                                        className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+                                        className="w-full max-w-60 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
                                     >
                                         メニューに戻る
                                     </button>
@@ -743,6 +777,33 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                         key={`ranking-${rankingUpdateKey}`}
                                         currentGameScore={averageTime}
                                     />
+                                    
+                                    {/* X連携促進ブロック（X未連携の場合のみ表示） */}
+                                    {isXLinked === false && (
+                                        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                            <div className="text-center space-y-3">
+                                                <button
+                                                    onClick={showXLinkModalOnClick}
+                                                    className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all duration-200 shadow-lg flex items-center justify-center mx-auto"
+                                                >
+                                                    {/* 公式Xロゴ */}
+                                                    <svg 
+                                                        width="16" 
+                                                        height="16" 
+                                                        viewBox="0 0 24 24" 
+                                                        fill="currentColor"
+                                                        className="mr-2"
+                                                    >
+                                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                                    </svg>
+                                                    連携
+                                                </button>
+                                                <div className="text-sm text-gray-600 leading-relaxed text-left">
+                                                    <p>X連携するとXのディスプレイ名とアイコンがランキングに掲載されます。なお、それ以外の情報は取得していません。また、いつでも解除可能です。</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -758,7 +819,6 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                     gameType={xLinkModalData?.gameType || 'reflex'}
                     score={xLinkModalData?.score || 0}
                 />
-            </div>
             </>
         );
     }
@@ -772,13 +832,13 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                     <div className="max-w-4xl mx-auto">
                         {/* ヘッダー */}
                         <div className="text-right mb-2">
-                                                            <h1 className="text-sm font-medium text-gray-500 font-bold">反射神経テスト</h1>
+                                                            <h1 className="text-sm font-medium text-gray-500 font-bold">反射神経トレーニング</h1>
                         </div>
 
                         {/* 進捗表示 */}
                         <div className="bg-white rounded-lg p-4 mb-8 shadow-sm border border-gray-200">
                             <div className="flex justify-between items-center mb-3">
-                                <span className="text-sm font-medium text-gray-700">テスト進行状況</span>
+                                <span className="text-sm font-medium text-gray-700">トレーニング進行状況</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-sm font-semibold text-blue-600">{results.length}</span>
                                     <span className="text-sm text-gray-400">/</span>
@@ -818,7 +878,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                 {gameState === 'ready' && '画面が赤くなったらクリック！'}
                                 {gameState === 'go' && 'クリック！'}
                                 {gameState === 'clicked' && currentResult && (
-                                    currentResult.success ? `${(currentResult.time / 1000).toFixed(3)}秒` : 'フライング！'
+                                    currentResult.success ? `${(currentResult.time / 1000).toFixed(5)}秒` : 'フライング！'
                                 )}
                             </div>
                         </div>
@@ -827,11 +887,11 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                         <div className="grid grid-cols-2 gap-6 mb-8">
                             <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
                                 <div className="text-sm text-gray-600 mb-1">平均反応時間</div>
-                                <div className="text-xl font-bold text-green-600">{averageTime > 0 ? `${(averageTime / 1000).toFixed(3)}秒` : '-'}</div>
+                                <div className="text-xl font-bold text-green-600">{validResults.length > 0 ? `${(averageTime / 1000).toFixed(6).replace(/0+$/, '').replace(/\.$/, '')}秒` : '-'}</div>
                             </div>
                             <div className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-100">
                                 <div className="text-sm text-gray-600 mb-1">最速記録</div>
-                                <div className="text-xl font-bold text-purple-600">{bestTime > 0 ? `${(bestTime / 1000).toFixed(3)}秒` : '-'}</div>
+                                <div className="text-xl font-bold text-purple-600">{validResults.length > 0 ? `${(bestTime / 1000).toFixed(6).replace(/0+$/, '').replace(/\.$/, '')}秒` : '-'}</div>
                             </div>
                         </div>
 

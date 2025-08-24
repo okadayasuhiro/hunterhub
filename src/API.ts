@@ -16,7 +16,7 @@ export type CreateGameScoreInput = {
 export type ModelGameScoreConditionInput = {
   userId?: ModelStringInput | null,
   gameType?: ModelStringInput | null,
-  score?: ModelIntInput | null,
+  score?: ModelFloatInput | null,
   metadata?: ModelStringInput | null,
   sessionId?: ModelStringInput | null,
   timestamp?: ModelStringInput | null,
@@ -68,7 +68,7 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
-export type ModelIntInput = {
+export type ModelFloatInput = {
   ne?: number | null,
   eq?: number | null,
   le?: number | null,
@@ -138,6 +138,18 @@ export type ModelUserProfileConditionInput = {
   or?: Array< ModelUserProfileConditionInput | null > | null,
   not?: ModelUserProfileConditionInput | null,
   updatedAt?: ModelStringInput | null,
+};
+
+export type ModelIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
 };
 
 export type ModelBooleanInput = {
@@ -232,7 +244,7 @@ export type ModelGameScoreFilterInput = {
   id?: ModelIDInput | null,
   userId?: ModelStringInput | null,
   gameType?: ModelStringInput | null,
-  score?: ModelIntInput | null,
+  score?: ModelFloatInput | null,
   metadata?: ModelStringInput | null,
   sessionId?: ModelStringInput | null,
   timestamp?: ModelStringInput | null,
@@ -320,7 +332,7 @@ export type ModelSubscriptionGameScoreFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   userId?: ModelSubscriptionStringInput | null,
   gameType?: ModelSubscriptionStringInput | null,
-  score?: ModelSubscriptionIntInput | null,
+  score?: ModelSubscriptionFloatInput | null,
   metadata?: ModelSubscriptionStringInput | null,
   sessionId?: ModelSubscriptionStringInput | null,
   timestamp?: ModelSubscriptionStringInput | null,
@@ -361,7 +373,7 @@ export type ModelSubscriptionStringInput = {
   notIn?: Array< string | null > | null,
 };
 
-export type ModelSubscriptionIntInput = {
+export type ModelSubscriptionFloatInput = {
   ne?: number | null,
   eq?: number | null,
   le?: number | null,
@@ -388,6 +400,18 @@ export type ModelSubscriptionUserProfileFilterInput = {
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionUserProfileFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserProfileFilterInput | null > | null,
+};
+
+export type ModelSubscriptionIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  in?: Array< number | null > | null,
+  notIn?: Array< number | null > | null,
 };
 
 export type ModelSubscriptionBooleanInput = {

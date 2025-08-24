@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Target, CheckCircle, XCircle, RotateCcw, Home } from 'lucide-react';
+import { Trophy, Target, CheckCircle, XCircle, RotateCcw, Home, Share2 } from 'lucide-react';
 import animalQuizService from '../services/animalQuizService';
 import type { AnimalQuizResult } from '../types/animalQuiz';
 
@@ -83,6 +83,33 @@ const AnimalQuizResultPage: React.FC = () => {
                 <p className="text-3xl font-bold text-green-700">
                   {correctPercentage.toFixed(1)}%
                 </p>
+                
+                {/* シェアボタン */}
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={() => {
+                      const shareText = `ハントレで狩猟動物クイズをプレイしました！\n結果: ${result.correctCount} / ${result.totalQuestions} 問正解\n正解率: ${correctPercentage.toFixed(1)}%`;
+                      const shareUrl = window.location.origin;
+                      
+                      if (navigator.share) {
+                        navigator.share({
+                          title: 'ハントレ - 狩猟動物クイズ結果',
+                          text: shareText,
+                          url: shareUrl
+                        });
+                      } else {
+                        // フォールバック: Xでシェア
+                        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                        window.open(twitterUrl, '_blank');
+                      }
+                    }}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-full text-sm font-medium transition-colors duration-200"
+                    title="結果をシェア"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    シェア
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -147,7 +174,7 @@ const AnimalQuizResultPage: React.FC = () => {
             className="w-full max-w-xs bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
           >
             <RotateCcw className="w-5 h-5 mr-2" />
-            もう一度挑戦
+            もう一度トレーニングする
           </button>
           
           <button
@@ -155,7 +182,7 @@ const AnimalQuizResultPage: React.FC = () => {
             className="w-full max-w-40 bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 px-6 rounded-lg shadow-lg border-2 border-gray-300 transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
           >
             <Home className="w-5 h-5 mr-2" />
-            ホームに戻る
+            メニューに戻る
           </button>
         </div>
       </div>

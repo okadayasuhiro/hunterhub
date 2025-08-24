@@ -7,7 +7,7 @@ type GameScore @model {
   id: ID!
   userId: String!
   gameType: String! # "reflex", "target", "sequence"
-  score: Int!
+  score: Float!
   metadata: String # JSON string for additional data
   sessionId: String
   timestamp: AWSDateTime!
