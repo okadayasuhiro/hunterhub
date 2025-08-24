@@ -105,7 +105,12 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                 <div className="h-40 relative">
                     <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    {playCount !== undefined && (
+                    {/* クイズ系ゲームの場合は免許ラベル、その他はプレイ回数を表示 */}
+                    {title.includes('クイズ') ? (
+                        <div className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-red-500 text-white rounded-md shadow-sm">
+                            狩猟免許 未取得者向け
+                        </div>
+                    ) : playCount !== undefined && (
                         <div className="absolute bottom-0 right-0 px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105 text-white" style={{ backgroundColor: '#2f76ac' }}>
                             Total {playCount} plays
                         </div>
