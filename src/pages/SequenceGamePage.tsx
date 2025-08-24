@@ -226,10 +226,11 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         setShowXLinkModal(false);
         setXLinkModalData(null);
         
-        const linked = await userService.isXLinked();
-        const name = await userService.getDisplayName();
-        setIsXLinked(linked);
-        setDisplayName(name);
+        // X OAuth認証フローを開始
+        console.log('🔧 Starting X OAuth flow from SequenceGamePage...');
+        const { default: XAuthService } = await import('../services/xAuthService');
+        const xAuthService = XAuthService.getInstance();
+        await xAuthService.startAuthFlow();
     };
 
     const handleStartGame = () => {

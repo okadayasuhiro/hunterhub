@@ -365,13 +365,14 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
 
     // X連携モーダルハンドラー
     const handleXLink = async () => {
-        // 簡易X連携（実際のOAuth実装は後で）
-        const xName = prompt('X表示名を入力してください（テスト用）:');
-        if (xName && xName.trim()) {
-            await userService.linkXAccount(xName.trim());
-            alert('X連携しました！');
-        }
         setShowXLinkModal(false);
+        setXLinkModalData(null);
+        
+        // X OAuth認証フローを開始
+        console.log('🔧 Starting X OAuth flow from ReflexTestPage...');
+        const { default: XAuthService } = await import('../services/xAuthService');
+        const xAuthService = XAuthService.getInstance();
+        await xAuthService.startAuthFlow();
     };
 
     const handleXLinkClose = () => {

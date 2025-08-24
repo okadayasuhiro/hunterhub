@@ -309,15 +309,14 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     };
 
     const handleXLink = async () => {
-        // X連携処理は XLinkPromptModal 内で実行される
         setShowXLinkModal(false);
         setXLinkModalData(null);
         
-        // X連携状態を更新
-        const linked = await userService.isXLinked();
-        const name = await userService.getDisplayName();
-        setIsXLinked(linked);
-        setDisplayName(name);
+        // X OAuth認証フローを開始
+        console.log('🔧 Starting X OAuth flow from TargetTrackingPage...');
+        const { default: XAuthService } = await import('../services/xAuthService');
+        const xAuthService = XAuthService.getInstance();
+        await xAuthService.startAuthFlow();
     };
 
     // パフォーマンスランク取得
