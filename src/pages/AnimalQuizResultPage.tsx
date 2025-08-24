@@ -76,15 +76,6 @@ const AnimalQuizResultPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* ベストスコア表示（ランキング風） */}
-              {bestScore && (
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center mb-4">
-                  <div className="text-sm text-blue-100 mb-1">あなたのベストスコア</div>
-                  <div className="text-xl font-bold">
-                    {bestScore.correctCount} / {bestScore.totalQuestions} 問正解 ({((bestScore.correctCount / bestScore.totalQuestions) * 100).toFixed(1)}%)
-                  </div>
-                </div>
-              )}
 
               {/* シェアボタン */}
               <div className="mt-3 flex justify-center gap-2">
@@ -154,17 +145,15 @@ const AnimalQuizResultPage: React.FC = () => {
             <div className="flex flex-col gap-3 items-center">
               <button
                 onClick={handleRetry}
-                className="w-full max-w-xs bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
+                className="w-full max-w-xs px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300"
               >
-                <RotateCcw className="w-5 h-5 mr-2" />
                 もう一度トレーニングする
               </button>
               
               <button
                 onClick={handleBackToHome}
-                className="w-full max-w-40 bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 px-6 rounded-lg shadow-lg border-2 border-gray-300 transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
+                className="w-full max-w-60 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
               >
-                <Home className="w-5 h-5 mr-2" />
                 メニューに戻る
               </button>
             </div>

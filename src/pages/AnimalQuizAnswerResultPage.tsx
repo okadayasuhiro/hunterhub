@@ -108,7 +108,7 @@ const AnimalQuizAnswerResultPage: React.FC = () => {
             <div className="text-center mb-4">
               <button
                 onClick={handleNextQuestion}
-                className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center mx-auto"
+                className="px-8 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-300 flex items-center mx-auto"
               >
                 {gameState.currentQuestionIndex + 1 >= gameState.questions.length ? (
                   <>
