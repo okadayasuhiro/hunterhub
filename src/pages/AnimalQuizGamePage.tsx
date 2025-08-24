@@ -92,7 +92,7 @@ const AnimalQuizGamePage: React.FC = () => {
                 <img
                   src={currentQuestion.animal.imageFile}
                   alt="動物の画像"
-                  className="w-64 h-64 object-cover rounded-lg"
+                  className="w-64 max-h-64 object-contain rounded-lg"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = '/images/placeholder-animal.png';

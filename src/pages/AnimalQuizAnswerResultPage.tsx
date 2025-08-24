@@ -75,7 +75,7 @@ const AnimalQuizAnswerResultPage: React.FC = () => {
                 <img
                   src={questionResult.question.animal.imageFile}
                   alt={questionResult.question.animal.name}
-                  className="w-48 h-48 object-cover rounded-lg"
+                  className="w-48 max-h-48 object-contain rounded-lg"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = '/images/placeholder-animal.png';
