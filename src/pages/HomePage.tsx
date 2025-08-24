@@ -11,6 +11,7 @@ import panel1 from '../assets/images/panel1.png';
 import panel2 from '../assets/images/panel2.png';
 import panel3 from '../assets/images/panel3.png';
 import panel4 from '../assets/images/panel4.png';
+import panel5 from '../assets/images/panel5.png';
 
 interface LastResult {
     primaryStat: string;
@@ -541,7 +542,7 @@ const HomePage: React.FC = () => {
                             icon={<></>}
                             path="/animal-quiz/instructions"
                             lastResult={undefined}
-                            imageSrc="/src/assets/images/panel5.png"
+                            imageSrc={panel5}
                             playCount={0}
                             topPlayer={undefined}
                             />
