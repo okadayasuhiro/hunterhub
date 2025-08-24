@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
     
     const userService = UserIdentificationService.getInstance();
 
-    // ゲームリスト定義（統計情報付き）
+    // トレーニングリスト定義（統計情報付き）
     const gameLinksWithStats = [
         { name: '反射神経', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
         { name: 'ターゲット追跡', path: '/target/instructions', gameType: 'target', showStats: true },
@@ -119,7 +119,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
         setShowUserMenu(false);
     };
 
-    // ゲーム統計情報を取得
+    // トレーニング統計情報を取得
     const loadGameStats = async () => {
         const stats: {[key: string]: {playCount: number, rank: number | null}} = {};
         
@@ -243,7 +243,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                 <div className="absolute inset-0 bg-black/20"></div>
                 {/* メニューヘッダー */}
                 <div className="relative z-10 flex items-center justify-between p-6 border-b border-white/30">
-                    <h2 className="text-xl font-bold text-white">ゲーム一覧</h2>
+                    <h2 className="text-xl font-bold text-white">トレーニング一覧</h2>
                     <button
                         onClick={() => setShowHamburgerMenu(false)}
                         className="flex items-center justify-center w-8 h-8 text-white hover:text-white hover:bg-white/20 rounded-full transition-colors duration-200"
@@ -254,7 +254,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
 
                 {/* メニュー項目 */}
                 <div className="relative z-10 flex-1 overflow-y-auto flex flex-col">
-                    {/* ゲームセクション */}
+                    {/* トレーニングセクション */}
                     <div className="py-2">
 
                         {gameLinksWithStats.map((game) => (

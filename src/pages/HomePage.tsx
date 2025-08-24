@@ -474,8 +474,8 @@ const HomePage: React.FC = () => {
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="relative z-10 max-w-4xl mx-auto text-center">
                     <h1 className="text-2xl md:text-3xl text-white font-bold mb-4 drop-shadow-lg">
-                        <span className="text-yellow-300">遊び</span>が<span className="text-blue-300">トレーニング</span>になる<br />
-                        ハンターのためのオンライントレーニングフィールド
+                        <span className="text-yellow-300">狩猟感覚を、遊びながら鍛える</span><br />
+                        <span className="text-sm">ハンターのためのオンライントレーニング</span>
                     </h1>
                 </div>
             </div>
