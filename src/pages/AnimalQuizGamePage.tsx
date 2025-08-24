@@ -102,13 +102,13 @@ const AnimalQuizGamePage: React.FC = () => {
             </div>
 
             {/* 4択ボタン */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
               {currentQuestion.choices.map((choice, index) => (
                 <button
                   key={index}
                   onClick={() => handleAnswerSelect(choice)}
                   disabled={isAnswering}
-                  className={`p-4 text-lg font-medium rounded-lg border-2 transition-all duration-200 ${
+                  className={`px-4 py-3 md:py-4 text-base md:text-lg font-medium rounded-lg border-2 transition-all duration-200 min-h-[48px] flex items-center justify-center ${
                     isAnswering
                       ? 'opacity-50 cursor-not-allowed'
                       : 'hover:bg-blue-50 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500'

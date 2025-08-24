@@ -27,7 +27,7 @@ const AnimalQuizInstructionsPage: React.FC = () => {
             {/* ヘッダー */}
             <div className="text-right mb-4">
               <h1 className="text-sm font-medium text-gray-500">
-                狩猟動物クイズ
+                狩猟鳥獣（獣類）クイズトレーニング
               </h1>
             </div>
 
@@ -39,7 +39,7 @@ const AnimalQuizInstructionsPage: React.FC = () => {
                   <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
                     <Camera className="w-3 h-3" />
                   </div>
-                  <p>狩猟対象となる<span className="font-semibold text-blue-600">16種の動物</span>の画像が表示されます</p>
+                  <p>狩猟対象となる<span className="font-semibold text-blue-600">動物</span>の画像が表示されます</p>
                 </div>
                 <div className="flex items-center">
                   <div className="inline-flex w-6 h-6 bg-gray-500 text-white rounded-md items-center justify-center mr-3 flex-shrink-0">
