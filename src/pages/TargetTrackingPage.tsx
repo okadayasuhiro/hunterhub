@@ -319,6 +319,14 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
         await xAuthService.startAuthFlow();
     };
 
+    // 直接X連携を開始（モーダルなし）
+    const handleDirectXLink = async () => {
+        console.log('🔧 Starting direct X OAuth flow from TargetTrackingPage...');
+        const { default: XAuthService } = await import('../services/xAuthService');
+        const xAuthService = XAuthService.getInstance();
+        await xAuthService.startAuthFlow();
+    };
+
     // パフォーマンスランク取得
     const getHunterRank = (avgReactionTime: number): { rank: string; number: number; total: number } => {
         if (avgReactionTime <= 0.800) return { rank: 'ハンター・オブ・ザ・オリジン', number: 1, total: 12 };
@@ -571,7 +579,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                     <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <div className="text-center space-y-3">
                             <button
-                                onClick={showXLinkModalOnClick}
+                                onClick={handleDirectXLink}
                                 className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all duration-200 shadow-lg flex items-center justify-center mx-auto"
                             >
                                 {/* 公式Xロゴ */}

@@ -233,6 +233,14 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
         await xAuthService.startAuthFlow();
     };
 
+    // 直接X連携を開始（モーダルなし）
+    const handleDirectXLink = async () => {
+        console.log('🔧 Starting direct X OAuth flow from SequenceGamePage...');
+        const { default: XAuthService } = await import('../services/xAuthService');
+        const xAuthService = XAuthService.getInstance();
+        await xAuthService.startAuthFlow();
+    };
+
     const handleStartGame = () => {
         startGame();
         navigate('/sequence/game');
@@ -709,7 +717,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                     <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                                         <div className="text-center space-y-3">
                                             <button
-                                                onClick={showXLinkModalOnClick}
+                                                onClick={handleDirectXLink}
                                                 className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-all duration-200 shadow-lg flex items-center justify-center mx-auto"
                                             >
                                                 {/* 公式Xロゴ */}
