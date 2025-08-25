@@ -178,14 +178,18 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                 console.log('Target result page current play score (actualTotalTime):', actualTotalTime, 'ms:', totalTimeMs);
                 
                 const rankResult = await rankingService.getCurrentScoreRank('target', totalTimeMs);
-                console.log('Target result page current score rank result:', rankResult);
+                console.log('Target result page optimized score rank result:', rankResult);
                 
-                if (rankResult) {
-                    console.log('Target result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                if (rankResult.isTop10 && rankResult.rank) {
+                    // 10位以内の場合
+                    console.log('🏆 Target result page top 10 rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
                     setCurrentRank(rankResult.rank);
                     setTotalPlayers(rankResult.totalPlayers);
                 } else {
-                    console.log('No current score rank found on target result page');
+                    // ランキング圏外の場合
+                    console.log('📍 Target result page out of ranking:', rankResult.totalPlayers, 'total players');
+                    setCurrentRank(null);
+                    setTotalPlayers(rankResult.totalPlayers);
                 }
             } catch (error) {
                 console.error('Failed to get current score rank on target result page:', error);
@@ -483,18 +487,27 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                 </div>
                                 
                                 {/* ランキング表示 */}
-                                {currentRank && totalPlayers > 0 ? (
+                                {totalPlayers > 0 ? (
                                     <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
                                         <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                         <div className="text-xl font-bold">
-                                            {currentRank}位 / {totalPlayers}位
+                                            {currentRank ? (
+                                                `${currentRank}位 / ${totalPlayers}位`
+                                            ) : (
+                                                `ランキング圏外 / ${totalPlayers}位`
+                                            )}
                                         </div>
+                                        {!currentRank && (
+                                            <div className="text-xs text-blue-200 mt-1">
+                                                (11位以下)
+                                            </div>
+                                        )}
                                         
                                         {/* シェアボタン */}
                                         <div className="mt-3 flex justify-center gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'} / ${totalPlayers}位\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
                                                     const shareUrl = window.location.origin;
                                                     
                                                     if (navigator.share) {

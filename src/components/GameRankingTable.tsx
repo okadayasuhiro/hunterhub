@@ -20,6 +20,7 @@ interface GameRankingTableProps {
     limit?: number;
     highlightCurrentUser?: boolean; // 現在ユーザーを赤色でハイライトするかどうか
     currentGameScore?: number; // 今回のゲーム結果スコア（この値と一致する行のみ赤くハイライト）
+    updateKey?: number; // ランキング更新用キー
 }
 
 interface ExtendedRankingEntry {
@@ -109,7 +110,7 @@ const UserIcon: React.FC<{
 
 
 
-const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 10, highlightCurrentUser = false, currentGameScore }) => {
+const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 10, highlightCurrentUser = false, currentGameScore, updateKey }) => {
     const [rankingData, setRankingData] = useState<RankingData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -119,7 +120,7 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
 
     useEffect(() => {
         loadRankingData();
-    }, [gameType]);
+    }, [gameType, updateKey]); // updateKey依存を追加（ランキング更新用）
 
     // X連携状態の変化を監視（安全版）
     const [isXLinkedState, setIsXLinkedState] = useState<boolean>(false);
@@ -165,7 +166,9 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
         setLoading(true);
         setError(null);
         try {
-            const data = await rankingService.getRankings(gameType, limit);
+            // 常に10件固定で取得（パフォーマンス最適化）
+            const data = await rankingService.getRankings(gameType, 10);
+            console.log(`📊 Top 10 ranking loaded for ${gameType} (fixed limit):`, data);
             
             // 現在のユーザーのX連携状態を取得
             const currentUserId = await userService.getCurrentUserId();
@@ -223,7 +226,7 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
             <div className="bg-white rounded-lg p-6 shadow-sm border border-blue-100">
                 <div className="text-center mb-4">
                     <h3 className="text-lg font-semibold text-gray-800">
-                        トッププレイヤー ランキング
+                        トッププレイヤー ランキング（上位10位）
                     </h3>
                 </div>
                 <div className="text-center py-8">
@@ -239,7 +242,7 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
             <div className="bg-white rounded-lg p-6 shadow-sm border border-blue-100">
                 <div className="text-center mb-4">
                     <h3 className="text-lg font-semibold text-gray-800">
-                        トッププレイヤー ランキング
+                        トッププレイヤー ランキング（上位10位）
                     </h3>
                 </div>
                 <div className="text-center py-8">
@@ -403,13 +406,25 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                 ))}
             </div>
 
-            {rankingData.totalPlayers > limit && (
-                <div className="text-center mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-500">
-                        {rankingData.totalPlayers}人中 上位{limit}位まで表示
-                    </p>
+            {/* 圏外ユーザーの表示 */}
+            {highlightCurrentUser && rankingData && !rankingData.rankings.some((entry: RankingEntry) => entry.isCurrentUser) && (
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg text-center border-2 border-dashed border-gray-300">
+                    <div className="text-gray-600">
+                        <User className="w-5 h-5 inline mr-2" />
+                        あなたの順位: <span className="font-bold text-gray-800">ランキング圏外</span>
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1">
+                        トップ10入りを目指してトレーニングを続けよう！
+                    </div>
                 </div>
             )}
+
+            {/* 総プレイヤー数表示 */}
+            <div className="text-center mt-4 pt-4 border-t border-gray-200">
+                <p className="text-sm text-gray-500">
+                    全{rankingData.totalPlayers}人中 上位10位まで表示
+                </p>
+            </div>
         </div>
     );
 };

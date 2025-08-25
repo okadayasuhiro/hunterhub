@@ -28,6 +28,13 @@ export interface RankingData {
   lastUpdated: string;
 }
 
+export interface OptimizedScoreRankResult {
+  rank: number | null;      // null = ランキング圏外
+  totalPlayers: number;     // 全プレイヤー数
+  isTop10: boolean;         // 10位以内かどうか
+  top10Threshold?: number;  // 10位のスコア（参考値）
+}
+
 export interface HybridRankingConfig {
   useCloud: boolean;
   fallbackToLocal: boolean;
@@ -135,21 +142,22 @@ export class HybridRankingService {
   }
 
   /**
-   * 特定スコアでの順位を計算（結果画面用）
+   * 特定スコアでの順位を計算（結果画面用）- 最適化版
    */
-  public async getCurrentScoreRank(gameType: string, currentScore: number): Promise<{rank: number, totalPlayers: number} | null> {
-    console.log('🎯 Calculating current score rank for:', gameType, 'score:', currentScore);
+  public async getCurrentScoreRank(gameType: string, currentScore: number): Promise<OptimizedScoreRankResult> {
+    console.log('🎯 Calculating optimized current score rank for:', gameType, 'score:', currentScore);
 
     try {
-      const result = await this.cloudService.getCurrentScoreRank(gameType, currentScore);
-      if (result) {
-        console.log('✅ Current score rank calculated from cloud');
-        return result;
-      }
-      return null;
+      const result = await this.cloudService.getCurrentScoreRankOptimized(gameType, currentScore);
+      console.log('✅ Optimized score rank calculated from cloud:', result);
+      return result;
     } catch (error) {
-      console.error('❌ Cloud current score rank calculation failed:', error);
-      return null;
+      console.error('❌ Optimized score rank calculation failed:', error);
+      return {
+        rank: null,
+        totalPlayers: 0,
+        isTop10: false
+      };
     }
   }
 
@@ -229,23 +237,18 @@ export class HybridRankingService {
   }
 
   /**
-   * 全ユーザーの総プレイ回数を取得
+   * 全ユーザーの総プレイ回数を取得（最適化版）
    */
   public async getTotalPlayCount(gameType: string): Promise<number> {
-    console.log(`🔍 CloudRankingService: Getting total play count for ${gameType}`);
+    console.log(`🔍 Getting optimized total play count for ${gameType}`);
     
     try {
-      console.log(`🔍 CloudRankingService: Attempting to get total play count from cloud for ${gameType}`);
-      // クラウドから全ユーザーの総プレイ回数を取得
-      const cloudResult = await this.cloudService.getRankings(gameType, 10000); // 大きな数で全データ取得
-      console.log(`🔍 CloudRankingService: Cloud result for ${gameType}:`, {
-        totalCount: cloudResult.totalCount,
-        rankingsLength: cloudResult.rankings.length,
-        totalPlayers: cloudResult.totalPlayers
-      });
-      return cloudResult.totalCount || 0;
+      // Count専用クエリで取得（データ転送なし）
+      const count = await this.cloudService.getTotalPlayerCount(gameType);
+      console.log(`✅ Optimized total play count for ${gameType}: ${count}`);
+      return count;
     } catch (error) {
-      console.error(`❌ CloudRankingService: Failed to get total play count for ${gameType}:`, error);
+      console.error(`❌ Failed to get optimized total play count for ${gameType}:`, error);
       return 0;
     }
   }

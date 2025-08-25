@@ -515,4 +515,124 @@ export class CloudRankingService {
       throw error;
     }
   }
+
+  /**
+   * 総プレイヤー数をCount専用クエリで取得（データ転送なし）
+   * パフォーマンス最適化: データ取得せずカウントのみ
+   */
+  public async getTotalPlayerCount(gameType: string): Promise<number> {
+    try {
+      console.log(`🔍 Getting total player count for ${gameType} (count-only query)`);
+      
+      let totalCount = 0;
+      let nextToken: string | null = null;
+      
+      // ページネーションでカウントのみ取得（データは取得しない）
+      do {
+        const variables: any = {
+          filter: {
+            gameType: { eq: gameType }
+          },
+          limit: 1000 // 大きなページサイズでカウント効率化
+        };
+        
+        if (nextToken) {
+          variables.nextToken = nextToken;
+        }
+        
+        const result: any = await this.client.graphql({
+          query: listGameScores,
+          variables
+        });
+        
+        const items = result.data?.listGameScores?.items || [];
+        totalCount += items.length;
+        nextToken = result.data?.listGameScores?.nextToken || null;
+        
+        console.log(`📊 Count batch: +${items.length}, total: ${totalCount}, hasNext: ${!!nextToken}`);
+        
+      } while (nextToken);
+      
+      console.log(`✅ Total player count for ${gameType}: ${totalCount} (optimized count)`);
+      return totalCount;
+      
+    } catch (error) {
+      console.error(`❌ Failed to get total player count for ${gameType}:`, error);
+      return 0;
+    }
+  }
+
+  /**
+   * 現在スコアの順位を最適化クエリで計算
+   * パフォーマンス最適化: 上位10件のみ取得 + Count専用クエリ
+   */
+  public async getCurrentScoreRankOptimized(gameType: string, currentScore: number): Promise<any> {
+    try {
+      console.log(`🎯 Calculating optimized rank for ${gameType}, score: ${currentScore}`);
+      
+      // 1. 上位10件のみ取得
+      const top10Result = await this.getRankings(gameType, 10);
+      console.log(`📊 Top 10 fetched: ${top10Result.rankings.length} entries`);
+      
+      // 2. 総プレイヤー数をCount専用で取得
+      const totalPlayers = await this.getTotalPlayerCount(gameType);
+      console.log(`👥 Total players: ${totalPlayers}`);
+      
+      // 3. 10位以内判定
+      if (top10Result.rankings.length < 10) {
+        // 全体で10人未満の場合
+        const exactRank = this.calculateExactRank(currentScore, top10Result.rankings);
+        console.log(`✅ Small pool rank: ${exactRank}/${totalPlayers}`);
+        return {
+          rank: exactRank,
+          totalPlayers,
+          isTop10: true,
+          top10Threshold: null
+        };
+      }
+      
+      const top10Threshold = top10Result.rankings[9].score; // 10位のスコア
+      console.log(`🎯 10th place threshold: ${top10Threshold}, current: ${currentScore}`);
+      
+      if (currentScore <= top10Threshold) {
+        // 10位以内の場合
+        const exactRank = this.calculateExactRank(currentScore, top10Result.rankings);
+        console.log(`✅ Top 10 rank: ${exactRank}/${totalPlayers}`);
+        return {
+          rank: exactRank,
+          totalPlayers,
+          isTop10: true,
+          top10Threshold
+        };
+      } else {
+        // ランキング圏外の場合
+        console.log(`📍 Out of ranking: score ${currentScore} > threshold ${top10Threshold}`);
+        return {
+          rank: null,
+          totalPlayers,
+          isTop10: false,
+          top10Threshold
+        };
+      }
+      
+    } catch (error) {
+      console.error(`❌ Failed to calculate optimized rank for ${gameType}:`, error);
+      return {
+        rank: null,
+        totalPlayers: 0,
+        isTop10: false
+      };
+    }
+  }
+
+  /**
+   * 上位10件内での正確な順位を計算
+   */
+  private calculateExactRank(currentScore: number, topRankings: CloudRankingEntry[]): number {
+    // 現在スコアより良いスコアの数を数える
+    const betterScoresCount = topRankings.filter(entry => entry.score < currentScore).length;
+    const rank = betterScoresCount + 1;
+    console.log(`🔢 Exact rank calculation: ${betterScoresCount} better scores, rank: ${rank}`);
+    return rank;
+  }
 }

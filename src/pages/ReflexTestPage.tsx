@@ -314,20 +314,19 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             console.log('Current play score (averageSuccessTime):', averageSuccessTime, 'weightedScore:', weightedScore);
                             
                             const rankResult = await rankingService.getCurrentScoreRank('reflex', weightedScore);
-                            console.log('Current score rank result:', rankResult);
+                            console.log('Optimized score rank result:', rankResult);
                             
-                            if (rankResult) {
-                                console.log('Current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                            if (rankResult.isTop10 && rankResult.rank) {
+                                // 10位以内の場合
+                                console.log('🏆 Top 10 rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
                                 setCurrentRank(rankResult.rank);
                                 setTotalPlayers(rankResult.totalPlayers);
-                                
-                                                // 10位以内の場合、ランキングテーブルを強制更新
-                if (rankResult.rank <= 10) {
-                    console.log('🏆 Top 10 rank achieved! Updating ranking table...');
-                    setRankingUpdateKey(prev => prev + 1);
-                }
+                                setRankingUpdateKey(prev => prev + 1); // ランキングテーブル更新
                             } else {
-                                console.log('No current score rank found');
+                                // ランキング圏外の場合
+                                console.log('📍 Out of ranking:', rankResult.totalPlayers, 'total players');
+                                setCurrentRank(null);
+                                setTotalPlayers(rankResult.totalPlayers);
                             }
                         } catch (error) {
                             console.error('Failed to get current score rank:', error);
@@ -506,14 +505,18 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                         console.log('Result page current play score (averageSuccessTime):', averageSuccessTime, 'weightedScore:', weightedScore);
                         
                         const rankResult = await rankingService.getCurrentScoreRank('reflex', weightedScore);
-                        console.log('Result page current score rank result:', rankResult);
+                        console.log('Result page optimized score rank result:', rankResult);
                         
-                        if (rankResult) {
-                            console.log('Result page current score rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
+                        if (rankResult.isTop10 && rankResult.rank) {
+                            // 10位以内の場合
+                            console.log('🏆 Result page top 10 rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
                             setCurrentRank(rankResult.rank);
                             setTotalPlayers(rankResult.totalPlayers);
                         } else {
-                            console.log('No current score rank found on result page');
+                            // ランキング圏外の場合
+                            console.log('📍 Result page out of ranking:', rankResult.totalPlayers, 'total players');
+                            setCurrentRank(null);
+                            setTotalPlayers(rankResult.totalPlayers);
                         }
                     }
                 } catch (error) {
@@ -682,12 +685,21 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                         </div>
                                         
                                         {/* ランキング表示 */}
-                                        {currentRank && totalPlayers > 0 && (
+                                        {totalPlayers > 0 && (
                                             <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 text-center">
                                                 <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                                 <div className="text-xl font-bold">
-                                                    {currentRank}位 / {totalPlayers}位
+                                                    {currentRank ? (
+                                                        `${currentRank}位 / ${totalPlayers}位`
+                                                    ) : (
+                                                        `ランキング圏外 / ${totalPlayers}位`
+                                                    )}
                                                 </div>
+                                                {!currentRank && (
+                                                    <div className="text-xs text-blue-200 mt-1">
+                                                        (11位以下)
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                                                                         
@@ -695,7 +707,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            const shareText = `ハントレで反射神経トレーニングをプレイしました！\n結果: ${currentRank}位 / ${totalPlayers}位\n平均反応時間: ${(averageTime / 1000).toFixed(5)}秒`;
+                                                            const shareText = `ハントレで反射神経トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'} / ${totalPlayers}位\n平均反応時間: ${(averageTime / 1000).toFixed(5)}秒`;
                                                             const shareUrl = window.location.origin;
                                                             
                                                             if (navigator.share) {
