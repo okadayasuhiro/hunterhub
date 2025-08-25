@@ -1,18 +1,32 @@
 /**
- * Hybrid Ranking Service
- * LocalStorage + AWS DynamoDB のハイブリッド型ランキングシステム
+ * Cloud Ranking Service Wrapper
+ * AWS DynamoDB ランキングシステム
  * 
  * 機能:
- * - LocalStorageをフォールバック
  * - AWS DynamoDBをプライマリ
- * - 自動データ同期
- * - オフライン対応
+ * - 統一されたランキングAPI
  */
 
-import { LocalRankingService } from './localRankingService';
-import type { RankingData, RankingEntry } from './localRankingService';
 import { CloudRankingService } from './cloudRankingService';
 import type { CloudRankingResult, CloudRankingEntry } from './cloudRankingService';
+
+// 型定義をローカルで定義（旧LocalRankingServiceから移行）
+export interface RankingEntry {
+  rank: number;
+  userId: string;
+  username?: string;
+  displayName: string;
+  score: number;
+  timestamp: string;
+  isCurrentUser: boolean;
+}
+
+export interface RankingData {
+  rankings: RankingEntry[];
+  userRank: RankingEntry | null;
+  totalPlayers: number;
+  lastUpdated: string;
+}
 
 export interface HybridRankingConfig {
   useCloud: boolean;
@@ -23,18 +37,16 @@ export interface HybridRankingConfig {
 
 export class HybridRankingService {
   private static instance: HybridRankingService;
-  private localService: LocalRankingService;
   private cloudService: CloudRankingService;
   
   private config: HybridRankingConfig = {
     useCloud: true,
-    fallbackToLocal: true,
-    autoSync: true,
-    syncInterval: 5 // 5分間隔
+    fallbackToLocal: false, // LocalStorage削除により無効化
+    autoSync: false, // 同期機能削除
+    syncInterval: 5 // 5分間隔（未使用）
   };
 
   private constructor() {
-    this.localService = LocalRankingService.getInstance();
     this.cloudService = CloudRankingService.getInstance();
   }
 
@@ -54,135 +66,65 @@ export class HybridRankingService {
   }
 
   /**
-   * スコアを送信（ハイブリッドモード）
+   * スコアを送信（クラウドのみ）
    */
   public async submitScore(gameType: string, score: number, metadata?: any): Promise<void> {
-    console.log('🎯 Hybrid score submission:', { gameType, score, metadata });
+    console.log('🎯 Cloud score submission:', { gameType, score, metadata });
 
-    // 1. ローカルに必ず保存（即座フィードバック用）
-    try {
-      await this.localService.submitScore(gameType, score, metadata);
-      console.log('✅ Local score saved successfully');
-    } catch (error) {
-      console.error('❌ Local score save failed:', error);
-    }
-
-    // 2. クラウドに保存（グローバルランキング用）
+    // クラウドに保存（DynamoDBのみ）
     if (this.config.useCloud) {
       try {
         await this.cloudService.submitScore(gameType, score, metadata);
         console.log('✅ Cloud score saved successfully');
       } catch (error) {
         console.error('❌ Cloud score save failed:', error);
-        console.log('ℹ️ Continuing with local-only mode');
+        throw error; // エラーを上位に伝播
       }
+    } else {
+      throw new Error('Cloud service is disabled');
     }
   }
 
-  /**
-   * ランキングを取得（ハイブリッドモード） - 削除予定
-   */
-  private async getRankingsOld(gameType: string, limit: number = 10): Promise<RankingData> {
-    console.log('🏆 Fetching hybrid rankings for:', gameType);
 
-    // 1. クラウドランキングを試行
-    if (this.config.useCloud) {
-      try {
-        const cloudResult = await this.cloudService.getRankings(gameType, limit);
-        console.log('✅ Cloud rankings fetched successfully');
-        
-        // CloudRankingResultをRankingDataに変換
-        return this.convertCloudToLocal(cloudResult);
-      } catch (error) {
-        console.error('❌ Cloud rankings fetch failed:', error);
-        
-        if (this.config.fallbackToLocal) {
-          console.log('🔄 Falling back to local rankings...');
-        } else {
-          throw error;
-        }
-      }
-    }
-
-    // 2. ローカルランキングにフォールバック
-    try {
-      const localResult = await this.localService.getRankings(gameType, limit);
-      console.log('✅ Local rankings fetched successfully (fallback)');
-      return localResult;
-    } catch (error) {
-      console.error('❌ Local rankings fetch also failed:', error);
-      
-      // 完全に失敗した場合は空のランキングを返す
-      return {
-        rankings: [],
-        userRank: null,
-        totalPlayers: 0,
-        lastUpdated: new Date().toISOString()
-      };
-    }
-  }
 
   /**
-   * トップ1位プレイヤーを取得（ハイブリッドモード）
+   * トップ1位プレイヤーを取得（クラウドのみ）
    */
   public async getTopPlayer(gameType: string): Promise<RankingEntry | null> {
-    console.log('🥇 Fetching hybrid top player for:', gameType);
+    console.log('🥇 Fetching cloud top player for:', gameType);
 
-    // 1. クラウドから取得を試行
-    if (this.config.useCloud) {
-      try {
-        const cloudTopPlayer = await this.cloudService.getTopPlayer(gameType);
-        if (cloudTopPlayer) {
-          console.log('✅ Cloud top player fetched successfully');
-          return this.convertCloudEntryToLocal(cloudTopPlayer);
-        }
-      } catch (error) {
-        console.error('❌ Cloud top player fetch failed:', error);
-      }
-    }
-
-    // 2. ローカルから取得
     try {
-      const localTopPlayer = await this.localService.getTopPlayer(gameType);
-      console.log('✅ Local top player fetched successfully (fallback)');
-      return localTopPlayer;
+      const cloudTopPlayer = await this.cloudService.getTopPlayer(gameType);
+      if (cloudTopPlayer) {
+        console.log('✅ Cloud top player fetched successfully');
+        return this.convertCloudEntryToLocal(cloudTopPlayer);
+      }
+      return null;
     } catch (error) {
-      console.error('❌ Local top player fetch also failed:', error);
+      console.error('❌ Cloud top player fetch failed:', error);
       return null;
     }
   }
 
   /**
-   * ランキングデータを取得（ハイブリッドモード）
+   * ランキングデータを取得（クラウドのみ）
    */
   public async getRankings(gameType: string, limit: number = 10): Promise<RankingData> {
-    console.log('🏅 Fetching hybrid rankings for:', gameType);
+    console.log('🏅 Fetching cloud rankings for:', gameType);
 
-    // 1. クラウドから取得を試行
-    if (this.config.useCloud) {
-      try {
-        const cloudRankings = await this.cloudService.getRankings(gameType, limit);
-        console.log('✅ Cloud rankings fetched successfully');
-        
-        // CloudRankingResult を RankingData に変換
-        return {
-          rankings: cloudRankings.rankings.map(entry => this.convertCloudEntryToLocal(entry)),
-          userRank: cloudRankings.userRank ? this.convertCloudEntryToLocal(cloudRankings.userRank) : null,
-          totalPlayers: cloudRankings.totalPlayers,
-          lastUpdated: cloudRankings.lastUpdated
-        };
-      } catch (error) {
-        console.error('❌ Cloud rankings fetch failed:', error);
-      }
-    }
-
-    // 2. ローカルから取得
     try {
-      const localRankings = await this.localService.getRankings(gameType, limit);
-      console.log('✅ Local rankings fetched successfully (fallback)');
-      return localRankings;
+      const cloudRankings = await this.cloudService.getRankings(gameType, limit);
+      console.log('✅ Cloud rankings fetched successfully');
+      
+      // CloudRankingResult を RankingData に変換
+      return {
+        rankings: cloudRankings.rankings.map(entry => this.convertCloudEntryToLocal(entry)),
+        userRank: cloudRankings.userRank ? this.convertCloudEntryToLocal(cloudRankings.userRank) : null,
+        totalPlayers: cloudRankings.totalPlayers,
+        lastUpdated: cloudRankings.lastUpdated
+      };
     } catch (error) {
-      console.error('❌ Local rankings fetch also failed:', error);
+      console.error('❌ Cloud rankings fetch failed:', error);
       return {
         rankings: [],
         userRank: null,
@@ -198,136 +140,41 @@ export class HybridRankingService {
   public async getCurrentScoreRank(gameType: string, currentScore: number): Promise<{rank: number, totalPlayers: number} | null> {
     console.log('🎯 Calculating current score rank for:', gameType, 'score:', currentScore);
 
-    // 1. クラウドから計算を試行
-    if (this.config.useCloud) {
-      try {
-        const result = await this.cloudService.getCurrentScoreRank(gameType, currentScore);
-        if (result) {
-          console.log('✅ Current score rank calculated from cloud');
-          return result;
-        }
-      } catch (error) {
-        console.error('❌ Cloud current score rank calculation failed:', error);
-      }
-    }
-
-    // 2. ローカルから計算（フォールバック）
     try {
-      // ローカルから指定ゲームタイプの全スコアを取得して手動計算
-      const gameScores = this.localService.getAllGameScores(gameType);
-      
-      // 現在スコアより良いスコアの数を数える
-      const betterScoresCount = gameScores.filter(score => score.score < currentScore).length;
-      
-      const rank = betterScoresCount + 1;
-      const totalPlayers = gameScores.length + 1; // 全スコア数 + 現在のスコア
-      
-      console.log('✅ Current score rank calculated from local (fallback)', {
-        gameType,
-        currentScore,
-        betterScoresCount,
-        rank,
-        totalPlayers,
-        totalGameScores: gameScores.length
-      });
-      return { rank, totalPlayers };
+      const result = await this.cloudService.getCurrentScoreRank(gameType, currentScore);
+      if (result) {
+        console.log('✅ Current score rank calculated from cloud');
+        return result;
+      }
+      return null;
     } catch (error) {
-      console.error('❌ Local current score rank calculation also failed:', error);
+      console.error('❌ Cloud current score rank calculation failed:', error);
       return null;
     }
   }
 
   /**
-   * 全ゲームのトップ1位プレイヤーを取得（ハイブリッドモード）
+   * 全ゲームのトップ1位プレイヤーを取得（クラウドのみ）
    */
   public async getAllTopPlayers(): Promise<{
     reflex: RankingEntry | null;
     target: RankingEntry | null;
     sequence: RankingEntry | null;
   }> {
-    console.log('🏅 Fetching all hybrid top players...');
+    console.log('🏅 Fetching all cloud top players...');
 
-    // 1. クラウドから取得を試行
-    if (this.config.useCloud) {
-      try {
-        const cloudTopPlayers = await this.cloudService.getAllTopPlayers();
-        console.log('✅ Cloud top players fetched successfully');
-        
-        return {
-          reflex: cloudTopPlayers.reflex ? this.convertCloudEntryToLocal(cloudTopPlayers.reflex) : null,
-          target: cloudTopPlayers.target ? this.convertCloudEntryToLocal(cloudTopPlayers.target) : null,
-          sequence: cloudTopPlayers.sequence ? this.convertCloudEntryToLocal(cloudTopPlayers.sequence) : null
-        };
-      } catch (error) {
-        console.error('❌ Cloud top players fetch failed:', error);
-      }
-    }
-
-    // 2. ローカルから取得
     try {
-      const localTopPlayers = await this.localService.getAllTopPlayers();
-      console.log('✅ Local top players fetched successfully (fallback)');
-      return localTopPlayers;
+      const cloudTopPlayers = await this.cloudService.getAllTopPlayers();
+      console.log('✅ Cloud top players fetched successfully');
+      
+      return {
+        reflex: cloudTopPlayers.reflex ? this.convertCloudEntryToLocal(cloudTopPlayers.reflex) : null,
+        target: cloudTopPlayers.target ? this.convertCloudEntryToLocal(cloudTopPlayers.target) : null,
+        sequence: cloudTopPlayers.sequence ? this.convertCloudEntryToLocal(cloudTopPlayers.sequence) : null
+      };
     } catch (error) {
-      console.error('❌ Local top players fetch also failed:', error);
+      console.error('❌ Cloud top players fetch failed:', error);
       return { reflex: null, target: null, sequence: null };
-    }
-  }
-
-  /**
-   * LocalStorageからクラウドへの一回限りの移行
-   */
-  public async migrateToCloud(): Promise<void> {
-    console.log('🚀 Starting one-time migration to cloud...');
-    
-    try {
-      await this.cloudService.migrateFromLocalStorage();
-      console.log('✅ Migration to cloud completed successfully');
-      
-      // 移行完了後はクラウドモードを有効化
-      this.updateConfig({ useCloud: true });
-      
-    } catch (error) {
-      console.error('❌ Migration to cloud failed:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * クラウドとローカルの同期
-   */
-  public async syncData(): Promise<void> {
-    if (!this.config.useCloud || !this.config.autoSync) {
-      return;
-    }
-
-    console.log('🔄 Starting data synchronization...');
-    
-    try {
-      // 現在は一方向同期（ローカル→クラウド）のみ実装
-      // 将来的には双方向同期も可能
-      
-      const lastSync = localStorage.getItem('hunterhub_last_sync');
-      const now = new Date();
-      
-      if (lastSync) {
-        const lastSyncTime = new Date(lastSync);
-        const minutesSinceSync = (now.getTime() - lastSyncTime.getTime()) / (1000 * 60);
-        
-        if (minutesSinceSync < this.config.syncInterval) {
-          console.log('ℹ️ Sync not needed yet, last sync was', minutesSinceSync.toFixed(1), 'minutes ago');
-          return;
-        }
-      }
-
-      // 同期実行
-      // TODO: 双方向同期の実装
-      
-      localStorage.setItem('hunterhub_last_sync', now.toISOString());
-      console.log('✅ Data synchronization completed');
-      
-    } catch (error) {
-      console.error('❌ Data synchronization failed:', error);
     }
   }
 
@@ -336,12 +183,9 @@ export class HybridRankingService {
    */
   public async getSystemStatus(): Promise<{
     cloudAvailable: boolean;
-    localAvailable: boolean;
-    currentMode: 'cloud' | 'local' | 'hybrid';
-    lastSync?: string;
+    currentMode: 'cloud';
   }> {
     let cloudAvailable = false;
-    let localAvailable = false;
 
     // クラウド可用性チェック
     try {
@@ -351,26 +195,9 @@ export class HybridRankingService {
       cloudAvailable = false;
     }
 
-    // ローカル可用性チェック
-    try {
-      await this.localService.getRankings('reflex', 1);
-      localAvailable = true;
-    } catch (error) {
-      localAvailable = false;
-    }
-
-    let currentMode: 'cloud' | 'local' | 'hybrid';
-    if (this.config.useCloud && cloudAvailable) {
-      currentMode = this.config.fallbackToLocal ? 'hybrid' : 'cloud';
-    } else {
-      currentMode = 'local';
-    }
-
     return {
       cloudAvailable,
-      localAvailable,
-      currentMode,
-      lastSync: localStorage.getItem('hunterhub_last_sync') || undefined
+      currentMode: 'cloud'
     };
   }
 
@@ -405,45 +232,20 @@ export class HybridRankingService {
    * 全ユーザーの総プレイ回数を取得
    */
   public async getTotalPlayCount(gameType: string): Promise<number> {
-    console.log(`🔍 HybridRankingService: Getting total play count for ${gameType}`);
-    console.log(`🔍 HybridRankingService: useCloud=${this.config.useCloud}, fallbackToLocal=${this.config.fallbackToLocal}`);
+    console.log(`🔍 CloudRankingService: Getting total play count for ${gameType}`);
     
     try {
-      if (this.config.useCloud) {
-        console.log(`🔍 HybridRankingService: Attempting to get total play count from cloud for ${gameType}`);
-        // クラウドから全ユーザーの総プレイ回数を取得
-        const cloudResult = await this.cloudService.getRankings(gameType, 10000); // 大きな数で全データ取得
-        console.log(`🔍 HybridRankingService: Cloud result for ${gameType}:`, {
-          totalCount: cloudResult.totalCount,
-          rankingsLength: cloudResult.rankings.length,
-          totalPlayers: cloudResult.totalPlayers
-        });
-        return cloudResult.totalCount || 0;
-      } else {
-        console.log(`🔍 HybridRankingService: Getting total play count from local for ${gameType}`);
-        // ローカルから取得（フォールバック）
-        const localResult = await this.localService.getRankings(gameType, 10000);
-        console.log(`🔍 HybridRankingService: Local result for ${gameType}:`, localResult.rankings.length);
-        return localResult.rankings.length;
-      }
+      console.log(`🔍 CloudRankingService: Attempting to get total play count from cloud for ${gameType}`);
+      // クラウドから全ユーザーの総プレイ回数を取得
+      const cloudResult = await this.cloudService.getRankings(gameType, 10000); // 大きな数で全データ取得
+      console.log(`🔍 CloudRankingService: Cloud result for ${gameType}:`, {
+        totalCount: cloudResult.totalCount,
+        rankingsLength: cloudResult.rankings.length,
+        totalPlayers: cloudResult.totalPlayers
+      });
+      return cloudResult.totalCount || 0;
     } catch (error) {
-      console.error(`❌ HybridRankingService: Failed to get total play count for ${gameType} from cloud:`, error);
-      console.error('Error details:', error);
-      
-      if (this.config.fallbackToLocal) {
-        console.log(`🔄 HybridRankingService: Falling back to local for ${gameType}`);
-        try {
-          // フォールバック: ローカルから取得
-          const localResult = await this.localService.getRankings(gameType, 10000);
-          console.log(`✅ HybridRankingService: Local fallback result for ${gameType}:`, localResult.rankings.length);
-          return localResult.rankings.length;
-        } catch (localError) {
-          console.error(`❌ HybridRankingService: Local fallback also failed for ${gameType}:`, localError);
-          return 0;
-        }
-      }
-      
-      console.log(`⚠️ HybridRankingService: No fallback configured, returning 0 for ${gameType}`);
+      console.error(`❌ CloudRankingService: Failed to get total play count for ${gameType}:`, error);
       return 0;
     }
   }
@@ -453,33 +255,13 @@ export class HybridRankingService {
    */
   public async getUserPlayCount(gameType: string): Promise<number> {
     try {
-      if (this.config.useCloud) {
-        // クラウドから現在ユーザーの全プレイ記録を取得
-        const cloudResult = await this.cloudService.getRankings(gameType, 10000);
-        // 現在ユーザーのスコア数をカウント
-        const userScores = cloudResult.rankings.filter(entry => entry.isCurrentUser);
-        return userScores.length;
-      } else {
-        // ローカルから取得（フォールバック）
-        const localResult = await this.localService.getRankings(gameType, 10000);
-        const userScores = localResult.rankings.filter(entry => entry.isCurrentUser);
-        return userScores.length;
-      }
+      // クラウドから現在ユーザーの全プレイ記録を取得
+      const cloudResult = await this.cloudService.getRankings(gameType, 10000);
+      // 現在ユーザーのスコア数をカウント
+      const userScores = cloudResult.rankings.filter(entry => entry.isCurrentUser);
+      return userScores.length;
     } catch (error) {
-      console.error('Failed to get user play count from cloud, falling back to local:', error);
-      
-      if (this.config.fallbackToLocal) {
-        // フォールバック: ローカルから取得
-        try {
-          const localResult = await this.localService.getRankings(gameType, 10000);
-          const userScores = localResult.rankings.filter(entry => entry.isCurrentUser);
-          return userScores.length;
-        } catch (localError) {
-          console.error('Failed to get user play count from local:', localError);
-          return 0;
-        }
-      }
-      
+      console.error('Failed to get user play count from cloud:', error);
       return 0;
     }
   }

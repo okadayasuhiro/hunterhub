@@ -117,35 +117,21 @@ class AnimalQuizService {
     this.gameState = null;
   }
 
-  // ベストスコアの管理（ローカルストレージ）
+  // ベストスコアの管理（削除済み - DynamoDBで管理）
   saveBestScore(result: AnimalQuizResult): void {
-    const bestScores = this.getBestScores();
-    bestScores.push({
-      date: result.date,
-      correctCount: result.correctCount,
-      totalQuestions: result.totalQuestions
-    });
-
-    // スコア順にソート（正解数が多い順）
-    bestScores.sort((a, b) => b.correctCount - a.correctCount);
-
-    // 上位10件のみ保存
-    const topScores = bestScores.slice(0, 10);
-    localStorage.setItem('animalQuizBestScores', JSON.stringify(topScores));
+    // LocalStorage保存処理を削除
+    // 現在はランキング非表示のため、スコア保存は不要
+    console.log('🦌 Animal quiz score (not saved to localStorage):', result);
   }
 
   getBestScores(): Array<{date: string, correctCount: number, totalQuestions: number}> {
-    const stored = localStorage.getItem('animalQuizBestScores');
-    return stored ? JSON.parse(stored) : [];
+    // LocalStorage取得処理を削除
+    return [];
   }
 
   getBestScore(): {correctCount: number, totalQuestions: number} | null {
-    const scores = this.getBestScores();
-    if (scores.length === 0) return null;
-    return {
-      correctCount: scores[0].correctCount,
-      totalQuestions: scores[0].totalQuestions
-    };
+    // LocalStorage取得処理を削除
+    return null;
   }
 }
 

@@ -5,7 +5,7 @@ import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } fr
 import { STORAGE_KEYS } from '../types/game';
 import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
-import type { RankingEntry } from '../services/localRankingService';
+import type { RankingEntry } from '../services/hybridRankingService';
 import { UserIdentificationService } from '../services/userIdentificationService';
 import panel1 from '../assets/images/panel1.png';
 import panel2 from '../assets/images/panel2.png';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User } from 'lucide-react';
 import { HybridRankingService } from '../services/hybridRankingService';
 import { UserIdentificationService } from '../services/userIdentificationService';
-import type { RankingData, RankingEntry } from '../services/localRankingService';
+import type { RankingData, RankingEntry } from '../services/hybridRankingService';
 
 // 日付フォーマット関数
 const formatDateTime = (timestamp: string): string => {
@@ -22,7 +22,14 @@ interface GameRankingTableProps {
     currentGameScore?: number; // 今回のゲーム結果スコア（この値と一致する行のみ赤くハイライト）
 }
 
-interface ExtendedRankingEntry extends RankingEntry {
+interface ExtendedRankingEntry {
+    rank: number;
+    userId: string;
+    username?: string;
+    displayName: string;
+    score: number;
+    timestamp: string;
+    isCurrentUser: boolean;
     isXLinked?: boolean;
     xDisplayName?: string;
     xProfileImageUrl?: string;

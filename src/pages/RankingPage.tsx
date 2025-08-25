@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Medal, Award, Clock, Target, Hash, User, Crown, Star } from 'lucide-react';
 import { HybridRankingService } from '../services/hybridRankingService';
-import type { RankingData, RankingEntry } from '../services/localRankingService';
+import type { RankingData, RankingEntry } from '../services/hybridRankingService';
 import { UserIdentificationService } from '../services/userIdentificationService';
 
 type GameType = 'reflex' | 'target' | 'sequence';
