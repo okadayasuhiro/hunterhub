@@ -154,33 +154,33 @@ export class CloudRankingService {
       const gameScores = result.data?.listGameScores?.items || [];
       
       // デバッグ: 生データの確認
-      console.log(`🔍 Debug: Raw scores count for ${gameType}:`, gameScores.length);
-      console.log(`🔍 Debug: Raw scores sample:`, gameScores.slice(0, 3).map(s => ({
-        userId: s.userId.substring(0, 8),
-        score: s.score,
-        displayName: s.displayName,
-        timestamp: s.timestamp
-      })));
+      // console.log(`🔍 Debug: Raw scores count for ${gameType}:`, gameScores.length);
+      // console.log(`🔍 Debug: Raw scores sample:`, gameScores.slice(0, 3).map(s => ({
+      //   userId: s.userId.substring(0, 8),
+      //   score: s.score,
+      //   displayName: s.displayName,
+      //   timestamp: s.timestamp
+      // })));
       
       // デバッグ: 最新のスコアを確認
       const sortedByTime = gameScores.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-      console.log(`🔍 Debug: Most recent scores for ${gameType}:`, sortedByTime.slice(0, 5).map(s => ({
-        userId: s.userId.substring(0, 8),
-        score: s.score,
-        timestamp: s.timestamp,
-        displayName: s.displayName
-      })));
+      // console.log(`🔍 Debug: Most recent scores for ${gameType}:`, sortedByTime.slice(0, 5).map(s => ({
+      //   userId: s.userId.substring(0, 8),
+      //   score: s.score,
+      //   timestamp: s.timestamp,
+      //   displayName: s.displayName
+      // })));
       
       // 全スコアをソート（同一ユーザーの複数スコアも含む）
       const sortedScores = this.sortScoresByGameType(gameScores as GameScore[], gameType);
       
       // デバッグ: ソート後の全スコアの確認
-      console.log(`🔍 Debug: All sorted scores count for ${gameType}:`, sortedScores.length);
-      console.log(`🔍 Debug: Top 10 sorted scores sample:`, sortedScores.slice(0, 10).map(s => ({
-        userId: s.userId.substring(0, 8),
-        score: s.score,
-        displayName: s.displayName
-      })));
+      // console.log(`🔍 Debug: All sorted scores count for ${gameType}:`, sortedScores.length);
+      // console.log(`🔍 Debug: Top 10 sorted scores sample:`, sortedScores.slice(0, 10).map(s => ({
+      //   userId: s.userId.substring(0, 8),
+      //   score: s.score,
+      //   displayName: s.displayName
+      // })));
       
       // 全ユーザーのUserProfileを一括取得
       const userIds = sortedScores.slice(0, limit).map(score => score.userId);
@@ -262,7 +262,7 @@ export class CloudRankingService {
       const totalPlayers = bestScores.length;
 
       // プレイ回数は全期間のデータをカウント
-      console.log(`🔍 Debug: Total scores: ${gameScores.length}`);
+      // console.log(`🔍 Debug: Total scores: ${gameScores.length}`);
 
       return {
         rankings,

@@ -138,11 +138,11 @@ export class GameHistoryService {
       };
 
       // 一時的に本番でもデバッグログを表示（問題調査のため）
-      console.log(`🔍 DEBUG: GameHistory query for ${gameType}:`, {
-        userId: userId.substring(0, 8) + '...',
-        gameType,
-        limit
-      });
+      // console.log(`🔍 DEBUG: GameHistory query for ${gameType}:`, {
+      //   userId: userId.substring(0, 8) + '...',
+      //   gameType,
+      //   limit
+      // });
 
       // 🚨 緊急修正2: より安全なアプローチ - 全データ取得後にフィルタリング
       const result = await getClient().graphql({
@@ -170,12 +170,12 @@ export class GameHistoryService {
 
       // 🔍 詳細デバッグ: GraphQLレスポンスの生データを確認
       const resultData = (result as any).data;
-      console.log(`🔍 DETAILED DEBUG: GraphQL response for ${gameType}:`, {
-        hasData: !!resultData,
-        hasListGameHistories: !!resultData?.listGameHistories,
-        hasItems: !!resultData?.listGameHistories?.items,
-        rawResponse: resultData?.listGameHistories
-      });
+      // console.log(`🔍 DETAILED DEBUG: GraphQL response for ${gameType}:`, {
+      //   hasData: !!resultData,
+      //   hasListGameHistories: !!resultData?.listGameHistories,
+      //   hasItems: !!resultData?.listGameHistories?.items,
+      //   rawResponse: resultData?.listGameHistories
+      // });
 
       const allHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
       
@@ -184,67 +184,67 @@ export class GameHistoryService {
         history.userId === userId && history.gameType === gameType
       );
       
-      console.log(`🔍 FILTER DEBUG: ${gameType} filtering results:`, {
-        totalHistories: allHistories.length,
-        userHistories: allHistories.filter(h => h.userId === userId).length,
-        gameTypeHistories: allHistories.filter(h => h.gameType === gameType).length,
-        filteredHistories: cloudHistories.length,
-        targetUserId: userId.substring(0, 8) + '...',
-        targetGameType: gameType
-      });
+      // console.log(`🔍 FILTER DEBUG: ${gameType} filtering results:`, {
+      //   totalHistories: allHistories.length,
+      //   userHistories: allHistories.filter(h => h.userId === userId).length,
+      //   gameTypeHistories: allHistories.filter(h => h.gameType === gameType).length,
+      //   filteredHistories: cloudHistories.length,
+      //   targetUserId: userId.substring(0, 8) + '...',
+      //   targetGameType: gameType
+      // });
       
       // 一時的に本番でもデバッグログを表示（問題調査のため）
-      console.log(`🔍 DEBUG: Raw GameHistory result for ${gameType}:`, {
-        totalItems: cloudHistories.length,
-        sampleItems: cloudHistories.slice(0, 2).map(item => ({
-          id: item.id,
-          gameType: item.gameType,
-          playedAt: item.playedAt,
-          userId: item.userId.substring(0, 8) + '...'
-        }))
-      });
+      // console.log(`🔍 DEBUG: Raw GameHistory result for ${gameType}:`, {
+      //   totalItems: cloudHistories.length,
+      //   sampleItems: cloudHistories.slice(0, 2).map(item => ({
+      //     id: item.id,
+      //     gameType: item.gameType,
+      //     playedAt: item.playedAt,
+      //     userId: item.userId.substring(0, 8) + '...'
+      //   }))
+      // });
 
       // 🚨 緊急デバッグ: 反射神経ゲームの場合、全GameHistoryを確認
-      if (gameType === 'reflex' && cloudHistories.length === 0) {
-        console.log(`🚨 EMERGENCY DEBUG: No reflex histories found, checking all GameHistory data...`);
-        
-        try {
-          // 全GameHistoryデータを取得（ユーザーフィルターなし）
-          const allHistoryResult = await getClient().graphql({
-            query: `
-              query ListAllGameHistories {
-                listGameHistories(limit: 100) {
-                  items {
-                    id
-                    userId
-                    gameType
-                    playedAt
-                    displayName
-                  }
-                }
-              }
-            `
-          });
-          
-          const allHistories = (allHistoryResult as any).data?.listGameHistories?.items || [];
-          const reflexHistories = allHistories.filter((h: any) => h.gameType === 'reflex');
-          const userReflexHistories = allHistories.filter((h: any) => h.gameType === 'reflex' && h.userId === userId);
-          
-          console.log(`🚨 EMERGENCY DEBUG: GameHistory analysis:`, {
-            totalHistories: allHistories.length,
-            totalReflexHistories: reflexHistories.length,
-            userReflexHistories: userReflexHistories.length,
-            currentUserId: userId.substring(0, 8) + '...',
-            reflexHistorySample: reflexHistories.slice(0, 3).map((h: any) => ({
-              userId: h.userId.substring(0, 8) + '...',
-              gameType: h.gameType,
-              playedAt: h.playedAt
-            }))
-          });
-        } catch (debugError) {
-          console.error(`🚨 EMERGENCY DEBUG failed:`, debugError);
-        }
-      }
+      // if (gameType === 'reflex' && cloudHistories.length === 0) {
+      //   console.log(`🚨 EMERGENCY DEBUG: No reflex histories found, checking all GameHistory data...`);
+      //   
+      //   try {
+      //     // 全GameHistoryデータを取得（ユーザーフィルターなし）
+      //     const allHistoryResult = await getClient().graphql({
+      //       query: `
+      //         query ListAllGameHistories {
+      //           listGameHistories(limit: 100) {
+      //             items {
+      //               id
+      //               userId
+      //               gameType
+      //               playedAt
+      //               displayName
+      //             }
+      //           }
+      //         }
+      //       `
+      //     });
+      //     
+      //     const allHistories = (allHistoryResult as any).data?.listGameHistories?.items || [];
+      //     const reflexHistories = allHistories.filter((h: any) => h.gameType === 'reflex');
+      //     const userReflexHistories = allHistories.filter((h: any) => h.gameType === 'reflex' && h.userId === userId);
+      //     
+      //     console.log(`🚨 EMERGENCY DEBUG: GameHistory analysis:`, {
+      //       totalHistories: allHistories.length,
+      //       totalReflexHistories: reflexHistories.length,
+      //       userReflexHistories: userReflexHistories.length,
+      //       currentUserId: userId.substring(0, 8) + '...',
+      //       reflexHistorySample: reflexHistories.slice(0, 3).map((h: any) => ({
+      //         userId: h.userId.substring(0, 8) + '...',
+      //         gameType: h.gameType,
+      //         playedAt: h.playedAt
+      //       }))
+      //     });
+      //   } catch (debugError) {
+      //     console.error(`🚨 EMERGENCY DEBUG failed:`, debugError);
+      //   }
+      // }
       
       // DynamoDBからの結果をアプリケーション側でソート（新しい順）し、指定された件数に制限
       const sortedHistories = cloudHistories
