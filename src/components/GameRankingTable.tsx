@@ -422,7 +422,7 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
             {/* 総プレイヤー数表示 */}
             <div className="text-center mt-4 pt-4 border-t border-gray-200">
                 <p className="text-sm text-gray-500">
-                    全{rankingData.totalPlayers}人中 上位10位まで表示
+                    {rankingData.totalPlayers}位中 上位10位まで表示
                 </p>
             </div>
         </div>

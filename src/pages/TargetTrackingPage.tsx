@@ -492,9 +492,9 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                         <div className="text-xl font-bold">
                                             {currentRank ? (
-                                                `${currentRank}位 / ${totalPlayers}位`
+                                                `${currentRank}位`
                                             ) : (
-                                                `ランキング圏外 / ${totalPlayers}位`
+                                                `ランキング圏外`
                                             )}
                                         </div>
                                         {!currentRank && (
@@ -507,7 +507,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="mt-3 flex justify-center gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'} / ${totalPlayers}位\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
                                                     const shareUrl = window.location.origin;
                                                     
                                                     if (navigator.share) {

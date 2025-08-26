@@ -620,9 +620,9 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="text-sm text-blue-100 mb-1">トレーニング結果！</div>
                                                 <div className="text-xl font-bold">
                                                     {currentRank ? (
-                                                        `${currentRank}位 / ${totalPlayers}位`
+                                                        `${currentRank}位`
                                                     ) : (
-                                                        `ランキング圏外 / ${totalPlayers}位`
+                                                        `ランキング圏外`
                                                     )}
                                                 </div>
                                                 {!currentRank && (
@@ -635,7 +635,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            const shareText = `ハントレでカウントアップ・トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'} / ${totalPlayers}位\n完了時間: ${finalTime?.toFixed(2)}秒`;
+                                                            const shareText = `ハントレでカウントアップ・トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n完了時間: ${finalTime?.toFixed(2)}秒`;
                                                             const shareUrl = window.location.origin;
                                                             
                                                             if (navigator.share) {
