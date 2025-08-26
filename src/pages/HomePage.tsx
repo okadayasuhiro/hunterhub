@@ -124,9 +124,9 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
                         {title}
                     </h3>
                 </div>
-                <p className="text-gray-600 font-normal leading-relaxed mb-6">
+                <div className="text-gray-600 font-normal leading-relaxed mb-6">
                     {description}
-                </p>
+                </div>
                 
                 {/* 1位プレイヤー表示（診断系ゲーム以外のみ） */}
                 {!isDiagnosisGame && (
