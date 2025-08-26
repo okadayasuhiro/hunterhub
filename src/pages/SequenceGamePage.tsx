@@ -650,7 +650,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                                 window.open(twitterUrl, '_blank');
                                                             }
                                                         }}
-                                                        className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-colors duration-200"
+                                                        className="flex text-white items-center gap-1 px-3 py-1.5 bg-black/100 hover:bg-black/100 rounded-full text-sm font-medium transition-colors duration-200"
                                                         title="結果をシェア"
                                                     >
                                                         <Share2 className="w-4 h-4" />
@@ -684,7 +684,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                                 window.open(twitterUrl, '_blank');
                                                             }
                                                         }}
-                                                        className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-colors duration-200"
+                                                        className="flex text-white items-center gap-1 px-3 py-1.5 bg-black/100 hover:bg-black/100 rounded-full text-sm font-medium transition-colors duration-200"
                                                         title="結果をシェア"
                                                     >
                                                         <Share2 className="w-4 h-4" />
