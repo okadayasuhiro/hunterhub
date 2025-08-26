@@ -121,24 +121,39 @@ export class GameHistoryService {
       const userId = await this.userService.getCurrentUserId();
 
       console.log(`📖 Loading ${gameType} game history from cloud...`);
+      console.log(`🔍 DEBUG: Query filter - userId: ${userId}, gameType: ${gameType}, limit: ${limit}`);
+
+      const queryVariables = {
+        filter: {
+          userId: { eq: userId },
+          gameType: { eq: gameType }
+        },
+        limit
+      };
+
+      console.log(`🔍 DEBUG: GraphQL variables:`, JSON.stringify(queryVariables, null, 2));
 
       const result = await getClient().graphql({
         query: LIST_GAME_HISTORIES,
-        variables: {
-          filter: {
-            userId: { eq: userId },
-            gameType: { eq: gameType }
-          },
-          limit
-        }
+        variables: queryVariables
       });
 
+      console.log(`🔍 DEBUG: GraphQL result:`, result);
+
       const cloudHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
+      console.log(`🔍 DEBUG: Raw cloudHistories count: ${cloudHistories.length}`);
+      
+      if (cloudHistories.length > 0) {
+        console.log(`🔍 DEBUG: Sample cloudHistory:`, cloudHistories[0]);
+      }
       
       // 日付でソート（新しい順）
       const sortedHistories = cloudHistories
         .sort((a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime())
-        .map(item => JSON.parse(item.gameData) as T);
+        .map(item => {
+          console.log(`🔍 DEBUG: Parsing gameData:`, item.gameData);
+          return JSON.parse(item.gameData) as T;
+        });
 
       console.log(`✅ Loaded ${sortedHistories.length} ${gameType} histories from cloud`);
       
