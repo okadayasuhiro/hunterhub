@@ -73,7 +73,8 @@ const RankingPage: React.FC = () => {
   const loadRankingData = async () => {
     setLoading(true);
     try {
-      const data = await rankingService.getRankings(selectedGame);
+      // 10件固定で取得（パフォーマンス最適化）
+      const data = await rankingService.getRankings(selectedGame, 10);
       setRankingData(data);
     } catch (error) {
       console.error('Failed to load ranking data:', error);
