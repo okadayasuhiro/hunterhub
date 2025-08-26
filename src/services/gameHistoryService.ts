@@ -169,11 +169,12 @@ export class GameHistoryService {
       });
 
       // 🔍 詳細デバッグ: GraphQLレスポンスの生データを確認
+      const resultData = (result as any).data;
       console.log(`🔍 DETAILED DEBUG: GraphQL response for ${gameType}:`, {
-        hasData: !!result.data,
-        hasListGameHistories: !!result.data?.listGameHistories,
-        hasItems: !!result.data?.listGameHistories?.items,
-        rawResponse: result.data?.listGameHistories
+        hasData: !!resultData,
+        hasListGameHistories: !!resultData?.listGameHistories,
+        hasItems: !!resultData?.listGameHistories?.items,
+        rawResponse: resultData?.listGameHistories
       });
 
       const allHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
