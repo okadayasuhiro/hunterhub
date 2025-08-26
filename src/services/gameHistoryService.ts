@@ -144,11 +144,11 @@ export class GameHistoryService {
         limit
       });
 
-      // 🚨 緊急修正: GSI問題回避のため、listGameHistoriesを使用してフィルタリング
+      // 🚨 緊急修正2: より安全なアプローチ - 全データ取得後にフィルタリング
       const result = await getClient().graphql({
         query: `
-          query ListGameHistoriesForUser($filter: ModelGameHistoryFilterInput, $limit: Int) {
-            listGameHistories(filter: $filter, limit: $limit) {
+          query ListAllGameHistories($limit: Int) {
+            listGameHistories(limit: $limit) {
               items {
                 id
                 userId
@@ -164,15 +164,33 @@ export class GameHistoryService {
           }
         `,
         variables: {
-          filter: {
-            userId: { eq: userId },
-            gameType: { eq: gameType }
-          },
-          limit: 50 // 十分な数を取得してからクライアント側でソート・制限
+          limit: 200 // 十分な数を取得
         }
       });
 
-      const cloudHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
+      // 🔍 詳細デバッグ: GraphQLレスポンスの生データを確認
+      console.log(`🔍 DETAILED DEBUG: GraphQL response for ${gameType}:`, {
+        hasData: !!result.data,
+        hasListGameHistories: !!result.data?.listGameHistories,
+        hasItems: !!result.data?.listGameHistories?.items,
+        rawResponse: result.data?.listGameHistories
+      });
+
+      const allHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
+      
+      // クライアント側でuserIdとgameTypeでフィルタリング
+      const cloudHistories = allHistories.filter(history => 
+        history.userId === userId && history.gameType === gameType
+      );
+      
+      console.log(`🔍 FILTER DEBUG: ${gameType} filtering results:`, {
+        totalHistories: allHistories.length,
+        userHistories: allHistories.filter(h => h.userId === userId).length,
+        gameTypeHistories: allHistories.filter(h => h.gameType === gameType).length,
+        filteredHistories: cloudHistories.length,
+        targetUserId: userId.substring(0, 8) + '...',
+        targetGameType: gameType
+      });
       
       // 一時的に本番でもデバッグログを表示（問題調査のため）
       console.log(`🔍 DEBUG: Raw GameHistory result for ${gameType}:`, {
