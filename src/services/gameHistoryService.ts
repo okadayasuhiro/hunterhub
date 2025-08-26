@@ -44,6 +44,21 @@ const LIST_GAME_HISTORIES = `
   }
 `;
 
+const GAME_HISTORIES_BY_USER_ID = `
+  query GameHistoriesByUserId($userId: String!, $filter: ModelGameHistoryFilterInput, $limit: Int, $sortDirection: ModelSortDirection) {
+    gameHistoriesByUserId(userId: $userId, filter: $filter, limit: $limit, sortDirection: $sortDirection) {
+      items {
+        id
+        userId
+        gameType
+        gameData
+        playedAt
+        displayName
+      }
+    }
+  }
+`;
+
 // GameHistory型定義
 interface CloudGameHistory {
   id: string;
@@ -123,24 +138,27 @@ export class GameHistoryService {
       console.log(`📖 Loading ${gameType} game history from cloud...`);
       console.log(`🔍 DEBUG: Query filter - userId: ${userId}, gameType: ${gameType}, limit: ${limit}`);
 
+      // 修正: gameHistoriesByUserIdクエリを使用してuserIdでインデックス検索
       const queryVariables = {
+        userId: userId,
         filter: {
-          userId: { eq: userId },
           gameType: { eq: gameType }
         },
-        limit
+        limit,
+        sortDirection: 'DESC' // 新しい順
       };
 
+      console.log(`🔍 DEBUG: Using gameHistoriesByUserId query`);
       console.log(`🔍 DEBUG: GraphQL variables:`, JSON.stringify(queryVariables, null, 2));
 
       const result = await getClient().graphql({
-        query: LIST_GAME_HISTORIES,
+        query: GAME_HISTORIES_BY_USER_ID,
         variables: queryVariables
       });
 
       console.log(`🔍 DEBUG: GraphQL result:`, result);
 
-      const cloudHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
+      const cloudHistories = ((result as any).data?.gameHistoriesByUserId?.items || []) as CloudGameHistory[];
       console.log(`🔍 DEBUG: Raw cloudHistories count: ${cloudHistories.length}`);
       
       if (cloudHistories.length > 0) {
