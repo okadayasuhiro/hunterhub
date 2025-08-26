@@ -125,7 +125,6 @@ export class GameHistoryService {
       const userId = await this.userService.getCurrentUserId();
 
       console.log(`📖 Loading ${gameType} game history from cloud...`);
-      console.log(`🔍 DEBUG: Query filter - userId: ${userId}, gameType: ${gameType}, limit: ${limit}`);
 
       // 修正: gameHistoriesByUserIdクエリを使用してuserIdでインデックス検索
       // 注意: byUserIdインデックスにSort Keyが定義されていないため、sortDirectionは使用不可
@@ -138,30 +137,17 @@ export class GameHistoryService {
         // sortDirection: ModelSortDirection.DESC // GSIにSort Keyがないため削除
       };
 
-      console.log(`🔍 DEBUG: Using gameHistoriesByUserId query`);
-      console.log(`🔍 DEBUG: GraphQL variables:`, JSON.stringify(queryVariables, null, 2));
-
       const result = await getClient().graphql({
         query: gameHistoriesByUserId,
         variables: queryVariables
       });
 
-      console.log(`🔍 DEBUG: GraphQL result:`, result);
-
       const cloudHistories = ((result as any).data?.gameHistoriesByUserId?.items || []) as CloudGameHistory[];
-      console.log(`🔍 DEBUG: Raw cloudHistories count: ${cloudHistories.length}`);
-      
-      if (cloudHistories.length > 0) {
-        console.log(`🔍 DEBUG: Sample cloudHistory:`, cloudHistories[0]);
-      }
       
       // DynamoDBからの結果をアプリケーション側でソート（新しい順）
       const sortedHistories = cloudHistories
         .sort((a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime())
-        .map(item => {
-          console.log(`🔍 DEBUG: Parsing gameData:`, item.gameData);
-          return JSON.parse(item.gameData) as T;
-        });
+        .map(item => JSON.parse(item.gameData) as T);
 
       console.log(`✅ Loaded ${sortedHistories.length} ${gameType} histories from cloud`);
       
@@ -169,19 +155,6 @@ export class GameHistoryService {
 
     } catch (error) {
       console.error(`❌ Failed to load ${gameType} game history from cloud:`, error);
-      
-      // GraphQLエラーの詳細をログ出力
-      if (error && typeof error === 'object' && 'errors' in error) {
-        console.error(`🔍 DEBUG: GraphQL errors:`, (error as any).errors);
-        (error as any).errors?.forEach((err: any, index: number) => {
-          console.error(`🔍 DEBUG: Error ${index + 1}:`, {
-            message: err.message,
-            locations: err.locations,
-            path: err.path,
-            extensions: err.extensions
-          });
-        });
-      }
       
       // フォールバック：ローカルストレージから取得
       return this.getFromLocalStorage<T>(gameType);
