@@ -144,12 +144,35 @@ export class GameHistoryService {
         limit
       });
 
+      // 🚨 緊急修正: GSI問題回避のため、listGameHistoriesを使用してフィルタリング
       const result = await getClient().graphql({
-        query: gameHistoriesByUserId,
-        variables: queryVariables
+        query: `
+          query ListGameHistoriesForUser($filter: ModelGameHistoryFilterInput, $limit: Int) {
+            listGameHistories(filter: $filter, limit: $limit) {
+              items {
+                id
+                userId
+                gameType
+                gameData
+                playedAt
+                displayName
+                createdAt
+                updatedAt
+                __typename
+              }
+            }
+          }
+        `,
+        variables: {
+          filter: {
+            userId: { eq: userId },
+            gameType: { eq: gameType }
+          },
+          limit: 50 // 十分な数を取得してからクライアント側でソート・制限
+        }
       });
 
-      const cloudHistories = ((result as any).data?.gameHistoriesByUserId?.items || []) as CloudGameHistory[];
+      const cloudHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
       
       // 一時的に本番でもデバッグログを表示（問題調査のため）
       console.log(`🔍 DEBUG: Raw GameHistory result for ${gameType}:`, {
@@ -204,9 +227,10 @@ export class GameHistoryService {
         }
       }
       
-      // DynamoDBからの結果をアプリケーション側でソート（新しい順）
+      // DynamoDBからの結果をアプリケーション側でソート（新しい順）し、指定された件数に制限
       const sortedHistories = cloudHistories
         .sort((a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime())
+        .slice(0, limit) // 指定された件数に制限
         .map(item => JSON.parse(item.gameData) as T);
 
       console.log(`✅ Loaded ${sortedHistories.length} ${gameType} histories from cloud`);
