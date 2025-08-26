@@ -128,13 +128,14 @@ export class GameHistoryService {
       console.log(`🔍 DEBUG: Query filter - userId: ${userId}, gameType: ${gameType}, limit: ${limit}`);
 
       // 修正: gameHistoriesByUserIdクエリを使用してuserIdでインデックス検索
+      // 注意: byUserIdインデックスにSort Keyが定義されていないため、sortDirectionは使用不可
       const queryVariables = {
         userId: userId,
         filter: {
           gameType: { eq: gameType }
         },
-        limit,
-        sortDirection: ModelSortDirection.DESC
+        limit
+        // sortDirection: ModelSortDirection.DESC // GSIにSort Keyがないため削除
       };
 
       console.log(`🔍 DEBUG: Using gameHistoriesByUserId query`);
@@ -154,7 +155,7 @@ export class GameHistoryService {
         console.log(`🔍 DEBUG: Sample cloudHistory:`, cloudHistories[0]);
       }
       
-      // 日付でソート（新しい順）
+      // DynamoDBからの結果をアプリケーション側でソート（新しい順）
       const sortedHistories = cloudHistories
         .sort((a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime())
         .map(item => {
