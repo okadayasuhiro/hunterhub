@@ -190,6 +190,38 @@ export class HybridRankingService {
   }
 
   /**
+   * 全ゲームのトップ1位プレイヤーを取得（最適化版）
+   * Phase 2: 最小限のデータ取得で高速化
+   */
+  public async getAllTopPlayersOptimized(): Promise<{
+    reflex: RankingEntry | null;
+    target: RankingEntry | null;
+    sequence: RankingEntry | null;
+  }> {
+    if (import.meta.env.DEV) {
+      console.log('🚀 Fetching optimized cloud top players...');
+    }
+
+    try {
+      const cloudTopPlayers = await this.cloudService.getAllTopPlayersOptimized();
+      
+      if (import.meta.env.DEV) {
+        console.log('✅ Optimized cloud top players fetched successfully');
+      }
+      
+      return {
+        reflex: cloudTopPlayers.reflex ? this.convertCloudEntryToLocal(cloudTopPlayers.reflex) : null,
+        target: cloudTopPlayers.target ? this.convertCloudEntryToLocal(cloudTopPlayers.target) : null,
+        sequence: cloudTopPlayers.sequence ? this.convertCloudEntryToLocal(cloudTopPlayers.sequence) : null
+      };
+    } catch (error) {
+      console.error('❌ Optimized cloud top players fetch failed:', error);
+      // フォールバック: 従来版を使用
+      return this.getAllTopPlayers();
+    }
+  }
+
+  /**
    * システム状態を取得
    */
   public async getSystemStatus(): Promise<{
@@ -254,6 +286,31 @@ export class HybridRankingService {
     } catch (error) {
       console.error(`❌ Failed to get optimized total play count for ${gameType}:`, error);
       return 0;
+    }
+  }
+
+  /**
+   * 全ユーザーの総プレイ回数を取得（超最適化版 - Phase 2）
+   * 最小限のデータ転送でカウントのみ取得
+   */
+  public async getTotalPlayCountOptimized(gameType: string): Promise<number> {
+    if (import.meta.env.DEV) {
+      console.log(`🚀 Getting super optimized total play count for ${gameType}`);
+    }
+    
+    try {
+      // 超最適化Count専用クエリで取得
+      const count = await this.cloudService.getTotalPlayerCountOptimized(gameType);
+      
+      if (import.meta.env.DEV) {
+        console.log(`🚀 Super optimized total play count for ${gameType}: ${count}`);
+      }
+      
+      return count;
+    } catch (error) {
+      console.error(`❌ Failed to get super optimized total play count for ${gameType}:`, error);
+      // フォールバック: 従来版を使用
+      return this.getTotalPlayCount(gameType);
     }
   }
 

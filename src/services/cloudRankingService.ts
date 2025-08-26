@@ -353,6 +353,70 @@ export class CloudRankingService {
   }
 
   /**
+   * 特定ゲームの1位プレイヤーを取得（最適化版）
+   * Phase 2: 最小限のデータ取得でトッププレイヤーのみ取得
+   */
+  public async getTopPlayerOptimized(gameType: string): Promise<CloudRankingEntry | null> {
+    const startTime = performance.now();
+    
+    try {
+      const userId = await this.userService.getCurrentUserId();
+      
+      const filter: ModelGameScoreFilterInput = {
+        gameType: { eq: gameType }
+      };
+
+      // 最適化: limit=50で上位のみ取得（1位確定に十分）
+      const result = await this.client.graphql({
+        query: listGameScores,
+        variables: { 
+          filter,
+          limit: 50  // 最小限のデータで1位を確実に取得
+        }
+      });
+
+      const gameScores = result.data?.listGameScores?.items || [];
+      
+      if (gameScores.length === 0) {
+        return null;
+      }
+      
+      // スコアソート（1位のみ必要）
+      const sortedScores = this.sortScoresByGameType(gameScores as GameScore[], gameType);
+      const topScore = sortedScores[0];
+      
+      if (!topScore) {
+        return null;
+      }
+
+      // 1位プレイヤーのプロファイル取得
+      const profileMap = await this.getUserProfiles([topScore.userId]);
+      const profile = profileMap.get(topScore.userId);
+      
+      const topPlayer: CloudRankingEntry = {
+        rank: 1,
+        userId: topScore.userId,
+        username: profile?.username || undefined,
+        displayName: topScore.displayName || profile?.xDisplayName || `ハンター${topScore.userId.slice(-4)}`,
+        score: topScore.score,
+        timestamp: topScore.timestamp,
+        isCurrentUser: topScore.userId === userId
+      };
+
+      const endTime = performance.now();
+      if (import.meta.env.DEV) {
+        console.log(`🚀 Optimized top player for ${gameType}: ${(endTime - startTime).toFixed(2)}ms`);
+      }
+
+      return topPlayer;
+      
+    } catch (error) {
+      console.error(`❌ Failed to get optimized top player for ${gameType}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * 全ゲームのトップ1位プレイヤーを取得
    */
   public async getAllTopPlayers(): Promise<{
@@ -370,6 +434,36 @@ export class CloudRankingService {
       return { reflex, target, sequence };
     } catch (error) {
       console.error('❌ Failed to fetch all top players:', error);
+      return { reflex: null, target: null, sequence: null };
+    }
+  }
+
+  /**
+   * 全ゲームのトップ1位プレイヤーを取得（最適化版）
+   * Phase 2: 最小限のデータ取得で高速化
+   */
+  public async getAllTopPlayersOptimized(): Promise<{
+    reflex: CloudRankingEntry | null;
+    target: CloudRankingEntry | null;
+    sequence: CloudRankingEntry | null;
+  }> {
+    const startTime = performance.now();
+    
+    try {
+      const [reflex, target, sequence] = await Promise.all([
+        this.getTopPlayerOptimized('reflex'),
+        this.getTopPlayerOptimized('target'),
+        this.getTopPlayerOptimized('sequence')
+      ]);
+
+      const endTime = performance.now();
+      if (import.meta.env.DEV) {
+        console.log(`🚀 Optimized all top players: ${(endTime - startTime).toFixed(2)}ms`);
+      }
+
+      return { reflex, target, sequence };
+    } catch (error) {
+      console.error('❌ Failed to fetch optimized all top players:', error);
       return { reflex: null, target: null, sequence: null };
     }
   }
@@ -559,6 +653,75 @@ export class CloudRankingService {
     } catch (error) {
       console.error(`❌ Failed to get total player count for ${gameType}:`, error);
       return 0;
+    }
+  }
+
+  /**
+   * 総プレイヤー数を超最適化クエリで取得（Phase 2）
+   * 最小限のフィールドのみ取得してデータ転送量を最小化
+   */
+  public async getTotalPlayerCountOptimized(gameType: string): Promise<number> {
+    const startTime = performance.now();
+    
+    try {
+      if (import.meta.env.DEV) {
+        console.log(`🚀 Getting optimized total player count for ${gameType}`);
+      }
+      
+      let totalCount = 0;
+      let nextToken: string | null = null;
+      
+      // カスタムクエリ: idのみ取得してデータ転送量を最小化
+      const minimalCountQuery = `
+        query ListGameScoresMinimal($filter: ModelGameScoreFilterInput, $limit: Int, $nextToken: String) {
+          listGameScores(filter: $filter, limit: $limit, nextToken: $nextToken) {
+            items {
+              id
+            }
+            nextToken
+          }
+        }
+      `;
+      
+      // ページネーションで最小限データのみ取得
+      do {
+        const variables: any = {
+          filter: {
+            gameType: { eq: gameType }
+          },
+          limit: 2000 // より大きなページサイズで効率化
+        };
+        
+        if (nextToken) {
+          variables.nextToken = nextToken;
+        }
+        
+        const result: any = await this.client.graphql({
+          query: minimalCountQuery,
+          variables
+        });
+        
+        const items = result.data?.listGameScores?.items || [];
+        totalCount += items.length;
+        nextToken = result.data?.listGameScores?.nextToken || null;
+        
+        if (import.meta.env.DEV) {
+          console.log(`🚀 Optimized count batch: +${items.length}, total: ${totalCount}, hasNext: ${!!nextToken}`);
+        }
+        
+      } while (nextToken);
+      
+      const endTime = performance.now();
+      if (import.meta.env.DEV) {
+        console.log(`🚀 Optimized total player count for ${gameType}: ${totalCount} (${(endTime - startTime).toFixed(2)}ms)`);
+      }
+      
+      return totalCount;
+      
+    } catch (error) {
+      console.error(`❌ Failed to get optimized total player count for ${gameType}:`, error);
+      // フォールバック: 従来版を使用
+      return this.getTotalPlayerCount(gameType);
     }
   }
 

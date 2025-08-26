@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy, Crown, Bell, Calendar } from 'lucide-react';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
@@ -292,12 +292,15 @@ const HomePage: React.FC = () => {
         sequence?: RankingEntry | null;
     }>({});
 
+    // Phase 2: 基本キャッシュ - サービスインスタンスをメモ化
+    const gameHistoryService = useMemo(() => GameHistoryService.getInstance(), []);
+    const hybridRankingService = useMemo(() => HybridRankingService.getInstance(), []);
+
     // ゲーム履歴から各ゲームの最新記録を取得
     useEffect(() => {
         const loadLastResults = async () => {
             const startTime = performance.now();
             try {
-                const gameHistoryService = GameHistoryService.getInstance();
                 
                 // 初回ロード時にLocalStorageからクラウドへ移行
                 await gameHistoryService.migrateLocalToCloud();
@@ -319,9 +322,7 @@ const HomePage: React.FC = () => {
                 // プレイ回数を設定（クラウドから全ユーザーの総プレイ回数を取得）
                 // ユーザーの履歴の有無に関係なく実行
                 try {
-                    const hybridRankingService = HybridRankingService.getInstance();
-
-                    const totalPlayCount = await hybridRankingService.getTotalPlayCount('reflex');
+                    const totalPlayCount = await hybridRankingService.getTotalPlayCountOptimized('reflex');
 
                     
                     if (totalPlayCount > 0) {
@@ -361,8 +362,7 @@ const HomePage: React.FC = () => {
                 // プレイ回数を設定（クラウドから全ユーザーの総プレイ回数を取得）
                 // ユーザーの履歴の有無に関係なく実行
                 try {
-                    const hybridRankingService = HybridRankingService.getInstance();
-                    const totalPlayCount = await hybridRankingService.getTotalPlayCount('target');
+                    const totalPlayCount = await hybridRankingService.getTotalPlayCountOptimized('target');
                     
                     if (totalPlayCount > 0) {
                         setPlayCounts(prev => ({
@@ -401,8 +401,7 @@ const HomePage: React.FC = () => {
                 // プレイ回数を設定（クラウドから全ユーザーの総プレイ回数を取得）
                 // ユーザーの履歴の有無に関係なく実行
                 try {
-                    const hybridRankingService = HybridRankingService.getInstance();
-                    const totalPlayCount = await hybridRankingService.getTotalPlayCount('sequence');
+                    const totalPlayCount = await hybridRankingService.getTotalPlayCountOptimized('sequence');
                     
                     if (totalPlayCount > 0) {
                         setPlayCounts(prev => ({
@@ -433,7 +432,7 @@ const HomePage: React.FC = () => {
         };
 
         loadLastResults();
-    }, []);
+    }, [gameHistoryService, hybridRankingService]);
 
     const location = useLocation();
 
@@ -442,8 +441,7 @@ const HomePage: React.FC = () => {
         const loadTopPlayers = async () => {
             const startTime = performance.now();
             try {
-                const rankingService = HybridRankingService.getInstance();
-                const topPlayers = await rankingService.getAllTopPlayers();
+                const topPlayers = await hybridRankingService.getAllTopPlayersOptimized();
                 if (topPlayers.sequence) {
                 }
                 setTopPlayers(topPlayers);
@@ -460,7 +458,7 @@ const HomePage: React.FC = () => {
 
         loadTopPlayers();
 
-    }, [location.pathname]); // ページ遷移時に再実行
+    }, [location.pathname, hybridRankingService]); // ページ遷移時に再実行
 
     return (
         <div className="flex-1">
