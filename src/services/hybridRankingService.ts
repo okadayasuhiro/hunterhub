@@ -25,6 +25,7 @@ export interface RankingData {
   rankings: RankingEntry[];
   userRank: RankingEntry | null;
   totalPlayers: number;
+  totalCount: number; // 全レコード数
   lastUpdated: string;
 }
 
@@ -128,6 +129,7 @@ export class HybridRankingService {
         rankings: cloudRankings.rankings.map(entry => this.convertCloudEntryToLocal(entry)),
         userRank: cloudRankings.userRank ? this.convertCloudEntryToLocal(cloudRankings.userRank) : null,
         totalPlayers: cloudRankings.totalPlayers,
+        totalCount: cloudRankings.totalCount, // 全レコード数を追加
         lastUpdated: cloudRankings.lastUpdated
       };
     } catch (error) {
@@ -136,6 +138,7 @@ export class HybridRankingService {
         rankings: [],
         userRank: null,
         totalPlayers: 0,
+        totalCount: 0, // エラー時も0を設定
         lastUpdated: new Date().toISOString()
       };
     }
@@ -217,6 +220,7 @@ export class HybridRankingService {
       rankings: cloudResult.rankings.map(entry => this.convertCloudEntryToLocal(entry)),
       userRank: cloudResult.userRank ? this.convertCloudEntryToLocal(cloudResult.userRank) : null,
       totalPlayers: cloudResult.totalPlayers,
+      totalCount: cloudResult.totalCount, // 全レコード数を追加
       lastUpdated: cloudResult.lastUpdated
     };
   }
