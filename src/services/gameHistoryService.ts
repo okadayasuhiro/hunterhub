@@ -162,13 +162,13 @@ export class GameHistoryService {
   }
 
   /**
-   * 最新のゲーム履歴を取得
+   * 最新のゲーム履歴を取得（最適化版）
    */
   public async getLatestGameHistory<T extends GameHistoryData>(
     gameType: 'reflex' | 'target' | 'sequence'
   ): Promise<T | null> {
-    // 修正: limitを指定せずに全データを取得してから最新を選択
-    const histories = await this.getGameHistory<T>(gameType);
+    // 最適化: 最新1件のみ取得（limit=1）
+    const histories = await this.getGameHistory<T>(gameType, 1);
     return histories.length > 0 ? histories[0] : null;
   }
 

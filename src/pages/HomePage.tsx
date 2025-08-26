@@ -67,7 +67,7 @@ const NoticeSection: React.FC<{ notices: Notice[] }> = ({ notices }) => {
     );
 };
 
-const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, lastResult, imageSrc, playCount, topPlayer, isComingSoon = false }) => {
+const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon, path, lastResult, imageSrc, playCount, topPlayer, isComingSoon = false }) => {
     const navigate = useNavigate();
     
 
@@ -243,7 +243,16 @@ const GameCard: React.FC<GameCardProps> = ({ title, description, icon, path, las
             </div>
         </div>
     );
-};
+}, (prevProps, nextProps) => {
+    // 最適化: 重要なpropsのみ比較
+    return (
+        prevProps.title === nextProps.title &&
+        prevProps.playCount === nextProps.playCount &&
+        prevProps.lastResult?.date === nextProps.lastResult?.date &&
+        prevProps.topPlayer?.displayName === nextProps.topPlayer?.displayName &&
+        prevProps.isComingSoon === nextProps.isComingSoon
+    );
+});
 
 const HomePage: React.FC = () => {
     const ENABLE_REFLEX_PANEL = true;
@@ -286,11 +295,11 @@ const HomePage: React.FC = () => {
     // ゲーム履歴から各ゲームの最新記録を取得
     useEffect(() => {
         const loadLastResults = async () => {
+            const startTime = performance.now();
             try {
                 const gameHistoryService = GameHistoryService.getInstance();
                 
                 // 初回ロード時にLocalStorageからクラウドへ移行
-                console.log('Starting migration from LocalStorage to cloud...');
                 await gameHistoryService.migrateLocalToCloud();
 
                 // 反射神経テストの最新記録
@@ -316,21 +325,17 @@ const HomePage: React.FC = () => {
 
                     
                     if (totalPlayCount > 0) {
-                        console.log(`✅ HomePage: Successfully got reflex play count: ${totalPlayCount}`);
                         setPlayCounts(prev => ({
                             ...prev,
                             reflex: totalPlayCount
                         }));
                     } else {
-                        console.warn(`⚠️ HomePage: Got 0 play count for reflex, trying fallback`);
                         throw new Error('Zero play count returned from cloud');
                     }
                 } catch (error) {
                     console.error('❌ HomePage: Failed to get reflex total play count from cloud:', error);
-                    console.error('Error details:', error);
                     
                     // クラウドが0件の場合はLocalStorageに依存せず0を表示
-                    console.log(`🧹 HomePage: Cloud returned 0, showing 0 for reflex (ignoring localStorage)`);
                     setPlayCounts(prev => ({
                         ...prev,
                         reflex: 0
@@ -360,21 +365,17 @@ const HomePage: React.FC = () => {
                     const totalPlayCount = await hybridRankingService.getTotalPlayCount('target');
                     
                     if (totalPlayCount > 0) {
-                        console.log(`✅ HomePage: Successfully got target play count: ${totalPlayCount}`);
                         setPlayCounts(prev => ({
                             ...prev,
                             target: totalPlayCount
                         }));
                     } else {
-                        console.warn(`⚠️ HomePage: Got 0 play count for target, trying fallback`);
                         throw new Error('Zero play count returned from cloud');
                     }
                 } catch (error) {
                     console.error('❌ HomePage: Failed to get target total play count from cloud:', error);
-                    console.error('Error details:', error);
                     
                     // クラウドが0件の場合はLocalStorageに依存せず0を表示
-                    console.log(`🧹 HomePage: Cloud returned 0, showing 0 for target (ignoring localStorage)`);
                     setPlayCounts(prev => ({
                         ...prev,
                         target: 0
@@ -404,21 +405,17 @@ const HomePage: React.FC = () => {
                     const totalPlayCount = await hybridRankingService.getTotalPlayCount('sequence');
                     
                     if (totalPlayCount > 0) {
-                        console.log(`✅ HomePage: Successfully got sequence play count: ${totalPlayCount}`);
                         setPlayCounts(prev => ({
                             ...prev,
                             sequence: totalPlayCount
                         }));
                     } else {
-                        console.warn(`⚠️ HomePage: Got 0 play count for sequence, trying fallback`);
                         throw new Error('Zero play count returned from cloud');
                     }
                 } catch (error) {
                     console.error('❌ HomePage: Failed to get sequence total play count from cloud:', error);
-                    console.error('Error details:', error);
                     
                     // クラウドが0件の場合はLocalStorageに依存せず0を表示
-                    console.log(`🧹 HomePage: Cloud returned 0, showing 0 for sequence (ignoring localStorage)`);
                     setPlayCounts(prev => ({
                         ...prev,
                         sequence: 0
@@ -426,6 +423,12 @@ const HomePage: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Failed to load last results:', error);
+            } finally {
+                const endTime = performance.now();
+                const loadTime = endTime - startTime;
+                if (import.meta.env.DEV) {
+                    console.log(`🚀 HomePage load time: ${loadTime.toFixed(2)}ms`);
+                }
             }
         };
 
@@ -437,6 +440,7 @@ const HomePage: React.FC = () => {
     // トップランカーを取得（初回 + ページナビゲーション時）
     useEffect(() => {
         const loadTopPlayers = async () => {
+            const startTime = performance.now();
             try {
                 const rankingService = HybridRankingService.getInstance();
                 const topPlayers = await rankingService.getAllTopPlayers();
@@ -445,6 +449,12 @@ const HomePage: React.FC = () => {
                 setTopPlayers(topPlayers);
             } catch (error) {
                 console.error('❌ Failed to load top players:', error);
+            } finally {
+                const endTime = performance.now();
+                const loadTime = endTime - startTime;
+                if (import.meta.env.DEV) {
+                    console.log(`🏆 Top players load time: ${loadTime.toFixed(2)}ms`);
+                }
             }
         };
 
