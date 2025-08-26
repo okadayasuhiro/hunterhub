@@ -4,6 +4,8 @@ import { Amplify } from 'aws-amplify';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import { UserIdentificationService } from './userIdentificationService';
+import { gameHistoriesByUserId } from '../graphql/queries';
+import { ModelSortDirection } from '../API';
 
 // Amplify設定チェック
 const getClient = () => {
@@ -44,20 +46,7 @@ const LIST_GAME_HISTORIES = `
   }
 `;
 
-const GAME_HISTORIES_BY_USER_ID = `
-  query GameHistoriesByUserId($userId: String!, $filter: ModelGameHistoryFilterInput, $limit: Int, $sortDirection: ModelSortDirection) {
-    gameHistoriesByUserId(userId: $userId, filter: $filter, limit: $limit, sortDirection: $sortDirection) {
-      items {
-        id
-        userId
-        gameType
-        gameData
-        playedAt
-        displayName
-      }
-    }
-  }
-`;
+
 
 // GameHistory型定義
 interface CloudGameHistory {
@@ -145,14 +134,14 @@ export class GameHistoryService {
           gameType: { eq: gameType }
         },
         limit,
-        sortDirection: 'DESC' // 新しい順
+        sortDirection: ModelSortDirection.DESC
       };
 
       console.log(`🔍 DEBUG: Using gameHistoriesByUserId query`);
       console.log(`🔍 DEBUG: GraphQL variables:`, JSON.stringify(queryVariables, null, 2));
 
       const result = await getClient().graphql({
-        query: GAME_HISTORIES_BY_USER_ID,
+        query: gameHistoriesByUserId,
         variables: queryVariables
       });
 
@@ -179,6 +168,19 @@ export class GameHistoryService {
 
     } catch (error) {
       console.error(`❌ Failed to load ${gameType} game history from cloud:`, error);
+      
+      // GraphQLエラーの詳細をログ出力
+      if (error && typeof error === 'object' && 'errors' in error) {
+        console.error(`🔍 DEBUG: GraphQL errors:`, (error as any).errors);
+        (error as any).errors?.forEach((err: any, index: number) => {
+          console.error(`🔍 DEBUG: Error ${index + 1}:`, {
+            message: err.message,
+            locations: err.locations,
+            path: err.path,
+            extensions: err.extensions
+          });
+        });
+      }
       
       // フォールバック：ローカルストレージから取得
       return this.getFromLocalStorage<T>(gameType);
