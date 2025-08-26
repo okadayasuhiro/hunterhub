@@ -366,12 +366,12 @@ export class CloudRankingService {
         gameType: { eq: gameType }
       };
 
-      // 最適化: limit=50で上位のみ取得（1位確定に十分）
+      // 修正: 全データを取得して正確な1位を確保
       const result = await this.client.graphql({
         query: listGameScores,
         variables: { 
-          filter,
-          limit: 50  // 最小限のデータで1位を確実に取得
+          filter
+          // limitを削除して全データを取得（1位の正確性を保証）
         }
       });
 
