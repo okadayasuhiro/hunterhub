@@ -293,6 +293,57 @@ const HomePage: React.FC = () => {
                 console.log('Starting migration from LocalStorage to cloud...');
                 await gameHistoryService.migrateLocalToCloud();
 
+                // 🔍 DEBUG: GameHistoryテーブルの直接調査
+                console.log('🔍 DEBUG: Investigating GameHistory table...');
+                try {
+                    const { generateClient } = await import('aws-amplify/api');
+                    const client = generateClient();
+                    
+                    // 全GameHistoryレコードを取得
+                    const allHistoriesResult = await client.graphql({
+                        query: `
+                          query ListAllGameHistories($limit: Int) {
+                            listGameHistories(limit: $limit) {
+                              items {
+                                id
+                                userId
+                                gameType
+                                playedAt
+                                displayName
+                              }
+                            }
+                          }
+                        `,
+                        variables: { limit: 100 }
+                    });
+                    
+                    const allHistories = (allHistoriesResult as any).data?.listGameHistories?.items || [];
+                    console.log('🔍 DEBUG: Total GameHistory records:', allHistories.length);
+                    
+                    if (allHistories.length > 0) {
+                        const gameTypeCounts = allHistories.reduce((acc: any, record: any) => {
+                            acc[record.gameType] = (acc[record.gameType] || 0) + 1;
+                            return acc;
+                        }, {});
+                        console.log('🔍 DEBUG: GameType distribution:', gameTypeCounts);
+                        
+                        // 現在のユーザーIDを取得
+                        const userService = UserIdentificationService.getInstance();
+                        const currentUserId = await userService.getCurrentUserId();
+                        console.log('🔍 DEBUG: Current user ID:', currentUserId);
+                        
+                        // 現在ユーザーのレコードを検索
+                        const userRecords = allHistories.filter((record: any) => record.userId === currentUserId);
+                        console.log('🔍 DEBUG: User records found:', userRecords.length);
+                        
+                        if (userRecords.length > 0) {
+                            console.log('🔍 DEBUG: User records:', userRecords);
+                        }
+                    }
+                } catch (debugError) {
+                    console.error('🔍 DEBUG: Failed to investigate GameHistory:', debugError);
+                }
+
                 // 反射神経テストの最新記録
                 const reflexLatest = await gameHistoryService.getLatestGameHistory<ReflexGameHistory>('reflex');
                 console.log('🔍 Reflex latest game history:', reflexLatest);

@@ -700,11 +700,8 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                                         (11位以下)
                                                     </div>
                                                 )}
-                                            </div>
-                                        )}
-                                                                                        
-                                                {/* シェアボタン */}
-                                                <div className="mt-3 flex justify-center gap-2">
+                                            {/* シェアボタン */}
+                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <button
                                                         onClick={() => {
                                                             const shareText = `ハントレで反射神経トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n平均反応時間: ${(averageTime / 1000).toFixed(5)}秒`;
@@ -729,6 +726,10 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                                         シェア
                                                     </button>
                                                 </div>
+                                            </div>
+                                        )}
+                                                                                        
+
                                     </>
                                 )}
                             </div>
