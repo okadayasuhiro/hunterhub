@@ -296,6 +296,56 @@ const HomePage: React.FC = () => {
     const gameHistoryService = useMemo(() => GameHistoryService.getInstance(), []);
     const hybridRankingService = useMemo(() => HybridRankingService.getInstance(), []);
 
+    // Phase 2: お知らせデータをメモ化（再レンダリング防止）
+    const memoizedNotices = useMemo(() => notices, []);
+
+    // Phase 2: ゲームカード設定をメモ化
+    const gameCardConfigs = useMemo(() => [
+        {
+            title: "反射神経トレーニング",
+            description: "緑から赤への色変化に素早く反応して、タップしてください。赤になる前にタップするとフライング！",
+            path: "/reflex/instructions",
+            imageSrc: ENABLE_REFLEX_PANEL ? panel1 : undefined,
+            gameType: 'reflex' as const
+        },
+        {
+            title: "ターゲット追跡トレーニング",
+            description: "画面上の標的を順番にタップ！10個のターゲットを順番に撃ち抜き、反応時間と総合時間を測定します。",
+            path: "/target/instructions",
+            imageSrc: ENABLE_TARGET_PANEL ? panel2 : undefined,
+            gameType: 'target' as const
+        },
+        {
+            title: "カウントアップ・トレーニング",
+            description: "画面上にランダムに配置された数字を小さい順にタップします！反応時間と総合時間を競います。",
+            path: "/sequence/instructions",
+            imageSrc: ENABLE_SEQUENCE_PANEL ? panel3 : undefined,
+            gameType: 'sequence' as const
+        }
+    ], [ENABLE_REFLEX_PANEL, ENABLE_TARGET_PANEL, ENABLE_SEQUENCE_PANEL]);
+
+    // Phase 2: 開発中ゲームカード設定をメモ化
+    const developingGameConfigs = useMemo(() => [
+        {
+            title: "動物識別記憶",
+            description: "瞬間的に表示される動物を正確に識別・記憶するゲームです。狩猟知識と記憶力を同時に鍛えます。",
+            path: "#",
+            isComingSoon: true
+        },
+        {
+            title: "足跡追跡記憶",
+            description: "動物の足跡パターンを記憶し、正確に再現するゲームです。フィールドでの追跡技術を向上させます。",
+            path: "#",
+            isComingSoon: true
+        },
+        {
+            title: "射撃タイミング",
+            description: "最適な射撃タイミングを判断するゲームです。風向きや距離を考慮した精密射撃を練習します。",
+            path: "#",
+            isComingSoon: true
+        }
+    ], []);
+
     // ゲーム履歴から各ゲームの最新記録を取得
     useEffect(() => {
         const loadLastResults = async () => {
@@ -518,7 +568,7 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* お知らせセクション */}
-            <NoticeSection notices={notices} />
+            <NoticeSection notices={memoizedNotices} />
 
                         {/* ゲーム選択セクション */}
             <div className="py-4 px-4">
@@ -526,36 +576,19 @@ const HomePage: React.FC = () => {
 
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <GameCard
-                            title="反射神経トレーニング"
-                            description="緑から赤への色変化に素早く反応して、タップしてください。赤になる前にタップするとフライング！"
-                            icon={<></>}
-                            path="/reflex/instructions"
-                            lastResult={lastResults.reflex}
-                            imageSrc={ENABLE_REFLEX_PANEL ? panel1 : undefined}
-                            playCount={playCounts.reflex}
-                            topPlayer={topPlayers.reflex}
-                        />
-                        <GameCard
-                            title="ターゲット追跡トレーニング"
-                            description="画面上の標的を順番にタップ！10個のターゲットを順番に撃ち抜き、反応時間と総合時間を測定します。"
-                            icon={<></>}
-                            path="/target/instructions"
-                            lastResult={lastResults.target}
-                            imageSrc={ENABLE_TARGET_PANEL ? panel2 : undefined}
-                            playCount={playCounts.target}
-                            topPlayer={topPlayers.target}
-                        />
-                        <GameCard
-                            title="カウントアップ・トレーニング"
-                            description="画面上にランダムに配置された数字を小さい順にタップします！反応時間と総合時間を競います。"
-                            icon={<></>}
-                            path="/sequence/instructions"
-                            lastResult={lastResults.sequence}
-                            imageSrc={ENABLE_SEQUENCE_PANEL ? panel3 : undefined}
-                            playCount={playCounts.sequence}
-                            topPlayer={topPlayers.sequence}
-                        />
+                        {gameCardConfigs.map((config) => (
+                            <GameCard
+                                key={config.gameType}
+                                title={config.title}
+                                description={config.description}
+                                icon={<></>}
+                                path={config.path}
+                                lastResult={lastResults[config.gameType]}
+                                imageSrc={config.imageSrc}
+                                playCount={playCounts[config.gameType]}
+                                topPlayer={topPlayers[config.gameType]}
+                            />
+                        ))}
                         <GameCard
                             title="狩猟鳥獣クイズ（獣類）"
                             description={
@@ -590,29 +623,20 @@ const HomePage: React.FC = () => {
                     <div className="mt-12">
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-                            <GameCard
-                                title="動物識別記憶"
-                                description="瞬間的に表示される動物を正確に識別・記憶するゲームです。狩猟知識と記憶力を同時に鍛えます。"
-                                icon={<></>}
-                                path="#"
-                                lastResult={undefined}
-                                imageSrc={undefined}
-                                playCount={0}
-                                topPlayer={undefined}
-                                isComingSoon={true}
-                            />
-                            <GameCard
-                                title="足跡追跡記憶"
-                                description="様々な動物の足跡パターンを記憶し、正確に識別するトラッキングスキルを向上させます。"
-                                icon={<></>}
-                                path="#"
-                                lastResult={undefined}
-                                imageSrc={undefined}
-                                playCount={0}
-                                topPlayer={undefined}
-                                isComingSoon={true}
-                            />
+                            {developingGameConfigs.slice(0, 2).map((config, index) => (
+                                <GameCard
+                                    key={`developing-${index}`}
+                                    title={config.title}
+                                    description={config.description}
+                                    icon={<></>}
+                                    path={config.path}
+                                    lastResult={undefined}
+                                    imageSrc={undefined}
+                                    playCount={0}
+                                    topPlayer={undefined}
+                                    isComingSoon={config.isComingSoon}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>
