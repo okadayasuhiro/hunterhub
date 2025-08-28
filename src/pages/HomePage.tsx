@@ -320,7 +320,7 @@ const HomePage: React.FC = () => {
         refetchOnWindowFocus: false
     });
 
-    // Phase 3最適化: React Query結果のログ出力（useEffect内で処理）
+    // 本番最適化: DEV環境のみログ出力
     useEffect(() => {
         if (optimizedData && import.meta.env.DEV) {
             console.log('🚀 Phase 3最適化: React Query統合データ取得成功', {
@@ -330,7 +330,8 @@ const HomePage: React.FC = () => {
                 topPlayers: Object.keys(optimizedData.topPlayers).length
             });
         }
-        if (optimizedError) {
+        // エラーログは本番でも重要（ただし簡潔に）
+        if (optimizedError && import.meta.env.DEV) {
             console.error('❌ Phase 3最適化: React Query統合データ取得エラー', optimizedError);
         }
     }, [optimizedData, optimizedError]);

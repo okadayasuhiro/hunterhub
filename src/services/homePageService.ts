@@ -2,6 +2,7 @@ import { GameHistoryService } from './gameHistoryService';
 import { HybridRankingService, type RankingEntry } from './hybridRankingService';
 import { UserIdentificationService } from './userIdentificationService';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
+import { logPerf, logError } from '../utils/logger';
 
 export interface HomePageData {
   lastResults: {
@@ -106,7 +107,8 @@ export class HomePageService {
       const endTime = performance.now();
       const loadTime = endTime - startTime;
 
-      console.log(`🚀 Phase 3最適化: ホームページデータ統合取得完了 (${loadTime.toFixed(2)}ms)`);
+      // 本番最適化: パフォーマンスログは開発環境のみ
+      logPerf('ホームページデータ統合取得完了', loadTime);
 
       return {
         lastResults,
@@ -115,7 +117,8 @@ export class HomePageService {
         loadTime
       };
     } catch (error) {
-      console.error('❌ HomePageService統合取得エラー:', error);
+      // エラーログは本番でも重要
+      logError('HomePageService統合取得エラー:', error);
       throw error;
     }
   }
