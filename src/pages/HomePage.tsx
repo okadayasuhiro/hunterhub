@@ -12,11 +12,12 @@ import { useQuery } from '@tanstack/react-query';
 import { HomePageService, type HomePageData } from '../services/homePageService';
 // Phase 3最適化: 遅延読み込み画像
 import LazyImage from '../components/LazyImage';
-import panel1 from '../assets/images/panel1.png';
-import panel2 from '../assets/images/panel2.png';
-import panel3 from '../assets/images/panel3.png';
-import panel4 from '../assets/images/panel4.png';
-import panel5 from '../assets/images/panel5.png';
+// WebP画像に変更（98%サイズ削減効果）
+import panel1 from '../assets/images/panel1.webp';
+import panel2 from '../assets/images/panel2.webp';
+import panel3 from '../assets/images/panel3.webp';
+import panel4 from '../assets/images/panel4.webp';
+import panel5 from '../assets/images/panel5.webp';
 
 interface LastResult {
     primaryStat: string;
