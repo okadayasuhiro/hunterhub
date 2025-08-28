@@ -7,6 +7,11 @@ import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { RankingEntry } from '../services/hybridRankingService';
 import { UserIdentificationService } from '../services/userIdentificationService';
+// Phase 3最適化: React Query導入
+import { useQuery } from '@tanstack/react-query';
+import { HomePageService, type HomePageData } from '../services/homePageService';
+// Phase 3最適化: 遅延読み込み画像
+import LazyImage from '../components/LazyImage';
 import panel1 from '../assets/images/panel1.png';
 import panel2 from '../assets/images/panel2.png';
 import panel3 from '../assets/images/panel3.png';
@@ -104,7 +109,12 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                 </div>
             ) : imageSrc && (
                 <div className="h-40 relative">
-                    <img src={imageSrc} alt="panel" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105" />
+                    <LazyImage 
+                        src={imageSrc} 
+                        alt="panel" 
+                        className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+                        placeholder="読み込み中..."
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                     {/* クイズ系ゲームの場合は免許ラベル、その他はプレイ回数を表示 */}
                     {title.includes('クイズ') ? (
@@ -295,6 +305,34 @@ const HomePage: React.FC = () => {
     // Phase 2: 基本キャッシュ - サービスインスタンスをメモ化
     const gameHistoryService = useMemo(() => GameHistoryService.getInstance(), []);
     const hybridRankingService = useMemo(() => HybridRankingService.getInstance(), []);
+    
+    // Phase 3最適化: HomePageServiceインスタンスをメモ化
+    const homePageService = useMemo(() => HomePageService.getInstance(), []);
+
+    // Phase 3最適化: React Query導入（既存のuseEffectと並行動作）
+    const { data: optimizedData, isLoading: isOptimizedLoading, error: optimizedError } = useQuery<HomePageData>({
+        queryKey: ['homePageData'],
+        queryFn: () => homePageService.getHomePageDataOptimized(),
+        staleTime: 5 * 60 * 1000, // 5分間キャッシュ
+        gcTime: 10 * 60 * 1000, // 10分間保持
+        retry: 2,
+        refetchOnWindowFocus: false
+    });
+
+    // Phase 3最適化: React Query結果のログ出力（useEffect内で処理）
+    useEffect(() => {
+        if (optimizedData && import.meta.env.DEV) {
+            console.log('🚀 Phase 3最適化: React Query統合データ取得成功', {
+                loadTime: optimizedData.loadTime,
+                lastResults: Object.keys(optimizedData.lastResults).length,
+                playCounts: optimizedData.playCounts,
+                topPlayers: Object.keys(optimizedData.topPlayers).length
+            });
+        }
+        if (optimizedError) {
+            console.error('❌ Phase 3最適化: React Query統合データ取得エラー', optimizedError);
+        }
+    }, [optimizedData, optimizedError]);
 
     // Phase 2: お知らせデータをメモ化（再レンダリング防止）
     const memoizedNotices = useMemo(() => notices, []);
@@ -345,6 +383,21 @@ const HomePage: React.FC = () => {
             isComingSoon: true
         }
     ], []);
+
+    // Phase 3最適化: 初期マイグレーション処理（React Queryと並行）
+    useEffect(() => {
+        const initializeMigration = async () => {
+            try {
+                await homePageService.migrateLocalToCloud();
+                if (import.meta.env.DEV) {
+                    console.log('🚀 Phase 3最適化: 初期マイグレーション完了');
+                }
+            } catch (error) {
+                console.error('❌ Phase 3最適化: 初期マイグレーションエラー', error);
+            }
+        };
+        initializeMigration();
+    }, [homePageService]);
 
     // ゲーム履歴から各ゲームの最新記録を取得
     useEffect(() => {
