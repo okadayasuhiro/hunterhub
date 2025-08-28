@@ -68,9 +68,9 @@ button {
   font-weight: 500;
 }
 
-/* ヒーローセクションの背景画像 */
+/* ヒーローセクションの背景画像（WebP最適化） */
 .hero-background {
-  background-image: url('/images/panel.png');
+  background-image: url('/images/panel.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
