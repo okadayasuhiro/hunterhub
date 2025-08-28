@@ -4,9 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- PSI最適化: Google Fonts高速化 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- 必要な文字重みのみ読み込み（267KB削減） -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- フォント読み込み優先度設定 -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
     <title>ハントレ - ハンタートレーニング・診断プラットフォーム</title>
     <meta name="description" content="ハンタートレーニング専用サイト「ハントレ」。反射神経テスト、ターゲット追跡、狩猟動物診断でハンターのスキル向上をサポート">
     <meta name="keywords" content="ハントレ,ハンタートレーニング,狩猟,射撃,ハンター,トレーニング,反射神経,診断,鳥獣">
