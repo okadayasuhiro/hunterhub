@@ -19,6 +19,7 @@ const XCallbackPage: React.FC = () => {
   useEffect(() => {
     // グローバルな処理状態管理
     const CALLBACK_PROCESSED_KEY = 'x-callback-processed';
+    const CALLBACK_RESULT_KEY = 'x-callback-result';
     
     const handleCallback = async () => {
       // 🔍 Phase 1 Debug: 全URLパラメータをログ出力
@@ -48,9 +49,11 @@ const XCallbackPage: React.FC = () => {
         currentProcessedCode: currentProcessedCode ? `${currentProcessedCode.substring(0, 10)}...` : null
       });
 
-      // 🔍 Phase 1 Debug: sessionStorage状態
+      // 🔍 Phase 2 Fix: sessionStorage状態（結果も含む）
+      const savedResult = sessionStorage.getItem(CALLBACK_RESULT_KEY);
       console.log('🔍 [DEBUG] SessionStorage State:', {
         processed: sessionStorage.getItem(CALLBACK_PROCESSED_KEY),
+        result: savedResult,
         currentCode: currentProcessedCode,
         allKeys: Object.keys(sessionStorage)
       });
@@ -59,14 +62,29 @@ const XCallbackPage: React.FC = () => {
       if (code && code !== currentProcessedCode) {
         console.log('🔍 [DEBUG] New code detected, clearing previous state');
         sessionStorage.removeItem(CALLBACK_PROCESSED_KEY);
+        sessionStorage.removeItem(CALLBACK_RESULT_KEY);
         sessionStorage.setItem('x-callback-current-code', code);
       }
       
-      // 既に処理済みかチェック
+      // 🛠️ Phase 2 Fix: 既に処理済みかチェック（結果に基づく状態復元）
       if (sessionStorage.getItem(CALLBACK_PROCESSED_KEY)) {
-        console.log('⚠️ [DEBUG] Callback already processed globally, skipping...');
-        setStatus('success');
-        setTimeout(() => navigate('/', { replace: true }), 1000);
+        console.log('🔍 [DEBUG] Callback already processed, restoring saved result:', savedResult);
+        
+        if (savedResult === 'success') {
+          setStatus('success');
+          setTimeout(() => navigate('/', { replace: true }), 1000);
+        } else if (savedResult === 'error') {
+          const savedError = sessionStorage.getItem('x-callback-error-message') || '認証に失敗しました';
+          setErrorMessage(savedError);
+          setStatus('error');
+          setTimeout(() => navigate('/', { replace: true }), 3000);
+        } else {
+          // 不明な状態の場合はエラー扱い
+          console.log('⚠️ [DEBUG] Unknown saved result, treating as error');
+          setErrorMessage('認証処理で予期しないエラーが発生しました');
+          setStatus('error');
+          setTimeout(() => navigate('/', { replace: true }), 3000);
+        }
         return;
       }
       
@@ -114,11 +132,16 @@ const XCallbackPage: React.FC = () => {
         console.log('🔍 [DEBUG] Setting status to success');
         setStatus('success');
         
+        // 🛠️ Phase 2 Fix: 成功結果を保存
+        sessionStorage.setItem(CALLBACK_RESULT_KEY, 'success');
+        
         // 処理完了後、sessionStorageをクリア
         setTimeout(() => {
           console.log('🔍 [DEBUG] Cleaning up and navigating to home');
           sessionStorage.removeItem(CALLBACK_PROCESSED_KEY);
+          sessionStorage.removeItem(CALLBACK_RESULT_KEY);
           sessionStorage.removeItem('x-callback-current-code');
+          sessionStorage.removeItem('x-callback-error-message');
           navigate('/', { replace: true });
         }, 2000);
 
@@ -130,17 +153,24 @@ const XCallbackPage: React.FC = () => {
           errorStack: error instanceof Error ? error.stack : null
         });
         
-        setErrorMessage(error instanceof Error ? error.message : '認証に失敗しました');
+        const errorMsg = error instanceof Error ? error.message : '認証に失敗しました';
+        setErrorMessage(errorMsg);
         console.log('🔍 [DEBUG] Setting status to error');
         setStatus('error');
         
-        // エラー時もsessionStorageをクリア
+        // 🛠️ Phase 2 Fix: エラー結果を保存
+        sessionStorage.setItem(CALLBACK_RESULT_KEY, 'error');
+        sessionStorage.setItem('x-callback-error-message', errorMsg);
+        
+        // エラー時もsessionStorageをクリア（短縮: 5秒→3秒）
         setTimeout(() => {
           console.log('🔍 [DEBUG] Error cleanup and navigating to home');
           sessionStorage.removeItem(CALLBACK_PROCESSED_KEY);
+          sessionStorage.removeItem(CALLBACK_RESULT_KEY);
           sessionStorage.removeItem('x-callback-current-code');
+          sessionStorage.removeItem('x-callback-error-message');
           navigate('/', { replace: true });
-        }, 5000);
+        }, 3000);
       }
     };
 
