@@ -366,24 +366,25 @@ const HomePage: React.FC = () => {
 
     // Phase 2: 開発中ゲームカード設定をメモ化
     const developingGameConfigs = useMemo(() => [
-        {
-            title: "動物識別記憶",
-            description: "瞬間的に表示される動物を正確に識別・記憶するゲームです。狩猟知識と記憶力を同時に鍛えます。",
-            path: "#",
-            isComingSoon: true
-        },
-        {
-            title: "足跡追跡記憶",
-            description: "動物の足跡パターンを記憶し、正確に再現するゲームです。フィールドでの追跡技術を向上させます。",
-            path: "#",
-            isComingSoon: true
-        },
-        {
-            title: "射撃タイミング",
-            description: "最適な射撃タイミングを判断するゲームです。風向きや距離を考慮した精密射撃を練習します。",
-            path: "#",
-            isComingSoon: true
-        }
+        // 初期リリース対象外: 全ての開発中ゲームをコメントアウト
+        // {
+        //     title: "動物識別記憶",
+        //     description: "瞬間的に表示される動物を正確に識別・記憶するゲームです。狩猟知識と記憶力を同時に鍛えます。",
+        //     path: "#",
+        //     isComingSoon: true
+        // },
+        // {
+        //     title: "足跡追跡記憶",
+        //     description: "動物の足跡パターンを記憶し、正確に再現するゲームです。フィールドでの追跡技術を向上させます。",
+        //     path: "#",
+        //     isComingSoon: true
+        // },
+        // {
+        //     title: "射撃タイミング",
+        //     description: "最適な射撃タイミングを判断するゲームです。風向きや距離を考慮した精密射撃を練習します。",
+        //     path: "#",
+        //     isComingSoon: true
+        // }
     ], []);
 
     // Phase 3最適化: 初期マイグレーション処理（React Queryと並行）
@@ -674,8 +675,8 @@ const HomePage: React.FC = () => {
                             />
                     </div>
 
-                    {/* 新しいゲーム（開発中） */}
-                    <div className="mt-12">
+                    {/* 初期リリース対象外: 新しいゲーム（開発中）をコメントアウト */}
+                    {/* <div className="mt-12">
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {developingGameConfigs.slice(0, 2).map((config, index) => (
@@ -693,12 +694,12 @@ const HomePage: React.FC = () => {
                                 />
                             ))}
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
-            {/* 狩猟動物診断セクション */}
-            <div className="bg-white py-16 px-4">
+            {/* 初期リリース対象外: 狩猟動物診断セクションをコメントアウト */}
+            {/* <div className="bg-white py-16 px-4">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-light text-gray-800 mb-4">
@@ -719,7 +720,7 @@ const HomePage: React.FC = () => {
                         />
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* 特徴セクション */}
             <div className="py-12 px-4">
