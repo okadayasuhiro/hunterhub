@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { code, state, redirectUri } = req.body;
+    const { code, state, redirectUri, codeVerifier } = req.body;
     
     console.log('🔄 Processing X token exchange...');
 
@@ -24,6 +24,13 @@ export default async function handler(req, res) {
       return res.status(400).json({
         success: false,
         error: 'Authorization code is required'
+      });
+    }
+
+    if (!codeVerifier) {
+      return res.status(400).json({
+        success: false,
+        error: 'Code verifier is required for PKCE'
       });
     }
 
@@ -49,7 +56,7 @@ export default async function handler(req, res) {
         client_id: X_CLIENT_ID,
         code: code,
         redirect_uri: redirectUri,
-        code_verifier: 'dummy' // PKCEは簡易実装
+        code_verifier: codeVerifier // 正しいPKCE code_verifier
       })
     });
 
