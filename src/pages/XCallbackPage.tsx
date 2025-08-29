@@ -83,6 +83,11 @@ const XCallbackPage: React.FC = () => {
           setErrorMessage(savedError);
           setStatus('error');
           setTimeout(() => navigate('/', { replace: true }), 3000);
+        } else if (savedResult === 'processing') {
+          // 処理中の場合は継続（再レンダリング対応）
+          console.log('🔄 X認証: 処理継続中...');
+          setStatus('processing');
+          return; // 処理を継続
         } else {
           // 不明な状態の場合はエラー扱い
           console.warn('⚠️ X認証: 不明な状態のためエラー扱いします');
@@ -96,6 +101,8 @@ const XCallbackPage: React.FC = () => {
       // 処理開始をマーク
       console.log('🚀 X認証: コールバック処理を開始...');
       sessionStorage.setItem(CALLBACK_PROCESSED_KEY, 'true');
+      // 処理中状態を明示的に保存
+      sessionStorage.setItem(CALLBACK_RESULT_KEY, 'processing');
       
       try {
 

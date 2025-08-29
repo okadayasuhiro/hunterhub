@@ -23,16 +23,35 @@ export class XAuthService {
   private config: XAuthConfig;
 
   private constructor() {
+    // 環境に応じたredirectUriの動的設定
+    const getRedirectUri = (): string => {
+      // 環境変数が設定されている場合はそれを使用
+      if (import.meta.env.VITE_X_REDIRECT_URI) {
+        return import.meta.env.VITE_X_REDIRECT_URI;
+      }
+      
+      // 本番環境の判定
+      const currentOrigin = window.location.origin;
+      if (currentOrigin.includes('hantore.net') || currentOrigin.includes('amplifyapp.com')) {
+        return `${currentOrigin}/x-callback`;
+      }
+      
+      // 開発環境
+      return 'http://localhost:5173/x-callback';
+    };
+
     this.config = {
       clientId: import.meta.env.VITE_X_CLIENT_ID || '',
-      redirectUri: import.meta.env.VITE_X_REDIRECT_URI || `${window.location.origin}/x-callback`,
+      redirectUri: getRedirectUri(),
       scopes: ['tweet.read', 'users.read'] // プロフィール情報とツイート読み取り
     };
     
     console.log('🔧 XAuthService initialized:', {
       clientId: this.config.clientId ? `${this.config.clientId.substring(0, 10)}...` : 'NOT SET',
       redirectUri: this.config.redirectUri,
-      hasClientId: !!this.config.clientId
+      hasClientId: !!this.config.clientId,
+      currentOrigin: window.location.origin,
+      isProduction: window.location.origin.includes('hantore.net') || window.location.origin.includes('amplifyapp.com')
     });
   }
 
