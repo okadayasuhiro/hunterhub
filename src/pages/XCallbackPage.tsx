@@ -22,17 +22,6 @@ const XCallbackPage: React.FC = () => {
     const CALLBACK_RESULT_KEY = 'x-callback-result';
     
     const handleCallback = async () => {
-      // 🔍 Phase 1 Debug: 全URLパラメータをログ出力
-      const allParams: Record<string, string> = {};
-      searchParams.forEach((value, key) => {
-        allParams[key] = value;
-      });
-      console.log('🔍 [DEBUG] XCallback URL Parameters:', {
-        url: window.location.href,
-        params: allParams,
-        paramCount: searchParams.size
-      });
-
       // URLパラメータをチェック（新しい連携試行か判断）
       const code = searchParams.get('code');
       const state = searchParams.get('state');
@@ -40,35 +29,51 @@ const XCallbackPage: React.FC = () => {
       const errorDescription = searchParams.get('error_description');
       const currentProcessedCode = sessionStorage.getItem('x-callback-current-code');
       
-      // 🔍 Phase 1 Debug: 重要パラメータの詳細ログ
-      console.log('🔍 [DEBUG] Key Parameters:', {
-        code: code ? `${code.substring(0, 10)}...` : null,
-        state: state ? `${state.substring(0, 10)}...` : null,
-        error: error,
-        errorDescription: errorDescription,
-        currentProcessedCode: currentProcessedCode ? `${currentProcessedCode.substring(0, 10)}...` : null
-      });
+      // 🔍 開発環境のみ: 詳細デバッグログ
+      if (import.meta.env.DEV) {
+        const allParams: Record<string, string> = {};
+        searchParams.forEach((value, key) => {
+          allParams[key] = value;
+        });
+        console.log('🔍 [DEBUG] XCallback URL Parameters:', {
+          url: window.location.href,
+          params: allParams,
+          paramCount: searchParams.size
+        });
+        
+        console.log('🔍 [DEBUG] Key Parameters:', {
+          code: code ? `${code.substring(0, 10)}...` : null,
+          state: state ? `${state.substring(0, 10)}...` : null,
+          error: error,
+          errorDescription: errorDescription,
+          currentProcessedCode: currentProcessedCode ? `${currentProcessedCode.substring(0, 10)}...` : null
+        });
+      }
 
-      // 🔍 Phase 2 Fix: sessionStorage状態（結果も含む）
+      // sessionStorage状態チェック
       const savedResult = sessionStorage.getItem(CALLBACK_RESULT_KEY);
-      console.log('🔍 [DEBUG] SessionStorage State:', {
-        processed: sessionStorage.getItem(CALLBACK_PROCESSED_KEY),
-        result: savedResult,
-        currentCode: currentProcessedCode,
-        allKeys: Object.keys(sessionStorage)
-      });
+      if (import.meta.env.DEV) {
+        console.log('🔍 [DEBUG] SessionStorage State:', {
+          processed: sessionStorage.getItem(CALLBACK_PROCESSED_KEY),
+          result: savedResult,
+          currentCode: currentProcessedCode,
+          allKeys: Object.keys(sessionStorage)
+        });
+      }
       
       // 新しいcodeの場合は前の処理状態をクリア
       if (code && code !== currentProcessedCode) {
-        console.log('🔍 [DEBUG] New code detected, clearing previous state');
+        if (import.meta.env.DEV) {
+          console.log('🔍 [DEBUG] New code detected, clearing previous state');
+        }
         sessionStorage.removeItem(CALLBACK_PROCESSED_KEY);
         sessionStorage.removeItem(CALLBACK_RESULT_KEY);
         sessionStorage.setItem('x-callback-current-code', code);
       }
       
-      // 🛠️ Phase 2 Fix: 既に処理済みかチェック（結果に基づく状態復元）
+      // 既に処理済みかチェック（結果に基づく状態復元）
       if (sessionStorage.getItem(CALLBACK_PROCESSED_KEY)) {
-        console.log('🔍 [DEBUG] Callback already processed, restoring saved result:', savedResult);
+        console.log('🔄 X認証: 処理済み状態を復元中...', savedResult);
         
         if (savedResult === 'success') {
           setStatus('success');
@@ -80,7 +85,7 @@ const XCallbackPage: React.FC = () => {
           setTimeout(() => navigate('/', { replace: true }), 3000);
         } else {
           // 不明な状態の場合はエラー扱い
-          console.log('⚠️ [DEBUG] Unknown saved result, treating as error');
+          console.warn('⚠️ X認証: 不明な状態のためエラー扱いします');
           setErrorMessage('認証処理で予期しないエラーが発生しました');
           setStatus('error');
           setTimeout(() => navigate('/', { replace: true }), 3000);
@@ -89,55 +94,49 @@ const XCallbackPage: React.FC = () => {
       }
       
       // 処理開始をマーク
-      console.log('🔍 [DEBUG] Starting callback processing...');
+      console.log('🚀 X認証: コールバック処理を開始...');
       sessionStorage.setItem(CALLBACK_PROCESSED_KEY, 'true');
       
       try {
 
-        // 🔍 Phase 1 Debug: エラー条件の詳細チェック
+        // エラー条件のチェック
         if (error) {
-          console.log('🔍 [DEBUG] Error parameter detected:', {
-            error: error,
-            errorDescription: errorDescription,
-            willThrowError: true
-          });
+          console.log('❌ X認証: キャンセルされました -', error);
+          if (import.meta.env.DEV) {
+            console.log('🔍 [DEBUG] Error details:', { error, errorDescription });
+          }
           throw new Error(`認証がキャンセルされました: ${error}`);
         }
 
         if (!code || !state) {
-          console.log('🔍 [DEBUG] Missing required parameters:', {
-            hasCode: !!code,
-            hasState: !!state,
-            willThrowError: true
-          });
+          console.error('❌ X認証: 必要なパラメータが不足しています');
+          if (import.meta.env.DEV) {
+            console.log('🔍 [DEBUG] Missing parameters:', { hasCode: !!code, hasState: !!state });
+          }
           throw new Error('認証パラメータが不正です');
         }
 
-        console.log('🔍 [DEBUG] Parameters validation passed, starting processing...');
+        console.log('✅ X認証: パラメータ検証完了、処理開始...');
         setStatus('processing');
 
         // X認証処理
-        console.log('🔍 [DEBUG] Starting X authentication...');
+        console.log('🔐 X認証: トークン交換中...');
         const { name, profileImageUrl } = await xAuthService.handleCallback(code, state);
-        console.log('🔍 [DEBUG] X authentication successful:', {
-          name: name,
-          hasProfileImage: !!profileImageUrl
-        });
+        console.log('✅ X認証: 認証成功 -', name);
 
         // ユーザーサービスに連携情報を保存
-        console.log('🔍 [DEBUG] Saving user link information...');
+        console.log('💾 X認証: ユーザー情報保存中...');
         await userService.linkXAccountWithImage(name, profileImageUrl);
-        console.log('🔍 [DEBUG] User link information saved successfully');
+        console.log('✅ X認証: 連携完了');
 
-        console.log('🔍 [DEBUG] Setting status to success');
         setStatus('success');
-        
-        // 🛠️ Phase 2 Fix: 成功結果を保存
         sessionStorage.setItem(CALLBACK_RESULT_KEY, 'success');
         
         // 処理完了後、sessionStorageをクリア
         setTimeout(() => {
-          console.log('🔍 [DEBUG] Cleaning up and navigating to home');
+          if (import.meta.env.DEV) {
+            console.log('🔍 [DEBUG] Cleaning up and navigating to home');
+          }
           sessionStorage.removeItem(CALLBACK_PROCESSED_KEY);
           sessionStorage.removeItem(CALLBACK_RESULT_KEY);
           sessionStorage.removeItem('x-callback-current-code');
@@ -146,25 +145,29 @@ const XCallbackPage: React.FC = () => {
         }, 2000);
 
       } catch (error) {
-        console.error('🔍 [DEBUG] X authentication callback failed:', error);
-        console.log('🔍 [DEBUG] Error details:', {
-          errorType: error?.constructor?.name,
-          errorMessage: error instanceof Error ? error.message : '認証に失敗しました',
-          errorStack: error instanceof Error ? error.stack : null
-        });
-        
         const errorMsg = error instanceof Error ? error.message : '認証に失敗しました';
+        console.error('❌ X認証: 処理失敗 -', errorMsg);
+        
+        if (import.meta.env.DEV) {
+          console.log('🔍 [DEBUG] Error details:', {
+            errorType: error?.constructor?.name,
+            errorMessage: errorMsg,
+            errorStack: error instanceof Error ? error.stack : null
+          });
+        }
+        
         setErrorMessage(errorMsg);
-        console.log('🔍 [DEBUG] Setting status to error');
         setStatus('error');
         
-        // 🛠️ Phase 2 Fix: エラー結果を保存
+        // エラー結果を保存
         sessionStorage.setItem(CALLBACK_RESULT_KEY, 'error');
         sessionStorage.setItem('x-callback-error-message', errorMsg);
         
-        // エラー時もsessionStorageをクリア（短縮: 5秒→3秒）
+        // エラー時もsessionStorageをクリア（3秒後）
         setTimeout(() => {
-          console.log('🔍 [DEBUG] Error cleanup and navigating to home');
+          if (import.meta.env.DEV) {
+            console.log('🔍 [DEBUG] Error cleanup and navigating to home');
+          }
           sessionStorage.removeItem(CALLBACK_PROCESSED_KEY);
           sessionStorage.removeItem(CALLBACK_RESULT_KEY);
           sessionStorage.removeItem('x-callback-current-code');
