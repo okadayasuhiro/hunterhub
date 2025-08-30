@@ -271,7 +271,10 @@ export class HybridRankingService {
       displayName: cloudEntry.displayName,
       score: cloudEntry.score,
       timestamp: cloudEntry.timestamp,
-      isCurrentUser: cloudEntry.isCurrentUser
+      isCurrentUser: cloudEntry.isCurrentUser,
+      xLinked: cloudEntry.xLinked,
+      xDisplayName: cloudEntry.xDisplayName,
+      xProfileImageUrl: cloudEntry.xProfileImageUrl
     };
   }
 

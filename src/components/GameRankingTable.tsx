@@ -211,15 +211,17 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                     entry.displayName !== `ユーザー${entry.userId.substring(0, 6)}` &&
                     !entry.displayName.startsWith('ハンター');
                 
-                // デバッグログ追加
-                console.log(`🔍 GameRankingTable Debug - User ${entry.userId.slice(-4)}:`, {
-                    displayName: entry.displayName,
-                    xLinked: entry.xLinked,
-                    xDisplayName: entry.xDisplayName,
-                    xProfileImageUrl: entry.xProfileImageUrl,
-                    hasXLinkedName,
-                    isCurrentUser: entry.userId === currentUserId
-                });
+                // デバッグログ追加（開発環境のみ）
+                if (import.meta.env.DEV) {
+                    console.log(`🔍 GameRankingTable Debug - User ${entry.userId.slice(-4)}:`, {
+                        displayName: entry.displayName,
+                        xLinked: entry.xLinked,
+                        xDisplayName: entry.xDisplayName,
+                        xProfileImageUrl: entry.xProfileImageUrl,
+                        hasXLinkedName,
+                        isCurrentUser: entry.userId === currentUserId
+                    });
+                }
                 
                 return {
                     ...entry,

@@ -189,16 +189,18 @@ export class CloudRankingService {
       const userIds = sortedScores.slice(0, limit).map(score => score.userId);
       const userProfiles = await this.getUserProfiles(userIds);
       
-      // デバッグ: 取得したUserProfileの詳細を出力
-      console.log(`📊 Retrieved ${userProfiles.size} user profiles for ranking`);
-      userProfiles.forEach((profile, userId) => {
-        console.log(`🔍 UserProfile Debug - User ${userId.slice(-4)}:`, {
-          xLinked: profile.xLinked,
-          xDisplayName: profile.xDisplayName,
-          xProfileImageUrl: profile.xProfileImageUrl,
-          username: profile.username
+      // デバッグ: 取得したUserProfileの詳細を出力（開発環境のみ）
+      if (import.meta.env.DEV) {
+        console.log(`📊 Retrieved ${userProfiles.size} user profiles for ranking`);
+        userProfiles.forEach((profile, userId) => {
+          console.log(`🔍 UserProfile Debug - User ${userId.slice(-4)}:`, {
+            xLinked: profile.xLinked,
+            xDisplayName: profile.xDisplayName,
+            xProfileImageUrl: profile.xProfileImageUrl,
+            username: profile.username
+          });
         });
-      });
+      }
       
       // 現在ユーザーのX連携情報を事前取得（UserServiceを優先）
       let currentUserXLinked = false;
@@ -263,14 +265,16 @@ export class CloudRankingService {
         const xDisplayName = userProfile?.xDisplayName || undefined;
         const xProfileImageUrl = userProfile?.xProfileImageUrl || undefined;
         
-        // デバッグログ追加
-        console.log(`🔍 CloudRankingService Debug - User ${score.userId.slice(-4)}:`, {
-          userProfile: userProfile ? 'found' : 'not found',
-          isXLinked,
-          xDisplayName,
-          xProfileImageUrl,
-          fullProfile: userProfile
-        });
+        // デバッグログ追加（開発環境のみ）
+        if (import.meta.env.DEV) {
+          console.log(`🔍 CloudRankingService Debug - User ${score.userId.slice(-4)}:`, {
+            userProfile: userProfile ? 'found' : 'not found',
+            isXLinked,
+            xDisplayName,
+            xProfileImageUrl,
+            fullProfile: userProfile
+          });
+        }
 
         return {
           rank: index + 1,
