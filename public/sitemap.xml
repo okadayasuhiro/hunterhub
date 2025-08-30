@@ -1,82 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- ホームページ -->
   <url>
     <loc>https://hantore.net/</loc>
-    <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <lastmod>2025-08-30</lastmod>
-  </url>
-  
-  <!-- 反射神経トレーニング -->
-  <url>
-    <loc>https://hantore.net/reflex/instructions</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2025-08-30</lastmod>
-  </url>
-  
-  <!-- ターゲット追跡トレーニング -->
-  <url>
-    <loc>https://hantore.net/target/instructions</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2025-08-30</lastmod>
-  </url>
-  
-  <!-- カウントアップ・トレーニング -->
-  <url>
-    <loc>https://hantore.net/sequence/instructions</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2025-08-30</lastmod>
-  </url>
-  
-  <!-- 狩猟鳥獣クイズ -->
-  <url>
-    <loc>https://hantore.net/animal-quiz/instructions</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <lastmod>2025-08-30</lastmod>
-  </url>
-  
-  <!-- ランキング -->
-  <url>
-    <loc>https://hantore.net/ranking</loc>
     <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-    <lastmod>2025-08-30</lastmod>
   </url>
-  
-  <!-- 狩猟鳥獣診断 -->
+  <url>
+    <loc>https://hantore.net/reflex</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://hantore.net/tracking</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://hantore.net/sequence</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://hantore.net/animal-quiz</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
   <url>
     <loc>https://hantore.net/diagnosis</loc>
+    <priority>0.8</priority>
     <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://hantore.net/ranking</loc>
     <priority>0.7</priority>
-    <lastmod>2025-08-30</lastmod>
+    <changefreq>daily</changefreq>
   </url>
-  
-  <!-- 診断ギャラリー -->
-  <url>
-    <loc>https://hantore.net/diagnosis/gallery</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-    <lastmod>2025-08-30</lastmod>
-  </url>
-  
-  <!-- 利用規約 -->
-  <url>
-    <loc>https://hantore.net/terms</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-    <lastmod>2025-08-30</lastmod>
-  </url>
-  
-  <!-- プライバシーポリシー -->
   <url>
     <loc>https://hantore.net/privacy</loc>
+    <priority>0.5</priority>
     <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-    <lastmod>2025-08-30</lastmod>
+  </url>
+  <url>
+    <loc>https://hantore.net/terms</loc>
+    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
   </url>
 </urlset>
