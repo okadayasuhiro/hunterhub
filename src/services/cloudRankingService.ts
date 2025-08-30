@@ -397,7 +397,7 @@ export class CloudRankingService {
         rank: 1,
         userId: topScore.userId,
         username: profile?.username || undefined,
-        displayName: topScore.displayName || profile?.xDisplayName || `ハンター${topScore.userId.slice(-4)}`,
+        displayName: profile?.xDisplayName || profile?.username || topScore.displayName || `ハンター${topScore.userId.slice(-4)}`,
         score: topScore.score,
         timestamp: topScore.timestamp,
         isCurrentUser: topScore.userId === userId
