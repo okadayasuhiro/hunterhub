@@ -82,20 +82,48 @@ const UserIcon: React.FC<{
             );
         }
     } else if (isXLinked) {
-        // 他のユーザーのX連携アイコン（黒いXロゴ）
-        return (
-            <div className={`${className} bg-black rounded-full flex items-center justify-center`}>
-                <svg 
-                    width="12" 
-                    height="12" 
-                    viewBox="0 0 24 24" 
-                    fill="white"
-                    className="w-3 h-3"
-                >
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-            </div>
-        );
+        // 他のユーザーのX連携：プロフィール画像があれば表示、なければXロゴ
+        if (xProfileImageUrl) {
+            return (
+                <div className={`${className} rounded-full overflow-hidden shadow-sm`}>
+                    <img 
+                        src={xProfileImageUrl}
+                        alt="X profile icon"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                            // 画像読み込み失敗時のフォールバック（Xロゴ）
+                            console.error('Failed to load X profile icon for other user');
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            if (target.parentElement) {
+                                target.parentElement.innerHTML = `
+                                    <div class="w-full h-full bg-black rounded-full flex items-center justify-center">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="white" class="w-3 h-3">
+                                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                        </svg>
+                                    </div>
+                                `;
+                            }
+                        }}
+                    />
+                </div>
+            );
+        } else {
+            // プロフィール画像がない場合はXロゴ
+            return (
+                <div className={`${className} bg-black rounded-full flex items-center justify-center`}>
+                    <svg 
+                        width="12" 
+                        height="12" 
+                        viewBox="0 0 24 24" 
+                        fill="white"
+                        className="w-3 h-3"
+                    >
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </div>
+            );
+        }
     } else {
         // デフォルトユーザーアイコン
         return (
@@ -185,10 +213,10 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                 
                 return {
                     ...entry,
-                    // 現在ユーザーの場合はUserServiceから、他ユーザーはdisplayNameから判定
-                    isXLinked: entry.userId === currentUserId ? isCurrentUserXLinked : hasXLinkedName,
-                    xDisplayName: entry.userId === currentUserId ? currentUserXName : (hasXLinkedName ? entry.displayName : undefined),
-                    xProfileImageUrl: entry.userId === currentUserId ? currentUserXImageUrl : undefined
+                    // 現在ユーザーの場合はUserServiceから、他ユーザーはCloudRankingServiceから
+                    isXLinked: entry.userId === currentUserId ? isCurrentUserXLinked : (entry.xLinked || hasXLinkedName),
+                    xDisplayName: entry.userId === currentUserId ? currentUserXName : (entry.xDisplayName || (hasXLinkedName ? entry.displayName : undefined)),
+                    xProfileImageUrl: entry.userId === currentUserId ? currentUserXImageUrl : entry.xProfileImageUrl
                 };
             });
             

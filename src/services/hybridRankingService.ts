@@ -19,6 +19,9 @@ export interface RankingEntry {
   score: number;
   timestamp: string;
   isCurrentUser: boolean;
+  xLinked?: boolean;
+  xDisplayName?: string;
+  xProfileImageUrl?: string;
 }
 
 export interface RankingData {

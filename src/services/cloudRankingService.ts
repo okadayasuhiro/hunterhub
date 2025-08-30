@@ -25,6 +25,9 @@ export interface CloudRankingEntry {
   score: number;
   timestamp: string;
   isCurrentUser: boolean;
+  xLinked?: boolean;
+  xDisplayName?: string;
+  xProfileImageUrl?: string;
 }
 
 export interface CloudRankingResult {
@@ -243,6 +246,12 @@ export class CloudRankingService {
           }
         }
 
+        // X連携情報を取得
+        const userProfile = userProfiles.get(score.userId);
+        const isXLinked = userProfile?.xLinked || false;
+        const xDisplayName = userProfile?.xDisplayName || undefined;
+        const xProfileImageUrl = userProfile?.xProfileImageUrl || undefined;
+
         return {
           rank: index + 1,
           userId: score.userId,
@@ -250,7 +259,10 @@ export class CloudRankingService {
           displayName: finalDisplayName,
           score: score.score,
           timestamp: score.timestamp,
-          isCurrentUser: score.userId === userId
+          isCurrentUser: score.userId === userId,
+          xLinked: isXLinked,
+          xDisplayName: xDisplayName,
+          xProfileImageUrl: xProfileImageUrl
         };
       }));
 

@@ -32,7 +32,7 @@ const TermsPage: React.FC = () => {
                     {/* タイトル */}
                     <div className="text-center mb-8">
                         <div className="flex items-center justify-center mb-4">
-                            <h1 className="text-3xl font-bold text-gray-800">利用規約</h1>
+                            <h1 className="text-2xl font-bold text-gray-800">利用規約</h1>
                         </div>
                         <p className="text-gray-600">ハントレ サービス利用規約</p>
                         <p className="text-sm text-gray-500 mt-2">最終更新日: 2025年8月30日</p>
@@ -42,7 +42,7 @@ const TermsPage: React.FC = () => {
                     <div className="space-y-6 text-gray-700 leading-relaxed text-sm">
                         
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第1条（適用）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第1条（適用）</h2>
                             <p>
                                 本規約は、ハントレ（以下「当サービス」）の利用に関して、当サービスを提供する運営者（以下「当社」）と利用者（以下「ユーザー」）との間の権利義務関係を定めることを目的とし、ユーザーと当社との間の当サービスの利用に関わる一切の関係に適用されます。
                             </p>
@@ -52,7 +52,7 @@ const TermsPage: React.FC = () => {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第2条（サービス利用）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第2条（サービス利用）</h2>
                             <p>
                                 当サービスは、<strong>会員登録不要</strong>でご利用いただけます。ユーザーは本規約に同意することで、直ちにサービスを利用できます。
                             </p>
@@ -69,7 +69,7 @@ const TermsPage: React.FC = () => {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第3条（禁止事項）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第3条（禁止事項）</h2>
                             <p>ユーザーは、当サービスの利用にあたり、以下の行為をしてはなりません：</p>
                             <ul className="list-disc list-inside mt-3 ml-4 space-y-2">
                                 <li>法令または公序良俗に違反する行為</li>
@@ -86,7 +86,7 @@ const TermsPage: React.FC = () => {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第4条（本サービスの提供の停止等）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第4条（本サービスの提供の停止等）</h2>
                             <p>
                                 当社は、以下のいずれかの事由があると判断した場合、ユーザーに事前に通知することなく本サービスの全部または一部の提供を停止または中断することができるものとします。
                             </p>
@@ -99,7 +99,7 @@ const TermsPage: React.FC = () => {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第5条（利用制限）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第5条（利用制限）</h2>
                             <p>
                                 当社は、ユーザーが以下のいずれかに該当する場合には、事前の通知なく、当該ユーザーのデータ削除やアクセス制限を行うことができるものとします：
                             </p>
@@ -115,7 +115,7 @@ const TermsPage: React.FC = () => {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第6条（免責事項）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第6条（免責事項）</h2>
                             <p>
                                 当サービスは<strong>無料</strong>で提供されており、以下について保証いたしません：
                             </p>
@@ -132,7 +132,7 @@ const TermsPage: React.FC = () => {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第7条（サービス内容の変更等）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第7条（サービス内容の変更等）</h2>
                             <p>
                                 当社は、サービス向上のため、事前通知なくサービス内容を変更または提供を中止することがあります。
                                 重要な変更については、可能な限りサイト上で事前にお知らせいたします。
@@ -140,7 +140,7 @@ const TermsPage: React.FC = () => {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第8条（利用規約の変更）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第8条（利用規約の変更）</h2>
                             <p>
                                 当社は、必要に応じて本規約を変更することがあります。
                                 変更後は、サイト上での告知により通知し、継続利用により変更に同意したものとみなします。
@@ -148,14 +148,14 @@ const TermsPage: React.FC = () => {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第9条（個人情報の取扱い）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第9条（個人情報の取扱い）</h2>
                             <p>
                                 当社は、本サービスで収集する情報について、別途定める「プライバシーポリシー」に従い適切に取り扱います。
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第10条（準拠法・裁判管轄）</h2>
+                            <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第10条（準拠法・裁判管轄）</h2>
                             <p>
                                 本規約は日本法に準拠し、本サービスに関する紛争については、当社所在地を管轄する裁判所を専属的合意管轄とします。
                             </p>
