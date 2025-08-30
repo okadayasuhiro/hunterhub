@@ -5,6 +5,7 @@
 
 import { BrowserFingerprint } from '../utils/browserFingerprint';
 import type { FingerprintData } from '../utils/browserFingerprint';
+import { RankingUpdateService } from './rankingUpdateService';
 import { generateHunterNameFromSeed } from '../data/hunterNames';
 export interface UserProfile {
   userId: string;
@@ -437,6 +438,7 @@ export class UserIdentificationService {
     
     if (this.currentUser) {
       const oldXDisplayName = this.currentUser.xDisplayName;
+      const userId = this.currentUser.userId;
       
       // LocalStorageのデータを更新
       this.currentUser.isXLinked = false;
@@ -446,7 +448,7 @@ export class UserIdentificationService {
       
       this.saveUserProfile(this.currentUser);
       
-      // DynamoDBのデータも更新（X連携情報を削除）
+      // DynamoDBのユーザープロファイルを更新
       try {
         await this.updateUserProfileInCloud();
         console.log(`✅ X account unlinked (both local and cloud), reverted to: ${this.currentUser.hunterName}`);
@@ -454,6 +456,21 @@ export class UserIdentificationService {
       } catch (error) {
         console.error('⚠️ Failed to update cloud profile, but local unlink successful:', error);
         console.log(`✅ X account unlinked locally, reverted to: ${this.currentUser.hunterName}`);
+      }
+
+      // 🆕 既存のランキングレコードからX連携情報を削除
+      try {
+        const rankingUpdateService = RankingUpdateService.getInstance();
+        const result = await rankingUpdateService.unlinkXFromRankings(userId);
+        
+        if (result.success) {
+          console.log(`🎯 Successfully updated ${result.updatedRecords} ranking records`);
+        } else {
+          console.error('⚠️ Failed to update ranking records:', result.error);
+        }
+      } catch (error) {
+        console.error('⚠️ Error updating ranking records:', error);
+        // ランキング更新失敗でもX連携解除は成功とする
       }
     }
   }

@@ -206,28 +206,51 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
             
             // 各エントリーにX連携情報を追加（全ユーザー対象）
             const extendedRankings = data.rankings.map(entry => {
-                // CloudRankingServiceから既にX連携情報が含まれているかチェック
-                const hasXLinkedName = entry.displayName && 
-                    entry.displayName !== `ユーザー${entry.userId.substring(0, 6)}` &&
-                    !entry.displayName.startsWith('ハンター');
+                // X連携状況の正確な判定
+                // xLinked フィールドが明示的に true の場合のみX連携中とする
+                const isActuallyXLinked = entry.xLinked === true;
+                
+                // 表示名の決定ロジック
+                let finalDisplayName = entry.displayName;
+                let finalXDisplayName = entry.xDisplayName;
+                
+                if (entry.userId === currentUserId) {
+                    // 現在ユーザーの場合：UserServiceから最新情報を取得
+                    finalDisplayName = isCurrentUserXLinked && currentUserXName ? currentUserXName : entry.displayName;
+                    finalXDisplayName = isCurrentUserXLinked ? currentUserXName : undefined;
+                } else {
+                    // 他ユーザーの場合：DynamoDBの xLinked フィールドを信頼
+                    if (isActuallyXLinked && entry.xDisplayName) {
+                        finalDisplayName = entry.xDisplayName;
+                        finalXDisplayName = entry.xDisplayName;
+                    } else {
+                        // X連携していない場合はハンター名を表示
+                        finalDisplayName = entry.displayName && entry.displayName.startsWith('ハンター') 
+                            ? entry.displayName 
+                            : `ハンター${entry.userId.slice(-4)}`;
+                        finalXDisplayName = undefined;
+                    }
+                }
                 
                 // デバッグログ追加（開発環境のみ）
                 if (import.meta.env.DEV) {
                     console.log(`🔍 GameRankingTable Debug - User ${entry.userId.slice(-4)}:`, {
-                        displayName: entry.displayName,
+                        originalDisplayName: entry.displayName,
+                        finalDisplayName,
                         xLinked: entry.xLinked,
+                        isActuallyXLinked,
                         xDisplayName: entry.xDisplayName,
+                        finalXDisplayName,
                         xProfileImageUrl: entry.xProfileImageUrl,
-                        hasXLinkedName,
                         isCurrentUser: entry.userId === currentUserId
                     });
                 }
                 
                 return {
                     ...entry,
-                    // 現在ユーザーの場合はUserServiceから、他ユーザーはCloudRankingServiceから
-                    isXLinked: entry.userId === currentUserId ? isCurrentUserXLinked : (entry.xLinked || hasXLinkedName),
-                    xDisplayName: entry.userId === currentUserId ? currentUserXName : (entry.xDisplayName || (hasXLinkedName ? entry.displayName : undefined)),
+                    displayName: finalDisplayName,
+                    isXLinked: entry.userId === currentUserId ? isCurrentUserXLinked : isActuallyXLinked,
+                    xDisplayName: finalXDisplayName,
                     xProfileImageUrl: entry.userId === currentUserId ? currentUserXImageUrl : entry.xProfileImageUrl
                 };
             });
