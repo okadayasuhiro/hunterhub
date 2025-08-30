@@ -255,7 +255,7 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                 )}
                 
                 {/* 前回の結果表示（診断系ゲーム以外のみ） */}
-                {!isDiagnosisGame && (
+                {!isDiagnosisGame ? (
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg border min-h-[100px]">
                         {lastResult ? (
                             <>
@@ -291,6 +291,9 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                             </div>
                         )}
                     </div>
+                ) : (
+                    // 診断系ゲーム用のスペーサー（他のゲームとボタン位置を揃えるため）
+                    <div className="mb-6 min-h-[100px]"></div>
                 )}
                 
                 <div className="mt-6">

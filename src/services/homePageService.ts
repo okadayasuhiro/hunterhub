@@ -2,7 +2,7 @@ import { GameHistoryService } from './gameHistoryService';
 import { HybridRankingService, type RankingEntry } from './hybridRankingService';
 import { UserIdentificationService } from './userIdentificationService';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
-import { logPerf, logError } from '../utils/logger';
+// Logger utility removed - using console directly
 
 export interface HomePageData {
   lastResults: {
@@ -108,7 +108,9 @@ export class HomePageService {
       const loadTime = endTime - startTime;
 
       // 本番最適化: パフォーマンスログは開発環境のみ
-      logPerf('ホームページデータ統合取得完了', loadTime);
+      if (import.meta.env.DEV) {
+        console.log(`🚀 ホームページデータ統合取得完了: ${loadTime.toFixed(2)}ms`);
+      }
 
       return {
         lastResults,
@@ -118,7 +120,7 @@ export class HomePageService {
       };
     } catch (error) {
       // エラーログは本番でも重要
-      logError('HomePageService統合取得エラー:', error);
+      console.error('❌ HomePageService統合取得エラー:', error);
       throw error;
     }
   }
