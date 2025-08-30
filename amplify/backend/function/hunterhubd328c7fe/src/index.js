@@ -56,17 +56,17 @@ async function handleRankingUpdate(event) {
 
         console.log(`🔄 Processing X unlink for user: ${userId.substring(0, 8)}...`);
 
-        // 全てのゲームタイプのランキングテーブルを更新
-        const gameTypes = ['reflex', 'target', 'sequence'];
+        // GameScoreテーブルとUserProfileテーブルを更新
         let totalUpdatedRecords = 0;
-
-        for (const gameType of gameTypes) {
-            const tableName = `HunterHub-${gameType}-rankings`;
-            
-            try {
-                // 該当ユーザーのランキングレコードを検索
+        
+        try {
+            // 1. GameScoreテーブルの更新
+            const gameScoreTableName = process.env.API_HUNTERHUB_GAMESCORETABLE_NAME;
+            if (gameScoreTableName) {
+                console.log(`📊 Updating GameScore table: ${gameScoreTableName}`);
+                
                 const scanParams = {
-                    TableName: tableName,
+                    TableName: gameScoreTableName,
                     FilterExpression: 'userId = :userId',
                     ExpressionAttributeValues: {
                         ':userId': userId
@@ -74,15 +74,14 @@ async function handleRankingUpdate(event) {
                 };
 
                 const scanResult = await dynamodb.scan(scanParams).promise();
-                console.log(`📊 Found ${scanResult.Items.length} records in ${tableName}`);
+                console.log(`📊 Found ${scanResult.Items.length} GameScore records`);
 
                 // 各レコードのX連携情報を削除
                 for (const item of scanResult.Items) {
                     const updateParams = {
-                        TableName: tableName,
+                        TableName: gameScoreTableName,
                         Key: {
-                            userId: item.userId,
-                            timestamp: item.timestamp
+                            id: item.id
                         },
                         UpdateExpression: 'REMOVE xDisplayName, xProfileImageUrl SET xLinked = :false',
                         ExpressionAttributeValues: {
@@ -93,12 +92,34 @@ async function handleRankingUpdate(event) {
                     await dynamodb.update(updateParams).promise();
                     totalUpdatedRecords++;
                     
-                    console.log(`✅ Updated record: ${item.userId.substring(0, 8)}... at ${item.timestamp}`);
+                    console.log(`✅ Updated GameScore record: ${item.id}`);
                 }
-            } catch (error) {
-                console.error(`❌ Error updating ${tableName}:`, error);
-                // 他のテーブルの処理は継続
             }
+
+            // 2. UserProfileテーブルの更新
+            const userProfileTableName = process.env.API_HUNTERHUB_USERPROFILETABLE_NAME;
+            if (userProfileTableName) {
+                console.log(`👤 Updating UserProfile table: ${userProfileTableName}`);
+                
+                const updateParams = {
+                    TableName: userProfileTableName,
+                    Key: {
+                        id: userId
+                    },
+                    UpdateExpression: 'REMOVE xDisplayName, xProfileImageUrl SET xLinked = :false',
+                    ExpressionAttributeValues: {
+                        ':false': false
+                    }
+                };
+
+                await dynamodb.update(updateParams).promise();
+                totalUpdatedRecords++;
+                
+                console.log(`✅ Updated UserProfile: ${userId.substring(0, 8)}...`);
+            }
+
+        } catch (error) {
+            console.error(`❌ Error updating tables:`, error);
         }
 
         console.log(`🎉 Total updated records: ${totalUpdatedRecords}`);

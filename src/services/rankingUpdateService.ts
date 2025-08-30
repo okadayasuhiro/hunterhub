@@ -20,9 +20,9 @@ export class RankingUpdateService {
 
   private constructor() {
     // API Gateway エンドポイントの設定
-    this.apiEndpoint = import.meta.env.VITE_AWS_API_ENDPOINT || 
-                      import.meta.env.VITE_BACKEND_URL || 
-                      'https://api.hantore.net';
+    // VITE_BACKEND_URLを使用（Lambda関数のベースURL）
+    this.apiEndpoint = import.meta.env.VITE_BACKEND_URL || 
+                      'https://w0oo7bi7xe.execute-api.ap-northeast-1.amazonaws.com/dev';
   }
 
   public static getInstance(): RankingUpdateService {
