@@ -5,23 +5,19 @@ const Footer: React.FC = () => {
     return (
         <footer className="w-full mt-auto border-t border-gray-700" style={{ backgroundColor: '#2A2A2E' }}>
             <div className="max-w-6xl mx-auto px-6 py-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    {/* アプリ情報 */}
-                    <div className="text-center md:text-left">
-                        <div className="mb-5">
-                            <img 
-                                src="/images/logo-w-w.png" 
-                                alt="ハントレ" 
-                                className="h-8 mx-auto md:mx-0"
-                            />
-                        </div>
-                        <p className="text-gray-300 text-sm leading-relaxed">
-                            反射神経と集中力を鍛える<br />
-                            オンライントレーニングプラットフォーム
-                        </p>
+                {/* アプリ情報 */}
+                <div className="text-center">
+                    <div className="mb-5">
+                        <img 
+                            src="/images/logo-w-w.png" 
+                            alt="ハントレ" 
+                            className="h-8 mx-auto"
+                        />
                     </div>
-
-
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                        反射神経と集中力を鍛える<br />
+                        オンライントレーニングプラットフォーム
+                    </p>
                 </div>
 
                 {/* ソーシャルシェア */}
