@@ -77,8 +77,7 @@ const XCallbackPage: React.FC = () => {
         
         if (savedResult === 'success') {
           setStatus('success');
-          // X連携完了フラグを設定してHeaderの更新をトリガー
-          sessionStorage.setItem('x-link-completed', 'true');          setTimeout(() => navigate('/', { replace: true }), 1000);
+          setTimeout(() => navigate('/', { replace: true }), 1000);
         } else if (savedResult === 'error') {
           const savedError = sessionStorage.getItem('x-callback-error-message') || '認証に失敗しました';
           setErrorMessage(savedError);
@@ -136,8 +135,7 @@ const XCallbackPage: React.FC = () => {
         console.log('💾 X認証: ユーザー情報保存中...');
         await userService.linkXAccountWithImage(name, profileImageUrl);
         console.log('✅ X認証: 連携完了');
-        // X連携完了フラグを設定してHeaderの更新をトリガー
-        sessionStorage.setItem('x-link-completed', 'true');
+
         setStatus('success');
         sessionStorage.setItem(CALLBACK_RESULT_KEY, 'success');
         

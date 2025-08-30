@@ -24,6 +24,28 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
     
     const userService = UserIdentificationService.getInstance();
 
+    // ユーザー情報を取得する関数
+    const loadUserInfo = async () => {
+        try {
+            const name = await userService.getDisplayName();
+            const linked = await userService.isXLinked();
+            const profileImageUrl = await userService.getXProfileImageUrl();
+            const xName = linked ? await userService.getXDisplayName() : '';
+            setDisplayName(name);
+            setIsXLinked(linked);
+            setXProfileImageUrl(profileImageUrl || '');
+            setXDisplayName(xName || '');
+        } catch (error) {
+            console.error('Failed to load user info:', error);
+        }
+    };
+
+    // 初回ユーザー情報読み込み
+    useEffect(() => {
+        loadUserInfo();
+        loadGameStats();
+    }, [userService]);
+
     // トレーニングリスト定義（統計情報付き）
     const gameLinksWithStats = [
         { name: '反射神経', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
@@ -94,6 +116,27 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
         }
     }, [showHamburgerMenu]);
 
+    // X連携完了フラグを監視してユーザー情報を更新
+    useEffect(() => {
+        const checkXLinkCompletion = () => {
+            const isCompleted = sessionStorage.getItem('x-link-completed');
+            if (isCompleted === 'true') {
+                console.log('🔄 X連携完了を検出、ユーザー情報を更新中...');
+                // フラグをクリアして重複実行を防ぐ
+                sessionStorage.removeItem('x-link-completed');
+                // ユーザー情報を再読み込み
+                loadUserInfo();
+            }
+        };
+
+        // 初回チェック
+        checkXLinkCompletion();
+
+        // 定期的にチェック（ページがアクティブな間）
+        const interval = setInterval(checkXLinkCompletion, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
     // 実際のX OAuth連携
     const handleXLink = async () => {
         console.log('🔧 X Link button clicked, isXLinked:', isXLinked);
