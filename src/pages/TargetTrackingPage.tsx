@@ -509,24 +509,14 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                                 onClick={() => {
                                                     const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
                                                     const shareUrl = window.location.origin;
-                                                    
-                                                    if (navigator.share) {
-                                                        navigator.share({
-                                                            title: 'ハントレ - ターゲット追跡トレーニング結果',
-                                                            text: shareText,
-                                                            url: shareUrl
-                                                        });
-                                                    } else {
-                                                        // フォールバック: Xでシェア
-                                                        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                                                        window.open(twitterUrl, '_blank');
-                                                    }
+                                                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                    window.open(twitterUrl, '_blank');
                                                 }}
                                                 className="flex text-white items-center gap-1 px-3 py-1.5 bg-black/100 hover:bg-black/100 rounded-full text-sm font-medium transition-colors duration-200"
-                                                title="結果をシェア"
+                                                title="Xでシェア"
                                             >
                                                 <Share2 className="w-4 h-4" />
-                                                シェア
+                                                Xでシェア
                                             </button>
                                         </div>
                                     </div>
@@ -543,24 +533,14 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                                 onClick={() => {
                                                     const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
                                                     const shareUrl = window.location.origin;
-                                                    
-                                                    if (navigator.share) {
-                                                        navigator.share({
-                                                            title: 'ハントレ - ターゲット追跡トレーニング結果',
-                                                            text: shareText,
-                                                            url: shareUrl
-                                                        });
-                                                    } else {
-                                                        // フォールバック: Xでシェア
-                                                        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                                                        window.open(twitterUrl, '_blank');
-                                                    }
+                                                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                    window.open(twitterUrl, '_blank');
                                                 }}
                                                 className="flex text-white items-center gap-1 px-3 py-1.5 bg-black/100 hover:bg-black/100 rounded-full text-sm font-medium transition-colors duration-200"
-                                                title="結果をシェア"
+                                                title="Xでシェア"
                                             >
                                                 <Share2 className="w-4 h-4" />
-                                                シェア
+                                                Xでシェア
                                             </button>
                                         </div>
                                     </div>

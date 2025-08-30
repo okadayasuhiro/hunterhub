@@ -637,24 +637,14 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                         onClick={() => {
                                                             const shareText = `ハントレでカウントアップ・トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n完了時間: ${finalTime?.toFixed(2)}秒`;
                                                             const shareUrl = window.location.origin;
-                                                            
-                                                            if (navigator.share) {
-                                                                navigator.share({
-                                                                    title: 'ハントレ - カウントアップ・トレーニング結果',
-                                                                    text: shareText,
-                                                                    url: shareUrl
-                                                                });
-                                                            } else {
-                                                                // フォールバック: Xでシェア
-                                                                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                                                                window.open(twitterUrl, '_blank');
-                                                            }
+                                                            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                            window.open(twitterUrl, '_blank');
                                                         }}
                                                         className="flex text-white items-center gap-1 px-3 py-1.5 bg-black/100 hover:bg-black/100 rounded-full text-sm font-medium transition-colors duration-200"
-                                                        title="結果をシェア"
+                                                        title="Xでシェア"
                                                     >
                                                         <Share2 className="w-4 h-4" />
-                                                        シェア
+                                                        Xでシェア
                                                     </button>
                                                 </div>
                                             </div>
@@ -671,24 +661,14 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                         onClick={() => {
                                                             const shareText = `ハントレで数字順序トレーニングをプレイしました！\n全レベル完全制覇！\n完了時間: ${finalTime?.toFixed(2)}秒`;
                                                             const shareUrl = window.location.origin;
-                                                            
-                                                            if (navigator.share) {
-                                                                navigator.share({
-                                                                    title: 'ハントレ - 数字順序トレーニング結果',
-                                                                    text: shareText,
-                                                                    url: shareUrl
-                                                                });
-                                                            } else {
-                                                                // フォールバック: Xでシェア
-                                                                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                                                                window.open(twitterUrl, '_blank');
-                                                            }
+                                                            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                                                            window.open(twitterUrl, '_blank');
                                                         }}
                                                         className="flex text-white items-center gap-1 px-3 py-1.5 bg-black/100 hover:bg-black/100 rounded-full text-sm font-medium transition-colors duration-200"
-                                                        title="結果をシェア"
+                                                        title="Xでシェア"
                                                     >
                                                         <Share2 className="w-4 h-4" />
-                                                        シェア
+                                                        Xでシェア
                                                     </button>
                                                 </div>
                                             </div>
