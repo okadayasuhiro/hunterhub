@@ -35,118 +35,128 @@ const PrivacyPage: React.FC = () => {
                             <Shield className="w-8 h-8 text-green-600 mr-3" />
                             <h1 className="text-3xl font-bold text-gray-800">プライバシーポリシー</h1>
                         </div>
-                        <p className="text-gray-600">HunterHub 個人情報保護方針</p>
-                        <p className="text-sm text-gray-500 mt-2">最終更新日: 2024年12月23日</p>
+                        <p className="text-gray-600">ハントレ 個人情報保護方針</p>
+                        <p className="text-sm text-gray-500 mt-2">最終更新日: 2025年8月30日</p>
                     </div>
 
                     {/* プライバシーポリシー内容 */}
                     <div className="space-y-8 text-gray-700 leading-relaxed">
                         
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">1. 個人情報の定義</h2>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">1. 収集する情報について</h2>
                             <p>
-                                本プライバシーポリシーにおいて、「個人情報」とは、個人情報保護法にいう「個人情報」を指すものとし、生存する個人に関する情報であって、当該情報に含まれる氏名、生年月日、住所、電話番号、連絡先その他の記述等により特定の個人を識別できる情報及び容貌、指紋、声紋にかかるデータ、及び健康保険証の保険者番号などの当該情報単体から特定の個人を識別できる情報（個人識別情報）を指します。
+                                ハントレでは、サービス提供のために以下の情報を収集・利用します：
                             </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">2. 個人情報の収集方法</h2>
-                            <p>
-                                当社は、ユーザーが利用登録をする際に氏名、生年月日、住所、電話番号、メールアドレス、銀行口座番号、クレジットカード番号、運転免許証番号などの個人情報をお尋ねすることがあります。また、ユーザーと提携先などとの間でなされたユーザーの個人情報を含む取引記録や決済に関する情報を、当社の提携先（情報提供元、広告主、広告配信先などを含みます。以下、「提携先」といいます。）などから収集することがあります。
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">3. 個人情報を収集・利用する目的</h2>
-                            <p>当社が個人情報を収集・利用する目的は、以下のとおりです。</p>
                             <ul className="list-disc list-inside mt-3 ml-4 space-y-2">
-                                <li>当社サービスの提供・運営のため</li>
-                                <li>ユーザーからのお問い合わせに回答するため（本人確認を行うことを含む）</li>
-                                <li>ユーザーが利用中のサービスの新機能、更新情報、キャンペーン等及び当社が提供する他のサービスの案内のメールを送付するため</li>
-                                <li>メンテナンス、重要なお知らせなど必要に応じたご連絡のため</li>
-                                <li>利用規約に違反したユーザーや、不正・不当な目的でサービスを利用しようとするユーザーの特定をし、ご利用をお断りするため</li>
-                                <li>ユーザーにご自身の登録情報の閲覧や変更、削除、ご利用状況の閲覧を行っていただくため</li>
-                                <li>有料サービスにおいて、ユーザーに利用料金を請求するため</li>
-                                <li>上記の利用目的に付随する目的</li>
+                                <li><strong>任意のユーザー名</strong>：ランキング表示用（2-20文字、ローカル保存）</li>
+                                <li><strong>ゲームプレイデータ</strong>：スコア、プレイ履歴（匿名化して保存）</li>
+                                <li><strong>ブラウザ情報</strong>：匿名ユーザー識別用フィンガープリント</li>
+                                <li><strong>X連携情報</strong>：表示名・プロフィール画像（連携時のみ、OAuth経由）</li>
+                            </ul>
+                            <p className="mt-3">
+                                <strong>重要：</strong>氏名、住所、電話番号、メールアドレス等の個人を特定できる情報は一切収集しません。
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">2. 情報の収集方法</h2>
+                            <p>
+                                ハントレでは、以下の方法で情報を収集します：
+                            </p>
+                            <ul className="list-disc list-inside mt-3 ml-4 space-y-2">
+                                <li><strong>ユーザー入力</strong>：任意のユーザー名設定時</li>
+                                <li><strong>自動収集</strong>：ゲームプレイ時のスコア・操作データ</li>
+                                <li><strong>ブラウザ技術</strong>：LocalStorage、ブラウザフィンガープリント</li>
+                                <li><strong>OAuth認証</strong>：X（旧Twitter）連携時の公開プロフィール情報</li>
+                            </ul>
+                            <p className="mt-3">
+                                <strong>注意：</strong>会員登録や個人情報の入力は一切不要です。
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">3. 情報の利用目的</h2>
+                            <p>収集した情報は、以下の目的でのみ利用します：</p>
+                            <ul className="list-disc list-inside mt-3 ml-4 space-y-2">
+                                <li>ゲームサービスの提供・運営</li>
+                                <li>ランキング機能の提供</li>
+                                <li>ユーザー体験の向上・最適化</li>
+                                <li>サービスの不正利用防止</li>
+                                <li>統計データの作成（匿名化済み）</li>
+                                <li>サービス改善のための分析</li>
+                            </ul>
+                            <p className="mt-3">
+                                <strong>重要：</strong>メール送信、電話連絡、有料サービス等は一切行いません。
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">4. 第三者への情報提供</h2>
+                            <p>
+                                ハントレでは、以下の場合を除き、収集した情報を第三者に提供することはありません：
+                            </p>
+                            <ul className="list-disc list-inside mt-3 ml-4 space-y-2">
+                                <li><strong>法令に基づく場合</strong>：法的要請がある場合</li>
+                                <li><strong>緊急時</strong>：生命・身体・財産保護のため緊急に必要な場合</li>
+                                <li><strong>統計データ</strong>：個人を特定できない形での統計情報提供</li>
+                            </ul>
+                            <p className="mt-3">
+                                <strong>重要：</strong>個人を特定できる情報の第三者提供は一切行いません。
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">5. データの管理・削除</h2>
+                            <p>
+                                ハントレでは、以下の方法でデータを管理しています：
+                            </p>
+                            <ul className="list-disc list-inside mt-3 ml-4 space-y-2">
+                                <li><strong>ローカルデータ</strong>：ブラウザのLocalStorageに保存（ユーザーが削除可能）</li>
+                                <li><strong>ゲームデータ</strong>：匿名化してクラウドに保存</li>
+                                <li><strong>X連携データ</strong>：連携解除時に自動削除</li>
+                            </ul>
+                            <p className="mt-3">
+                                <strong>データ削除方法：</strong>
+                            </p>
+                            <ul className="list-disc list-inside mt-2 ml-4 space-y-1">
+                                <li>ブラウザの設定からLocalStorageを削除</li>
+                                <li>X連携の解除（ヘッダーメニューから）</li>
                             </ul>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">4. 利用目的の変更</h2>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">6. Cookie・トラッキング技術について</h2>
                             <p>
-                                当社は、利用目的が変更前と関連性を有すると合理的に認められる場合に限り、個人情報の利用目的を変更するものとします。利用目的の変更を行った場合には、変更後の目的について、当社所定の方法により、ユーザーに通知し、または本ウェブサイト上に公表するものとします。
+                                ハントレでは、以下のトラッキング技術を使用しています：
                             </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">5. 個人情報の第三者提供</h2>
-                            <p>
-                                当社は、次に掲げる場合を除いて、あらかじめユーザーの同意を得ることなく、第三者に個人情報を提供することはありません。ただし、個人情報保護法その他の法令で認められる場合を除きます。
-                            </p>
-                            <ul className="list-disc list-inside mt-3 ml-4 space-y-1">
-                                <li>人の生命、身体または財産の保護のために必要がある場合であって、本人の同意を得ることが困難であるとき</li>
-                                <li>公衆衛生の向上または児童の健全な育成の推進のために特に必要がある場合であって、本人の同意を得ることが困難であるとき</li>
-                                <li>国の機関もしくは地方公共団体またはその委託を受けた者が法令の定める事務を遂行することに対して協力する必要がある場合であって、本人の同意を得ることにより当該事務の遂行に支障を及ぼすおそれがあるとき</li>
-                                <li>予め次の事項を告知あるいは公表し、かつ当社が個人情報保護委員会に届出をしたとき</li>
+                            <ul className="list-disc list-inside mt-3 ml-4 space-y-2">
+                                <li><strong>Google Analytics</strong>：アクセス解析（匿名データ）</li>
+                                <li><strong>Google AdSense</strong>：広告配信</li>
+                                <li><strong>LocalStorage</strong>：ゲームデータ保存</li>
                             </ul>
-                        </section>
-
-                        <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">6. 個人情報の開示</h2>
-                            <p>
-                                当社は、本人から個人情報の開示を求められたときは、本人に対し、遅滞なくこれを開示します。ただし、開示することにより次のいずれかに該当する場合は、その全部または一部を開示しないこともあり、開示しない決定をした場合には、その旨を遅滞なく通知します。なお、個人情報の開示に際しては、1件あたり1,000円の手数料を申し受けます。
-                            </p>
-                            <ul className="list-disc list-inside mt-3 ml-4 space-y-1">
-                                <li>本人または第三者の生命、身体、財産その他の権利利益を害するおそれがある場合</li>
-                                <li>当社の業務の適正な実施に著しい支障を及ぼすおそれがある場合</li>
-                                <li>その他法令に違反することとなる場合</li>
-                            </ul>
-                        </section>
-
-                        <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">7. 個人情報の訂正および削除</h2>
-                            <p>
-                                ユーザーは、当社の保有する自己の個人情報が誤った情報である場合には、当社が定める手続きにより、当社に対して個人情報の訂正、追加または削除（以下、「訂正等」といいます。）を請求することができます。当社は、ユーザーから前項の請求を受けてその請求に応じる必要があると判断した場合には、遅滞なく、当該個人情報の訂正等を行うものとします。
+                            <p className="mt-3">
+                                これらの技術により収集されるデータは匿名化されており、個人を特定することはできません。
+                                ブラウザの設定でCookieを無効にできますが、一部機能が制限される場合があります。
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">8. 個人情報の利用停止等</h2>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">7. プライバシーポリシーの変更</h2>
                             <p>
-                                当社は、本人から、個人情報が、利用目的の範囲を超えて取り扱われているという理由、または不正の手段により取得されたものであるという理由により、その利用の停止または消去（以下、「利用停止等」といいます。）を求められた場合には、遅滞なく必要な調査を行います。
+                                ハントレでは、必要に応じてこのプライバシーポリシーを変更することがあります。
+                                変更時は、サイト上での告知により通知いたします。
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">9. Cookieの使用について</h2>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">8. お問い合わせ</h2>
                             <p>
-                                当社のサービスは、ユーザーの利便性向上のためにCookie（クッキー）を使用することがあります。Cookieの使用を希望されない場合は、ブラウザの設定でCookieを無効にすることができます。ただし、Cookieを無効にした場合、サービスの一部機能がご利用いただけない場合があります。
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">10. アクセス解析ツールについて</h2>
-                            <p>
-                                当社のサービスでは、Googleによるアクセス解析ツール「Googleアナリティクス」を使用しています。このGoogleアナリティクスはデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">11. プライバシーポリシーの変更</h2>
-                            <p>
-                                当社は、必要に応じて、このプライバシーポリシーの内容を変更することがあります。この場合、変更後のプライバシーポリシーの施行時期と内容を適切な方法により周知または通知します。
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">12. お問い合わせ窓口</h2>
-                            <p>
-                                本ポリシーに関するお問い合わせは、下記の窓口までお願いいたします。
+                                本ポリシーに関するご質問やご意見は、以下までお願いいたします：
                             </p>
                             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                                <p><strong>サービス名:</strong> HunterHub</p>
-                                <p><strong>運営者:</strong> HunterHub運営チーム</p>
-                                <p><strong>メールアドレス:</strong> privacy@hunterhub.example.com</p>
+                                <p><strong>サービス名:</strong> ハントレ（hantore.net）</p>
+                                <p><strong>運営者:</strong> ハントレ運営チーム</p>
+                                <p><strong>お問い合わせ:</strong> サイト内のお問い合わせフォームをご利用ください</p>
                             </div>
                         </section>
 
