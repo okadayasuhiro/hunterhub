@@ -37,11 +37,10 @@ export class XAuthProxy {
     console.log('🔄 Exchanging code via AWS Lambda...');
     
     try {
-              // AWS API Gateway endpoint (東京リージョン)
-        const apiEndpoint = 'https://w0oo7bi7xe.execute-api.ap-northeast-1.amazonaws.com/dev/x-auth/exchange' ||
-                            import.meta.env.VITE_AWS_API_ENDPOINT || 
-                            import.meta.env.VITE_BACKEND_URL || 
-                            `${this.baseUrl}/api/x-auth/exchange`;
+      // AWS API Gateway endpoint - 環境変数を優先
+      const apiEndpoint = import.meta.env.VITE_AWS_API_ENDPOINT || 
+                          import.meta.env.VITE_BACKEND_URL || 
+                          'https://w0oo7bi7xe.execute-api.ap-northeast-1.amazonaws.com/dev/x-auth/exchange';
       
       // 現在のユーザーIDを取得してリクエストに含める
       const { UserIdentificationService } = await import('./userIdentificationService');
