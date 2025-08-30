@@ -138,7 +138,7 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
 
     return (
         <div
-            className={`bg-white rounded-xl shadow-lg border-0 transform transition-all duration-300 group overflow-hidden ${
+            className={`bg-white rounded-xl shadow-lg border-0 transform transition-all duration-300 group overflow-hidden flex flex-col ${
                 isComingSoon 
                     ? 'opacity-75 cursor-default' 
                     : 'cursor-pointer hover:shadow-xl hover:-translate-y-2'
@@ -176,7 +176,7 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                     )}
                 </div>
             )}
-            <div className="text-left p-6">
+            <div className="text-left p-6 flex flex-col flex-1">
                 <div className="mb-2">
                     <h3 className="text-xl font-semibold text-gray-800">
                         {title}
@@ -255,7 +255,7 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                 )}
                 
                 {/* 前回の結果表示（診断系ゲーム以外のみ） */}
-                {!isDiagnosisGame ? (
+                {!isDiagnosisGame && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg border min-h-[100px]">
                         {lastResult ? (
                             <>
@@ -291,12 +291,9 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                             </div>
                         )}
                     </div>
-                ) : (
-                    // 診断系ゲーム用のスペーサー（他のゲームとボタン位置を揃えるため）
-                    <div className="mb-6 min-h-[100px]"></div>
                 )}
                 
-                <div className="mt-6">
+                <div className="mt-auto">
                     <button className="w-full px-8 py-3 bg-blue-500 text-white rounded-lg text-sm font-medium group-hover:bg-blue-600 transition-all duration-300 shadow-md group-hover:shadow-lg">
                         トレーニングする
                     </button>
