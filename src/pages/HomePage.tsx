@@ -80,11 +80,11 @@ const AdCard: React.FC = React.memo(() => {
                     />
                     
                     {/* 広告説明テキスト */}
-                    <div className="w-full max-w-sm text-center">
-                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                    <div className="w-full px-2">
+                        <h3 className="text-base font-semibold text-gray-800 mb-2 text-left">
                             Jackeryポータブル電源
                         </h3>
-                        <p className="text-sm text-gray-600 leading-relaxed">
+                        <p className="text-xs text-gray-600 leading-relaxed text-left">
                             キャンプ、夜釣りなどのアウトドアに活用！ スマホやパソコンの電力を確保、電池が切れる心配なし。 防災用のみではなくアウトドアにもよく活用されている 持ち運びにやすいポータブル電源です。
                         </p>
                     </div>
