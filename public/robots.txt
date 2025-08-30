@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# ゲーム実行ページ（SEO不要）
+Disallow: /reflex/game
+Disallow: /reflex/result
+Disallow: /target/game
+Disallow: /target/result
+Disallow: /sequence/game
+Disallow: /sequence/result
+Disallow: /animal-quiz/game
+Disallow: /animal-quiz/answer-result
+Disallow: /animal-quiz/result
+Disallow: /trigger-timing/
+
+# OAuth・コールバック
+Disallow: /x-callback
+
+# 診断結果（個別結果ページ）
+Disallow: /diagnosis/result/
+
+# サイトマップ
+Sitemap: https://hantore.net/sitemap.xml

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy, Crown, Bell, Calendar } from 'lucide-react';
+import SEO from '../components/SEO';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import { HybridRankingService } from '../services/hybridRankingService';
@@ -613,8 +614,36 @@ const HomePage: React.FC = () => {
 
     }, [location.pathname, hybridRankingService]); // ページ遷移時に再実行
 
+    // 構造化データ（ホームページ用）
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ハントレ",
+        "description": "ハンタートレーニング専用サイト「ハントレ」。反射神経テスト、ターゲット追跡、狩猟動物診断でハンターのスキル向上をサポート",
+        "url": "https://hantore.net",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "ハントレ開発チーム"
+        },
+        "keywords": "ハンタートレーニング,狩猟,射撃,反射神経,トレーニング,診断"
+    };
+
     return (
         <div className="flex-1">
+            <SEO 
+                title="ハントレ - ハンタートレーニング・診断プラットフォーム"
+                description="ハンタートレーニング専用サイト「ハントレ」。反射神経テスト、ターゲット追跡、狩猟動物診断でハンターのスキル向上をサポート"
+                keywords="ハントレ,ハンタートレーニング,狩猟,射撃,ハンター,トレーニング,反射神経,診断,鳥獣"
+                ogType="website"
+                structuredData={structuredData}
+            />
             {/* ヒーローセクション */}
             <div className="relative flex items-center justify-center py-12 px-4 min-h-[15vh] overflow-hidden hero-background">
                 {/* グラデーションオーバーレイ */}

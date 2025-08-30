@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Zap, MousePointer, RotateCcw, AlertTriangle, Trophy, Share2 } from 'lucide-react';
+import SEO from '../components/SEO';
 import type { TestResult, ReflexGameHistory } from '../types/game';
 import { getReflexHunterRank, STORAGE_KEYS, calculateWeightedScore, REFLEX_SCORING } from '../types/game';
 import { useGameHistory } from '../hooks/useGameHistory';
@@ -547,6 +548,13 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
     if (mode === 'instructions') {
         return (
             <div className="flex-1">
+                <SEO 
+                    title="反射神経トレーニング - ハントレ"
+                    description="緑から赤への色変化に素早く反応するトレーニング。ハンターに必要な瞬間的な判断力と反射神経を鍛えます。"
+                    keywords="反射神経,トレーニング,ハンター,射撃,反応時間,瞬発力,集中力"
+                    ogType="game"
+                    canonicalUrl="https://hantore.net/reflex/instructions"
+                />
                 <div className="min-h-screen">
                     <div className="py-4 px-4">
                         <div className="max-w-3xl mx-auto">

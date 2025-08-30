@@ -19,6 +19,9 @@ const AnimalQuizAnswerResultPage = lazy(() => import('../pages/AnimalQuizAnswerR
 const TermsPage = lazy(() => import('../pages/TermsPage'));
 const PrivacyPage = lazy(() => import('../pages/PrivacyPage'));
 const AnimalQuizResultPage = lazy(() => import('../pages/AnimalQuizResultPage'));
+const TriggerTimingInstructionsPage = lazy(() => import('../pages/TriggerTimingInstructionsPage'));
+const TriggerTimingGamePage = lazy(() => import('../pages/TriggerTimingGamePage'));
+const TriggerTimingResultPage = lazy(() => import('../pages/TriggerTimingResultPage'));
 const XCallbackPage = lazy(() => import('../pages/XCallbackPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
@@ -76,6 +79,12 @@ const AppRouter: React.FC = () => {
                             <Route path="/animal-quiz/game" element={<AnimalQuizGamePage />} />
                             <Route path="/animal-quiz/answer-result" element={<AnimalQuizAnswerResultPage />} />
                             <Route path="/animal-quiz/result" element={<AnimalQuizResultPage />} />
+
+                            {/* トリガータイミングトレーニング（遅延読み込み） */}
+                            <Route path="/trigger-timing" element={<Navigate to="/trigger-timing/instructions" replace />} />
+                            <Route path="/trigger-timing/instructions" element={<TriggerTimingGamePage mode="instructions" />} />
+                            <Route path="/trigger-timing/game" element={<TriggerTimingGamePage mode="game" />} />
+                            <Route path="/trigger-timing/result" element={<TriggerTimingGamePage mode="result" />} />
 
                             {/* ランキング（遅延読み込み） */}
                             <Route path="/ranking" element={<RankingPage />} />

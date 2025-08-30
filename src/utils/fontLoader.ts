@@ -117,3 +117,4 @@ export const initializeFonts = async (): Promise<void> => {
     console.error('Font initialization failed:', error);
   }
 };
+

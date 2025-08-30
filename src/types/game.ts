@@ -60,6 +60,24 @@ export interface SequenceGameHistory {
     completed: boolean;
 }
 
+// トリガータイミングトレーニング関連
+export interface TriggerTimingRound {
+    round: number;
+    score: number;
+    distance: number;
+    targetSpeed: number;
+    targetSize: number;
+    reactionTime: number;
+}
+
+export interface TriggerTimingHistory {
+    date: string;
+    totalScore: number;
+    averageScore: number;
+    bestRoundScore: number;
+    rounds: TriggerTimingRound[];
+}
+
 // ハンターランク計算関数
 export const getReflexHunterRank = (avgTime: number): HunterRank => {
     if (avgTime <= 200) return { rank: 'ハンター・オブ・ザ・オリジン', number: 1, total: 12 };
@@ -106,6 +124,21 @@ export const getSequenceRankFromTime = (timeInSeconds: number): { rank: number; 
     return { rank: 12, title: 'リラックスハンター', color: 'from-gray-400 to-gray-500' };
 };
 
+export const getTriggerTimingHunterRank = (totalScore: number): HunterRank => {
+    if (totalScore >= 23.0) return { rank: 'ハンター・オブ・ザ・オリジン', number: 1, total: 12 };
+    if (totalScore >= 21.0) return { rank: 'ハンター・ゼロ', number: 2, total: 12 };
+    if (totalScore >= 19.0) return { rank: 'ゴッドハンター', number: 3, total: 12 };
+    if (totalScore >= 17.0) return { rank: 'アルティメットハンター', number: 4, total: 12 };
+    if (totalScore >= 15.0) return { rank: 'ベテランハンター', number: 5, total: 12 };
+    if (totalScore >= 13.0) return { rank: 'スキルドハンター', number: 6, total: 12 };
+    if (totalScore >= 11.0) return { rank: 'アマチュアハンター', number: 7, total: 12 };
+    if (totalScore >= 9.0) return { rank: 'ルーキーハンター', number: 8, total: 12 };
+    if (totalScore >= 7.0) return { rank: 'ミスティーハンター', number: 9, total: 12 };
+    if (totalScore >= 5.0) return { rank: 'スロウリーハンター', number: 10, total: 12 };
+    if (totalScore >= 3.0) return { rank: 'スリーピーハンター', number: 11, total: 12 };
+    return { rank: 'リラックスハンター', number: 12, total: 12 };
+};
+
 // 時間フォーマット関数
 export const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -117,7 +150,8 @@ export const formatTime = (seconds: number): string => {
 export const STORAGE_KEYS = {
     REFLEX_HISTORY: 'reflexTestHistory',
     TARGET_HISTORY: 'targetTrackingHistory',
-    SEQUENCE_HISTORY: 'sequenceGameHistory'
+    SEQUENCE_HISTORY: 'sequenceGameHistory',
+    TRIGGER_TIMING_HISTORY: 'triggerTimingHistory'
 } as const;
 
 // 反射神経テスト - 加重平均システム定数

@@ -16,7 +16,7 @@ const formatDateTime = (timestamp: string): string => {
 };
 
 interface GameRankingTableProps {
-    gameType: 'reflex' | 'target' | 'sequence';
+    gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing';
     limit?: number;
     highlightCurrentUser?: boolean; // 現在ユーザーを赤色でハイライトするかどうか
     currentGameScore?: number; // 今回のゲーム結果スコア（この値と一致する行のみ赤くハイライト）
