@@ -90,6 +90,21 @@ const Footer: React.FC = () => {
                             </svg>
                         </button>
                     </div>
+                    
+                    {/* お問い合わせリンク */}
+                    <div className="mt-6">
+                        <a
+                            href="https://forms.gle/FdWpWuBft4KS6q5A6"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-gray-300 hover:text-white transition-colors duration-200 text-sm"
+                        >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            お問い合わせ
+                        </a>
+                    </div>
                 </div>
 
                 {/* コピーライト */}

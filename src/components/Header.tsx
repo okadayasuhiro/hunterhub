@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { User, ExternalLink, Menu, X, Share2, FileText, Shield, CircleArrowRight } from 'lucide-react';
+import { User, ExternalLink, Menu, X, Share2, FileText, Shield, CircleArrowRight, MessageCircle } from 'lucide-react';
 import { UserIdentificationService } from '../services/userIdentificationService';
 import XAuthService from '../services/xAuthService';
 import { HybridRankingService } from '../services/hybridRankingService';
@@ -67,6 +67,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
     const legalLinks = [
         { name: '利用規約', path: '/terms', icon: FileText },
         { name: 'プライバシーポリシー', path: '/privacy', icon: Shield },
+        { name: 'お問い合わせ', path: 'https://forms.gle/FdWpWuBft4KS6q5A6', icon: MessageCircle, external: true },
     ];
 
     const handleHomeClick = () => {
@@ -405,17 +406,34 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                     {/* 法的文書セクション（最下部） */}
                     <div className="py-2 border-t border-white/20 mt-auto">
                         {legalLinks.map((legal) => (
-                            <button
-                                key={legal.path}
-                                onClick={() => handleGameLinkClick(legal.path)}
-                                className="w-full text-left px-6 py-1 text-white hover:bg-white/20 transition-colors duration-200 group"
-                            >
-                                <div className="flex items-center">
-                                    <span className="text-sm group-hover:text-blue-100 transition-colors duration-200">
-                                        {legal.name}
-                                    </span>
-                                </div>
-                            </button>
+                            legal.external ? (
+                                <a
+                                    key={legal.path}
+                                    href={legal.path}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full text-left px-6 py-1 text-white hover:bg-white/20 transition-colors duration-200 group block"
+                                >
+                                    <div className="flex items-center">
+                                        <span className="text-sm group-hover:text-blue-100 transition-colors duration-200">
+                                            {legal.name}
+                                        </span>
+                                        <ExternalLink className="w-3 h-3 ml-1 text-white/60 group-hover:text-blue-100" />
+                                    </div>
+                                </a>
+                            ) : (
+                                <button
+                                    key={legal.path}
+                                    onClick={() => handleGameLinkClick(legal.path)}
+                                    className="w-full text-left px-6 py-1 text-white hover:bg-white/20 transition-colors duration-200 group"
+                                >
+                                    <div className="flex items-center">
+                                        <span className="text-sm group-hover:text-blue-100 transition-colors duration-200">
+                                            {legal.name}
+                                        </span>
+                                    </div>
+                                </button>
+                            )
                         ))}
                     </div>
                 </div>

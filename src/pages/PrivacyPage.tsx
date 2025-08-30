@@ -155,7 +155,7 @@ const PrivacyPage: React.FC = () => {
                             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                                 <p><strong>サービス名:</strong> ハントレ（hantore.net）</p>
                                 <p><strong>運営者:</strong> ハントレ運営チーム</p>
-                                <p><strong>お問い合わせ:</strong> サイト内のお問い合わせフォームをご利用ください</p>
+                                <p><strong>お問い合わせ:</strong> <a href="https://forms.gle/FdWpWuBft4KS6q5A6" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 underline">お問い合わせフォーム</a>をご利用ください</p>
                             </div>
                         </section>
 
