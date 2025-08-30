@@ -22,3 +22,4 @@ Disallow: /diagnosis/result/
 # サイトマップ
 Sitemap: https://hantore.net/sitemap.xml
 
+
