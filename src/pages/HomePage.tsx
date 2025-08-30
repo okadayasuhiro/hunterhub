@@ -47,6 +47,43 @@ interface GameCardProps {
     isComingSoon?: boolean;
 }
 
+// 広告カードコンポーネント
+const AdCard: React.FC = React.memo(() => {
+    return (
+        <div className="bg-white rounded-xl shadow-lg border-0 transform transition-all duration-300 group overflow-hidden">
+            <div className="relative">
+                {/* 広告ラベル */}
+                <div className="absolute top-2 left-2 z-10">
+                    <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                        広告
+                    </span>
+                </div>
+                
+                {/* 広告コンテンツ */}
+                <div className="p-4 flex items-center justify-center min-h-[280px]">
+                    <a href="https://px.a8.net/svt/ejp?a8mat=45C668+CHIAIA+4NJ4+6GRMP" rel="nofollow" className="block">
+                        <img 
+                            width="336" 
+                            height="280" 
+                            alt="広告" 
+                            src="https://www28.a8.net/svt/bgt?aid=250830656755&wid=001&eno=01&mid=s00000021712001086000&mc=1"
+                            className="rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+                            style={{ border: 'none' }}
+                        />
+                    </a>
+                    <img 
+                        width="1" 
+                        height="1" 
+                        src="https://www11.a8.net/0.gif?a8mat=45C668+CHIAIA+4NJ4+6GRMP" 
+                        alt=""
+                        style={{ display: 'none', border: 'none' }}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+});
+
 // お知らせコンポーネント（2行レイアウト版）
 const NoticeSection: React.FC<{ notices: Notice[] }> = ({ notices }) => {
     if (!notices || notices.length === 0) {
@@ -632,19 +669,51 @@ const HomePage: React.FC = () => {
 
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {gameCardConfigs.map((config) => (
-                            <GameCard
-                                key={config.gameType}
-                                title={config.title}
-                                description={config.description}
-                                icon={<></>}
-                                path={config.path}
-                                lastResult={lastResults[config.gameType]}
-                                imageSrc={config.imageSrc}
-                                playCount={playCounts[config.gameType]}
-                                topPlayer={topPlayers[config.gameType]}
-                            />
-                        ))}
+                        {/* 反射神経トレーニング */}
+                        <GameCard
+                            key={gameCardConfigs[0].gameType}
+                            title={gameCardConfigs[0].title}
+                            description={gameCardConfigs[0].description}
+                            icon={<></>}
+                            path={gameCardConfigs[0].path}
+                            lastResult={lastResults[gameCardConfigs[0].gameType]}
+                            imageSrc={gameCardConfigs[0].imageSrc}
+                            playCount={playCounts[gameCardConfigs[0].gameType]}
+                            topPlayer={topPlayers[gameCardConfigs[0].gameType]}
+                        />
+                        
+                        {/* 広告カード */}
+                        <AdCard />
+                        
+                        {/* ターゲット追跡トレーニング */}
+                        <GameCard
+                            key={gameCardConfigs[1].gameType}
+                            title={gameCardConfigs[1].title}
+                            description={gameCardConfigs[1].description}
+                            icon={<></>}
+                            path={gameCardConfigs[1].path}
+                            lastResult={lastResults[gameCardConfigs[1].gameType]}
+                            imageSrc={gameCardConfigs[1].imageSrc}
+                            playCount={playCounts[gameCardConfigs[1].gameType]}
+                            topPlayer={topPlayers[gameCardConfigs[1].gameType]}
+                        />
+                    </div>
+                    
+                    {/* 2行目: カウントアップ・トレーニング */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                        <GameCard
+                            key={gameCardConfigs[2].gameType}
+                            title={gameCardConfigs[2].title}
+                            description={gameCardConfigs[2].description}
+                            icon={<></>}
+                            path={gameCardConfigs[2].path}
+                            lastResult={lastResults[gameCardConfigs[2].gameType]}
+                            imageSrc={gameCardConfigs[2].imageSrc}
+                            playCount={playCounts[gameCardConfigs[2].gameType]}
+                            topPlayer={topPlayers[gameCardConfigs[2].gameType]}
+                        />
+                        
+                        {/* 狩猟鳥獣クイズ */}
                         <GameCard
                             title="狩猟鳥獣クイズ（獣類）"
                             description={
@@ -672,7 +741,7 @@ const HomePage: React.FC = () => {
                             imageSrc={panel5}
                             playCount={0}
                             topPlayer={undefined}
-                            />
+                        />
                     </div>
 
                     {/* 初期リリース対象外: 新しいゲーム（開発中）をコメントアウト */}
