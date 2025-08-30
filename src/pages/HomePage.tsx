@@ -60,8 +60,8 @@ const AdCard: React.FC = React.memo(() => {
                 </div>
                 
                 {/* 広告コンテンツ */}
-                <div className="p-4 flex items-center justify-center min-h-[280px]">
-                    <a href="https://px.a8.net/svt/ejp?a8mat=45C668+CHIAIA+4NJ4+6GRMP" rel="nofollow" className="block">
+                <div className="p-4 flex flex-col items-center justify-center">
+                    <a href="https://px.a8.net/svt/ejp?a8mat=45C668+CHIAIA+4NJ4+6GRMP" rel="nofollow" className="block mb-4">
                         <img 
                             width="336" 
                             height="280" 
@@ -78,6 +78,16 @@ const AdCard: React.FC = React.memo(() => {
                         alt=""
                         style={{ display: 'none', border: 'none' }}
                     />
+                    
+                    {/* 広告説明テキスト */}
+                    <div className="w-full max-w-sm text-center">
+                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                            Jackeryポータブル電源
+                        </h3>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            キャンプ、夜釣りなどのアウトドアに活用！ スマホやパソコンの電力を確保、電池が切れる心配なし。 防災用のみではなくアウトドアにもよく活用されている 持ち運びにやすいポータブル電源です。
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
