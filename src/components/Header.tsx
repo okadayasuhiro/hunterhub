@@ -408,11 +408,10 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                             <button
                                 key={legal.path}
                                 onClick={() => handleGameLinkClick(legal.path)}
-                                className="w-full text-left px-6 py-3 text-white hover:bg-white/20 transition-colors duration-200 group"
+                                className="w-full text-left px-6 py-1 text-white hover:bg-white/20 transition-colors duration-200 group"
                             >
                                 <div className="flex items-center">
-                                    <legal.icon className="w-4 h-4 mr-3 text-white/80 group-hover:text-white transition-colors duration-200" />
-                                    <span className="font-medium group-hover:text-blue-100 transition-colors duration-200">
+                                    <span className="text-sm group-hover:text-blue-100 transition-colors duration-200">
                                         {legal.name}
                                     </span>
                                 </div>

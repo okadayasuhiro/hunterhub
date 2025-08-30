@@ -10,7 +10,7 @@ const TermsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
+        <div className="min-h-screen">
             {/* ヘッダー */}
             <div className="bg-white shadow-sm border-b">
                 <div className="max-w-4xl mx-auto px-4 py-4">
@@ -28,11 +28,10 @@ const TermsPage: React.FC = () => {
 
             {/* メインコンテンツ */}
             <div className="max-w-4xl mx-auto px-4 py-8">
-                <div className="bg-white rounded-2xl shadow-lg p-8">
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8">
                     {/* タイトル */}
                     <div className="text-center mb-8">
                         <div className="flex items-center justify-center mb-4">
-                            <FileText className="w-8 h-8 text-blue-600 mr-3" />
                             <h1 className="text-3xl font-bold text-gray-800">利用規約</h1>
                         </div>
                         <p className="text-gray-600">ハントレ サービス利用規約</p>
@@ -40,7 +39,7 @@ const TermsPage: React.FC = () => {
                     </div>
 
                     {/* 利用規約内容 */}
-                    <div className="space-y-8 text-gray-700 leading-relaxed">
+                    <div className="space-y-6 text-gray-700 leading-relaxed text-sm">
                         
                         <section>
                             <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-600 pb-2">第1条（適用）</h2>
