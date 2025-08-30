@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Crosshair, Target, Hash, Clock, Trophy, Share2 } from 'lucide-react';
+import SEO from '../components/SEO';
 import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { TargetTrackingHistory, TargetResult } from '../types/game';
@@ -370,6 +371,13 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
     if (mode === 'instructions') {
         return (
             <div className="flex-1">
+                <SEO 
+                    title="ターゲット追跡トレーニング - ハントレ"
+                    description="動き回るターゲットを正確にクリックするトレーニング。ハンターに必要な動体視力と精密射撃スキルを向上させます。"
+                    keywords="ターゲット追跡,動体視力,射撃,精密射撃,ハンター,トレーニング,集中力"
+                    ogType="game"
+                    canonicalUrl="https://hantore.net/target/instructions"
+                />
                 <div className="min-h-screen" style={{ backgroundColor: '#ecf6ff' }}>
                     <div className="py-4 px-4">
                         <div className="max-w-3xl mx-auto">

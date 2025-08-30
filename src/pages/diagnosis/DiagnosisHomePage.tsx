@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Compass, Target, Brain, Share2, Zap } from 'lucide-react';
+import SEO from '../../components/SEO';
 
 export default function DiagnosisHomePage() {
     const navigate = useNavigate();
@@ -47,6 +48,13 @@ export default function DiagnosisHomePage() {
 
     return (
         <div className="min-h-screen bg-slate-50">
+            <SEO 
+                title="狩猟鳥獣診断 - ハントレ"
+                description="あなたのハンタータイプを診断！46種類の狩猟鳥獣から、あなたの性格や特徴に最も近い動物を見つけよう。"
+                keywords="狩猟鳥獣診断,ハンター診断,性格診断,動物診断,狩猟,鳥獣,46種類"
+                ogType="website"
+                canonicalUrl="https://hantore.net/diagnosis"
+            />
             {/* ヘッダー */}
             <header className="bg-white shadow-sm">
                 <div className="container mx-auto px-4 py-4">

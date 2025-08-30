@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Medal, Award, Clock, Target, Hash, User, Crown, Star } from 'lucide-react';
+import SEO from '../components/SEO';
 import { HybridRankingService } from '../services/hybridRankingService';
 import type { RankingData, RankingEntry } from '../services/hybridRankingService';
 import { UserIdentificationService } from '../services/userIdentificationService';
@@ -112,6 +113,13 @@ const RankingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen glass-light">
+      <SEO 
+        title="ランキング - ハントレ"
+        description="ハントレの全ゲームランキングを確認。反射神経、ターゲット追跡、カウントアップの各トレーニングで上位を目指そう！"
+        keywords="ランキング,ハンター,トレーニング,反射神経,ターゲット追跡,カウントアップ,競争"
+        ogType="website"
+        canonicalUrl="https://hantore.net/ranking"
+      />
       <div className="container mx-auto px-4 py-8">
         {/* ヘッダー */}
         <div className="text-center mb-8">

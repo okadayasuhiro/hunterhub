@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, MousePointer, CheckCircle, Trophy } from 'lucide-react';
+import SEO from '../components/SEO';
 import animalQuizService from '../services/animalQuizService';
 
 const AnimalQuizInstructionsPage: React.FC = () => {
@@ -21,6 +22,13 @@ const AnimalQuizInstructionsPage: React.FC = () => {
 
   return (
     <div className="flex-1">
+      <SEO 
+        title="狩猟鳥獣クイズ - ハントレ"
+        description="狩猟対象の鳥獣を写真で判別するクイズ。ハンターに必要な鳥獣識別スキルを楽しく学習できます。"
+        keywords="狩猟鳥獣,クイズ,鳥獣識別,ハンター,学習,狩猟免許,野生動物"
+        ogType="game"
+        canonicalUrl="https://hantore.net/animal-quiz/instructions"
+      />
       <div className="min-h-screen">
         <div className="py-4 px-4">
           <div className="max-w-3xl mx-auto">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const TermsPage: React.FC = () => {
     const navigate = useNavigate();
@@ -11,6 +12,14 @@ const TermsPage: React.FC = () => {
 
     return (
         <div className="min-h-screen">
+            <SEO 
+                title="利用規約 - ハントレ"
+                description="ハントレの利用規約をご確認ください。サービス利用時の注意事項や禁止行為について記載しています。"
+                keywords="利用規約,ハントレ,サービス利用,注意事項"
+                ogType="website"
+                canonicalUrl="https://hantore.net/terms"
+                noIndex={true}
+            />
             {/* ヘッダー */}
             <div className="bg-white shadow-sm border-b">
                 <div className="max-w-4xl mx-auto px-4 py-4">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Shield } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const PrivacyPage: React.FC = () => {
     const navigate = useNavigate();
@@ -11,6 +12,14 @@ const PrivacyPage: React.FC = () => {
 
     return (
         <div className="min-h-screen">
+            <SEO 
+                title="プライバシーポリシー - ハントレ"
+                description="ハントレのプライバシーポリシーをご確認ください。個人情報の取り扱いやデータ保護について記載しています。"
+                keywords="プライバシーポリシー,ハントレ,個人情報保護,データ保護"
+                ogType="website"
+                canonicalUrl="https://hantore.net/privacy"
+                noIndex={true}
+            />
             {/* ヘッダー */}
             <div className="bg-white shadow-sm border-b">
                 <div className="max-w-4xl mx-auto px-4 py-4">

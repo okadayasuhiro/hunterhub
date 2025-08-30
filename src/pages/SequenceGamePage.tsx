@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Hash, Trophy, Clock, Medal, Crown, Share2 } from 'lucide-react';
+import SEO from '../components/SEO';
 import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { SequenceGameHistory, NumberButton } from '../types/game';
@@ -496,6 +497,13 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
     if (mode === 'instructions') {
         return (
             <div className="flex-1">
+                <SEO 
+                    title="カウントアップ・トレーニング - ハントレ"
+                    description="1から順番に数字をクリックするスピードトレーニング。ハンターに必要な瞬間的な判断力と手の動きを鍛えます。"
+                    keywords="カウントアップ,数字順序,判断力,瞬発力,ハンター,トレーニング,集中力"
+                    ogType="game"
+                    canonicalUrl="https://hantore.net/sequence/instructions"
+                />
                 <div className="min-h-screen" style={{ backgroundColor: '#ecf6ff' }}>
                     <div className="py-4 px-4">
                         <div className="max-w-3xl mx-auto">
