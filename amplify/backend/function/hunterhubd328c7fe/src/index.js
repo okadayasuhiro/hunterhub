@@ -61,12 +61,15 @@ async function handleRankingUpdate(event) {
         
         try {
             // 1. GameScoreテーブルの更新
-            const gameScoreTableName = process.env.API_HUNTERHUB_GAMESCORETABLE_NAME;
-            if (gameScoreTableName) {
-                console.log(`📊 Updating GameScore table: ${gameScoreTableName}`);
-                
-                const scanParams = {
-                    TableName: gameScoreTableName,
+            // 環境変数から取得、フォールバックとして推測されるテーブル名を使用
+            const gameScoreTableName = process.env.API_HUNTERHUB_GAMESCORETABLE_NAME || 
+                                     process.env.STORAGE_GAMESCORE_NAME ||
+                                     'GameScore-hunterhubd328c7fe-dev';
+            
+            console.log(`📊 Updating GameScore table: ${gameScoreTableName}`);
+            
+            const scanParams = {
+                TableName: gameScoreTableName,
                     FilterExpression: 'userId = :userId',
                     ExpressionAttributeValues: {
                         ':userId': userId
@@ -97,12 +100,14 @@ async function handleRankingUpdate(event) {
             }
 
             // 2. UserProfileテーブルの更新
-            const userProfileTableName = process.env.API_HUNTERHUB_USERPROFILETABLE_NAME;
-            if (userProfileTableName) {
-                console.log(`👤 Updating UserProfile table: ${userProfileTableName}`);
-                
-                const updateParams = {
-                    TableName: userProfileTableName,
+            const userProfileTableName = process.env.API_HUNTERHUB_USERPROFILETABLE_NAME || 
+                                        process.env.STORAGE_USERPROFILE_NAME ||
+                                        'UserProfile-hunterhubd328c7fe-dev';
+            
+            console.log(`👤 Updating UserProfile table: ${userProfileTableName}`);
+            
+            const updateParams = {
+                TableName: userProfileTableName,
                     Key: {
                         id: userId
                     },

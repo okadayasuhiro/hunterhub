@@ -24,7 +24,7 @@
       "function": {
         "hunterhubd328c7fe": {
           "deploymentBucketName": "amplify-hunterhub-dev-e104e-deployment",
-          "s3Key": "amplify-builds/hunterhubd328c7fe-4d5645724e6d6d6f6346-build.zip"
+          "s3Key": "amplify-builds/hunterhubd328c7fe-4b736e72715268317859-build.zip"
         }
       }
     }

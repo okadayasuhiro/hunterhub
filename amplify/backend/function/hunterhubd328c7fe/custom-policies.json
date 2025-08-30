@@ -11,8 +11,12 @@
       "dynamodb:BatchWriteItem"
     ],
     "Resource": [
-      "arn:aws:dynamodb:*:*:table/HunterHub-*",
-      "arn:aws:dynamodb:*:*:table/HunterHub-*/index/*"
+      "arn:aws:dynamodb:*:*:table/GameScore-*",
+      "arn:aws:dynamodb:*:*:table/UserProfile-*",
+      "arn:aws:dynamodb:*:*:table/GameHistory-*",
+      "arn:aws:dynamodb:*:*:table/GameScore-*/index/*",
+      "arn:aws:dynamodb:*:*:table/UserProfile-*/index/*",
+      "arn:aws:dynamodb:*:*:table/GameHistory-*/index/*"
     ]
   }
 ]

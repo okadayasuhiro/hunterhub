@@ -164,6 +164,44 @@
           ]
         }
       }
+    },
+    "CustomLambdaExecutionPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "custom-lambda-execution-policy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "dynamodb:Query",
+                "dynamodb:Scan",
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:BatchGetItem",
+                "dynamodb:BatchWriteItem"
+              ],
+              "Resource": [
+                "arn:aws:dynamodb:*:*:table/GameScore-*",
+                "arn:aws:dynamodb:*:*:table/UserProfile-*",
+                "arn:aws:dynamodb:*:*:table/GameHistory-*",
+                "arn:aws:dynamodb:*:*:table/GameScore-*/index/*",
+                "arn:aws:dynamodb:*:*:table/UserProfile-*/index/*",
+                "arn:aws:dynamodb:*:*:table/GameHistory-*/index/*"
+              ],
+              "Effect": "Allow"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ]
+      },
+      "DependsOn": "LambdaExecutionRole"
     }
   },
   "Outputs": {
