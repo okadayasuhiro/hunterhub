@@ -104,6 +104,15 @@ export class XAuthProxy {
     } catch (error) {
       console.error('❌ Backend proxy failed:', error);
       
+      // 🔧 開発環境での自動フォールバック
+      const isDevelopment = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1';
+      
+      if (isDevelopment) {
+        console.log('🔄 Development environment detected, using enhanced mock X profile');
+        return this.getEnhancedMockProfile(code, state);
+      }
+      
       // バックエンドが利用できない場合の簡易実装
       if (error instanceof TypeError && error.message.includes('fetch')) {
         console.log('⚠️ Backend not available, using mock data for development');
@@ -115,7 +124,47 @@ export class XAuthProxy {
   }
 
   /**
-   * 開発用モックプロフィール
+   * 拡張開発用モックプロフィール（OAuth codeベース）
+   */
+  private getEnhancedMockProfile(code: string, state: string): { id: string; name: string; username: string; profile_image_url: string } {
+    // OAuth codeから一意のプロフィールを生成
+    const hash = this.hashCode(code);
+    const profiles = [
+      {
+        id: 'dev_okada_' + Math.abs(hash),
+        name: 'オカダヤスヒロ (Dev)',
+        username: 'okadayasuhiro_dev',
+        profile_image_url: '/images/x_icon/icon_yacchin.jpg'
+      },
+      {
+        id: 'dev_hunter_' + Math.abs(hash),
+        name: 'ハンターテスト (Dev)',
+        username: 'hunter_test_dev',
+        profile_image_url: '/images/x_icon/icon_yacchin.jpg'
+      },
+      {
+        id: 'dev_sample_' + Math.abs(hash),
+        name: 'サンプルユーザー (Dev)',
+        username: 'sample_user_dev',
+        profile_image_url: '/images/x_icon/icon_yacchin.jpg'
+      }
+    ];
+
+    // codeハッシュに基づいて一貫したプロフィールを返す
+    const profileIndex = Math.abs(hash) % profiles.length;
+    const selectedProfile = profiles[profileIndex];
+    
+    console.log('🎭 Enhanced mock profile generated:', {
+      code: code.substring(0, 10) + '...',
+      selectedProfile: selectedProfile.name,
+      profileId: selectedProfile.id
+    });
+    
+    return selectedProfile;
+  }
+
+  /**
+   * 開発用モックプロフィール（フォールバック）
    */
   private getMockProfile(): { id: string; name: string; username: string; profile_image_url: string } {
     return {
@@ -124,6 +173,19 @@ export class XAuthProxy {
       username: 'okadayasuhiro_dev',
       profile_image_url: '/images/x_icon/icon_yacchin.jpg' // 既存のyacchin画像を使用
     };
+  }
+
+  /**
+   * 文字列ハッシュ計算
+   */
+  private hashCode(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // 32bit整数に変換
+    }
+    return hash;
   }
 }
 

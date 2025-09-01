@@ -144,7 +144,18 @@ const XCallbackPage: React.FC = () => {
         // ユーザーサービスに連携情報を保存
         console.log('💾 X認証: ユーザー情報保存中...');
         await userService.linkXAccountWithImage(userProfile.name, userProfile.profile_image_url, userProfile.username, userProfile.id);
-        console.log('✅ X認携: 連携完了');
+        console.log('✅ X認証: 連携完了');
+        
+        // 🎭 開発環境での特別表示
+        const isDevelopment = window.location.hostname === 'localhost';
+        if (isDevelopment) {
+          console.log('🎭 開発環境: モックX連携が正常に完了しました');
+          console.log('📝 連携情報:', {
+            表示名: userProfile.name,
+            ユーザー名: userProfile.username,
+            プロフィールID: userProfile.id
+          });
+        }
         // X連携完了フラグを設定してHeaderの更新をトリガー
         sessionStorage.setItem('x-link-completed', 'true');
         setStatus('success');
