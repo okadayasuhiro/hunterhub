@@ -25,9 +25,9 @@ const queryClient = new QueryClient({
 })
 
 createRoot(document.getElementById('root')!).render(
-  // <StrictMode> // 🚨 緊急修正: ログループ防止のため一時無効化
+  <StrictMode>
     <QueryClientProvider client={queryClient}>
       <App />
     </QueryClientProvider>
-  // </StrictMode>
+  </StrictMode>,
 )

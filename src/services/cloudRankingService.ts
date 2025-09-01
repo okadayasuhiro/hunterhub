@@ -67,10 +67,11 @@ export class CloudRankingService {
         userId,
         gameType,
         score,
-        metadata: metadata ? JSON.stringify(metadata) : undefined,
-        sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: new Date().toISOString(),
-        displayName
+        timestamp: new Date().toISOString()
+        // 🔧 一時修正: 現在のスキーマに存在しないフィールドを除去
+        // metadata: metadata ? JSON.stringify(metadata) : undefined,
+        // sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        // displayName
       };
 
       console.log('🌐 Submitting score to cloud:', input);
@@ -309,9 +310,12 @@ export class CloudRankingService {
       };
 
     } catch (error) {
-      // 🚨 緊急修正: DNS/接続エラーの詳細ログ抑制
+      // 🔍 一時的詳細ログ: GraphQLエラー調査用
       if (import.meta.env.DEV) {
         console.warn(`⚠️ Cloud connection failed for ${gameType}:`, error);
+        if (error && typeof error === 'object' && 'errors' in error) {
+          console.warn('📋 GraphQL Errors:', error.errors);
+        }
       }
       
       // エラー時は空のランキングを返す

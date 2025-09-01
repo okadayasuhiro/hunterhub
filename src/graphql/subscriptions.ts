@@ -14,10 +14,7 @@ export const onCreateGameScore = /* GraphQL */ `subscription OnCreateGameScore($
     userId
     gameType
     score
-    metadata
-    sessionId
     timestamp
-    displayName
     createdAt
     updatedAt
     __typename
@@ -33,10 +30,7 @@ export const onUpdateGameScore = /* GraphQL */ `subscription OnUpdateGameScore($
     userId
     gameType
     score
-    metadata
-    sessionId
     timestamp
-    displayName
     createdAt
     updatedAt
     __typename
@@ -52,10 +46,7 @@ export const onDeleteGameScore = /* GraphQL */ `subscription OnDeleteGameScore($
     userId
     gameType
     score
-    metadata
-    sessionId
     timestamp
-    displayName
     createdAt
     updatedAt
     __typename
@@ -70,16 +61,12 @@ export const onCreateUserProfile = /* GraphQL */ `subscription OnCreateUserProfi
 ) {
   onCreateUserProfile(filter: $filter) {
     id
-    userId
     username
-    totalGamesPlayed
-    createdAt
-    lastActiveAt
-    fingerprintQuality
-    xLinked
+    xId
     xDisplayName
+    xUsername
     xProfileImageUrl
-    xLinkedAt
+    createdAt
     updatedAt
     __typename
   }
@@ -93,16 +80,12 @@ export const onUpdateUserProfile = /* GraphQL */ `subscription OnUpdateUserProfi
 ) {
   onUpdateUserProfile(filter: $filter) {
     id
-    userId
     username
-    totalGamesPlayed
-    createdAt
-    lastActiveAt
-    fingerprintQuality
-    xLinked
+    xId
     xDisplayName
+    xUsername
     xProfileImageUrl
-    xLinkedAt
+    createdAt
     updatedAt
     __typename
   }
@@ -116,16 +99,12 @@ export const onDeleteUserProfile = /* GraphQL */ `subscription OnDeleteUserProfi
 ) {
   onDeleteUserProfile(filter: $filter) {
     id
-    userId
     username
-    totalGamesPlayed
-    createdAt
-    lastActiveAt
-    fingerprintQuality
-    xLinked
+    xId
     xDisplayName
+    xUsername
     xProfileImageUrl
-    xLinkedAt
+    createdAt
     updatedAt
     __typename
   }
@@ -141,9 +120,9 @@ export const onCreateGameHistory = /* GraphQL */ `subscription OnCreateGameHisto
     id
     userId
     gameType
-    gameData
-    playedAt
-    displayName
+    score
+    details
+    timestamp
     createdAt
     updatedAt
     __typename
@@ -160,9 +139,9 @@ export const onUpdateGameHistory = /* GraphQL */ `subscription OnUpdateGameHisto
     id
     userId
     gameType
-    gameData
-    playedAt
-    displayName
+    score
+    details
+    timestamp
     createdAt
     updatedAt
     __typename
@@ -179,9 +158,9 @@ export const onDeleteGameHistory = /* GraphQL */ `subscription OnDeleteGameHisto
     id
     userId
     gameType
-    gameData
-    playedAt
-    displayName
+    score
+    details
+    timestamp
     createdAt
     updatedAt
     __typename

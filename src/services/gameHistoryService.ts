@@ -24,9 +24,11 @@ const CREATE_GAME_HISTORY = `
       id
       userId
       gameType
-      gameData
-      playedAt
-      displayName
+      score
+      details
+      timestamp
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -38,9 +40,11 @@ const LIST_GAME_HISTORIES = `
         id
         userId
         gameType
-        gameData
-        playedAt
-        displayName
+        score
+        details
+        timestamp
+        createdAt
+        updatedAt
       }
     }
   }
@@ -53,9 +57,11 @@ interface CloudGameHistory {
   id: string;
   userId: string;
   gameType: string;
-  gameData: string;
-  playedAt: string;
-  displayName: string;
+  score: number;
+  details: string; // gameData → details
+  timestamp: string; // playedAt → timestamp
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // ゲーム履歴の統合型
@@ -91,9 +97,11 @@ export class GameHistoryService {
       const input = {
         userId,
         gameType,
-        gameData: JSON.stringify(gameData),
-        playedAt: new Date().toISOString(),
-        displayName
+        score: gameData.score || 0, // スキーマに合わせて追加
+        details: JSON.stringify(gameData), // gameData → details
+        timestamp: new Date().toISOString() // playedAt → timestamp
+        // 🔧 一時修正: 現在のスキーマに存在しないフィールドを除去
+        // displayName
       };
 
       const result = await getClient().graphql({
@@ -153,9 +161,9 @@ export class GameHistoryService {
                 id
                 userId
                 gameType
-                gameData
-                playedAt
-                displayName
+                score
+                details
+                timestamp
                 createdAt
                 updatedAt
                 __typename
@@ -248,9 +256,9 @@ export class GameHistoryService {
       
       // DynamoDBからの結果をアプリケーション側でソート（新しい順）し、指定された件数に制限
       const sortedHistories = cloudHistories
-        .sort((a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime())
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // playedAt → timestamp
         .slice(0, limit) // 指定された件数に制限
-        .map(item => JSON.parse(item.gameData) as T);
+        .map(item => JSON.parse(item.details) as T); // gameData → details
 
       console.log(`✅ Loaded ${sortedHistories.length} ${gameType} histories from cloud`);
       
@@ -337,9 +345,11 @@ export class GameHistoryService {
     const input = {
       userId,
       gameType,
-      gameData: JSON.stringify(gameData),
-      playedAt: new Date().toISOString(),
-      displayName
+      score: gameData.score || 0, // スキーマに合わせて追加
+      details: JSON.stringify(gameData), // gameData → details
+      timestamp: new Date().toISOString() // playedAt → timestamp
+      // 🔧 一時修正: 現在のスキーマに存在しないフィールドを除去
+      // displayName
     };
 
     const client = getClient();

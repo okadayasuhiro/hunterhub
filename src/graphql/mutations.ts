@@ -17,10 +17,7 @@ export const createGameScore = /* GraphQL */ `mutation CreateGameScore(
     userId
     gameType
     score
-    metadata
-    sessionId
     timestamp
-    displayName
     createdAt
     updatedAt
     __typename
@@ -39,10 +36,7 @@ export const updateGameScore = /* GraphQL */ `mutation UpdateGameScore(
     userId
     gameType
     score
-    metadata
-    sessionId
     timestamp
-    displayName
     createdAt
     updatedAt
     __typename
@@ -61,10 +55,7 @@ export const deleteGameScore = /* GraphQL */ `mutation DeleteGameScore(
     userId
     gameType
     score
-    metadata
-    sessionId
     timestamp
-    displayName
     createdAt
     updatedAt
     __typename
@@ -80,16 +71,12 @@ export const createUserProfile = /* GraphQL */ `mutation CreateUserProfile(
 ) {
   createUserProfile(input: $input, condition: $condition) {
     id
-    userId
     username
-    totalGamesPlayed
-    createdAt
-    lastActiveAt
-    fingerprintQuality
-    xLinked
+    xId
     xDisplayName
+    xUsername
     xProfileImageUrl
-    xLinkedAt
+    createdAt
     updatedAt
     __typename
   }
@@ -104,16 +91,12 @@ export const updateUserProfile = /* GraphQL */ `mutation UpdateUserProfile(
 ) {
   updateUserProfile(input: $input, condition: $condition) {
     id
-    userId
     username
-    totalGamesPlayed
-    createdAt
-    lastActiveAt
-    fingerprintQuality
-    xLinked
+    xId
     xDisplayName
+    xUsername
     xProfileImageUrl
-    xLinkedAt
+    createdAt
     updatedAt
     __typename
   }
@@ -128,16 +111,12 @@ export const deleteUserProfile = /* GraphQL */ `mutation DeleteUserProfile(
 ) {
   deleteUserProfile(input: $input, condition: $condition) {
     id
-    userId
     username
-    totalGamesPlayed
-    createdAt
-    lastActiveAt
-    fingerprintQuality
-    xLinked
+    xId
     xDisplayName
+    xUsername
     xProfileImageUrl
-    xLinkedAt
+    createdAt
     updatedAt
     __typename
   }
@@ -154,9 +133,9 @@ export const createGameHistory = /* GraphQL */ `mutation CreateGameHistory(
     id
     userId
     gameType
-    gameData
-    playedAt
-    displayName
+    score
+    details
+    timestamp
     createdAt
     updatedAt
     __typename
@@ -174,9 +153,9 @@ export const updateGameHistory = /* GraphQL */ `mutation UpdateGameHistory(
     id
     userId
     gameType
-    gameData
-    playedAt
-    displayName
+    score
+    details
+    timestamp
     createdAt
     updatedAt
     __typename
@@ -194,9 +173,9 @@ export const deleteGameHistory = /* GraphQL */ `mutation DeleteGameHistory(
     id
     userId
     gameType
-    gameData
-    playedAt
-    displayName
+    score
+    details
+    timestamp
     createdAt
     updatedAt
     __typename

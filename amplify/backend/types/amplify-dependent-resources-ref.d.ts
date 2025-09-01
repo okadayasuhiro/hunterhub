@@ -1,18 +1,9 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
-    "hunterhub": {
+    "hantore": {
       "GraphQLAPIEndpointOutput": "string",
       "GraphQLAPIIdOutput": "string",
       "GraphQLAPIKeyOutput": "string"
-    }
-  },
-  "function": {
-    "hunterhubd328c7fe": {
-      "Arn": "string",
-      "LambdaExecutionRole": "string",
-      "LambdaExecutionRoleArn": "string",
-      "Name": "string",
-      "Region": "string"
     }
   }
 }
