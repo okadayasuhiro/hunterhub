@@ -486,17 +486,19 @@ export class UserIdentificationService {
       const client = generateClient();
 
       // 既存のUserProfileを検索
-      const { userProfilesByUserId } = await import('../graphql/queries');
+      const { listUserProfiles } = await import('../graphql/queries');
       
       const existingResult = await client.graphql({
-        query: userProfilesByUserId,
+        query: listUserProfiles,
         variables: {
-          userId: this.currentUser.userId,
+          filter: {
+            id: { eq: this.currentUser.userId }
+          },
           limit: 1
         }
       });
 
-      const existingProfiles = existingResult.data?.userProfilesByUserId?.items || [];
+      const existingProfiles = existingResult.data?.listUserProfiles?.items || [];
       
       if (existingProfiles.length > 0) {
         // 既存プロファイルを更新
@@ -508,11 +510,10 @@ export class UserIdentificationService {
           variables: {
             input: {
               id: existingProfile.id,
-              xLinked: this.currentUser.isXLinked,
+              // 🔧 スキーマに存在するフィールドのみ使用
               xDisplayName: this.currentUser.xDisplayName || null,
-              xProfileImageUrl: this.currentUser.xProfileImageUrl || null,
-              xLinkedAt: this.currentUser.xLinkedAt || null,
-              // updatedAt: new Date().toISOString() // GraphQLスキーマで自動設定
+              xProfileImageUrl: this.currentUser.xProfileImageUrl || null
+              // xLinked, xLinkedAt は存在しないため削除
             }
           }
         });

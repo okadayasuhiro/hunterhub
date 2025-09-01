@@ -5,7 +5,7 @@
 
 import { generateClient } from 'aws-amplify/api';
 import { createGameScore, createUserProfile, updateUserProfile } from '../graphql/mutations';
-import { listGameScores, getUserProfile, listUserProfiles, userProfilesByUserId } from '../graphql/queries';
+import { listGameScores, getUserProfile, listUserProfiles } from '../graphql/queries';
 import type { 
   CreateGameScoreInput, 
   CreateUserProfileInput,
@@ -102,14 +102,16 @@ export class CloudRankingService {
     const profilePromises = userIds.map(async (userId) => {
       try {
         const result = await this.client.graphql({
-          query: userProfilesByUserId,
+          query: listUserProfiles,
           variables: {
-            userId: userId,
+            filter: {
+              id: { eq: userId } // userId → id に修正
+            },
             limit: 1
           }
         });
         
-        const profiles = result.data?.userProfilesByUserId?.items || [];
+        const profiles = result.data?.listUserProfiles?.items || [];
         if (profiles.length > 0) {
           return { userId, profile: profiles[0] as UserProfile };
         }
@@ -195,7 +197,7 @@ export class CloudRankingService {
         console.log(`📊 Retrieved ${userProfiles.size} user profiles for ranking`);
         userProfiles.forEach((profile, userId) => {
           console.log(`🔍 UserProfile Debug - User ${userId.slice(-4)}:`, {
-            xLinked: profile.xLinked,
+            // xLinked: profile.xLinked, // フィールドが存在しないため削除
             xDisplayName: profile.xDisplayName,
             xProfileImageUrl: profile.xProfileImageUrl,
             username: profile.username
@@ -216,7 +218,7 @@ export class CloudRankingService {
       } catch (error) {
         // UserServiceが失敗した場合のみDynamoDBから取得
         const currentUserProfile = userProfiles.get(userId);
-        if (currentUserProfile?.xLinked && currentUserProfile.xDisplayName) {
+        if (currentUserProfile?.xId && currentUserProfile.xDisplayName) { // xLinked → xId で判定
           currentUserXLinked = true;
           currentUserXDisplayName = currentUserProfile.xDisplayName;
         }
@@ -246,7 +248,7 @@ export class CloudRankingService {
         } else {
           // 他のユーザーの場合：現在のUserProfile状態を優先
           const userProfile = userProfiles.get(score.userId);
-          if (userProfile?.xLinked && userProfile.xDisplayName) {
+          if (userProfile?.xId && userProfile.xDisplayName) { // xLinked → xId で判定
             // 現在X連携中の場合はX名を表示
             finalDisplayName = userProfile.xDisplayName;
             finalUsername = userProfile.xDisplayName;
@@ -255,14 +257,14 @@ export class CloudRankingService {
             finalDisplayName = userProfile.username;
           } else {
             // UserProfileが見つからない場合は過去のdisplayNameを使用（フォールバック）
-            finalDisplayName = score.displayName || `ユーザー${score.userId.substring(0, 6)}`;
-            finalUsername = score.displayName || undefined;
+            finalDisplayName = `ユーザー${score.userId.substring(0, 6)}`; // displayNameフィールド削除により直接生成
+            finalUsername = undefined; // displayNameフィールド削除
           }
         }
 
         // X連携情報を取得
         const userProfile = userProfiles.get(score.userId);
-        const isXLinked = userProfile?.xLinked || false;
+        const isXLinked = !!(userProfile?.xId && userProfile?.xUsername); // xLinked → xId+xUsername で判定
         const xDisplayName = userProfile?.xDisplayName || undefined;
         const xProfileImageUrl = userProfile?.xProfileImageUrl || undefined;
         
@@ -440,7 +442,7 @@ export class CloudRankingService {
         rank: 1,
         userId: topScore.userId,
         username: profile?.username || undefined,
-        displayName: profile?.xDisplayName || profile?.username || topScore.displayName || `ハンター${topScore.userId.slice(-4)}`,
+        displayName: profile?.xDisplayName || profile?.username || `ハンター${topScore.userId.slice(-4)}`, // displayNameフィールド削除
         score: topScore.score,
         timestamp: topScore.timestamp,
         isCurrentUser: topScore.userId === userId
@@ -524,7 +526,7 @@ export class CloudRankingService {
       
       // 既存プロファイルを確認
       const filter: ModelUserProfileFilterInput = {
-        userId: { eq: userId }
+        id: { eq: userId } // userId → id に修正
       };
 
       const existingResult = await this.client.graphql({
@@ -551,9 +553,9 @@ export class CloudRankingService {
         const profile = existingProfiles[0] as UserProfile;
         const updateInput: UpdateUserProfileInput = {
           id: profile.id,
-          totalGamesPlayed: (profile.totalGamesPlayed || 0) + 1,
-          lastActiveAt: new Date().toISOString(),
           username: username || profile.username
+          // 🔧 スキーマに存在しないフィールドを削除
+          // lastActiveAt, totalGamesPlayed
         };
 
         await this.client.graphql({
@@ -565,12 +567,9 @@ export class CloudRankingService {
       } else {
         // 新規プロファイル作成
         const createInput: CreateUserProfileInput = {
-          userId,
-          username: username || undefined,
-          totalGamesPlayed: 1,
-          createdAt: new Date().toISOString(),
-          lastActiveAt: new Date().toISOString(),
-          fingerprintQuality: 100
+          username: username || `ユーザー${userId.substring(0, 6)}` // undefined不可のため代替値
+          // 🔧 スキーマに存在しないフィールドを削除
+          // userId, totalGamesPlayed, lastActiveAt, fingerprintQuality
         };
 
         await this.client.graphql({

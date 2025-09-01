@@ -4,8 +4,8 @@ import { Amplify } from 'aws-amplify';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import { UserIdentificationService } from './userIdentificationService';
-import { gameHistoriesByUserId } from '../graphql/queries';
-import { ModelSortDirection } from '../API';
+// import { gameHistoriesByUserId } from '../graphql/queries'; // 存在しないため削除
+// import { ModelSortDirection } from '../API'; // 存在しないため削除
 
 // Amplify設定チェック
 const getClient = () => {
@@ -97,7 +97,7 @@ export class GameHistoryService {
       const input = {
         userId,
         gameType,
-        score: gameData.score || 0, // スキーマに合わせて追加
+        score: (gameData as any).score || (gameData as any).averageTime || (gameData as any).totalTime || 0, // 各ゲーム型に対応
         details: JSON.stringify(gameData), // gameData → details
         timestamp: new Date().toISOString() // playedAt → timestamp
         // 🔧 一時修正: 現在のスキーマに存在しないフィールドを除去
@@ -345,7 +345,7 @@ export class GameHistoryService {
     const input = {
       userId,
       gameType,
-      score: gameData.score || 0, // スキーマに合わせて追加
+      score: (gameData as any).score || (gameData as any).averageTime || (gameData as any).totalTime || 0, // 各ゲーム型に対応
       details: JSON.stringify(gameData), // gameData → details
       timestamp: new Date().toISOString() // playedAt → timestamp
       // 🔧 一時修正: 現在のスキーマに存在しないフィールドを除去

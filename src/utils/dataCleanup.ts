@@ -70,7 +70,7 @@ export class DataCleanupService {
         variables: {
           filter: {
             gameType: { eq: gameType },
-            playedAt: { lt: beforeDate.toISOString() }
+            timestamp: { lt: beforeDate.toISOString() } // playedAt → timestamp
           }
         }
       });
