@@ -6,8 +6,10 @@
 interface XAuthProxyResponse {
   success: boolean;
   data?: {
-    name: string;
-    profileImageUrl: string;
+    id: string;              // X ユーザーID
+    name: string;            // X 表示名
+    username: string;        // X ユーザー名
+    profileImageUrl: string; // プロフィール画像URL
   };
   error?: string;
 }
@@ -33,7 +35,7 @@ export class XAuthProxy {
   /**
    * X認証トークン交換をAWS Lambda経由で実行
    */
-  public async exchangeCodeForProfile(code: string, state: string): Promise<{ name: string; profileImageUrl: string }> {
+  public async exchangeCodeForProfile(code: string, state: string): Promise<{ id: string; name: string; username: string; profile_image_url: string }> {
     console.log('🔄 Exchanging code via AWS Lambda...');
     
     try {
@@ -92,7 +94,13 @@ export class XAuthProxy {
         throw new Error(result.error || 'Unknown backend error');
       }
 
-      return result.data;
+      // レスポンス型の変換
+      return {
+        id: result.data.id,
+        name: result.data.name,
+        username: result.data.username,
+        profile_image_url: result.data.profileImageUrl // profileImageUrl → profile_image_url
+      };
     } catch (error) {
       console.error('❌ Backend proxy failed:', error);
       
@@ -109,10 +117,12 @@ export class XAuthProxy {
   /**
    * 開発用モックプロフィール
    */
-  private getMockProfile(): { name: string; profileImageUrl: string } {
+  private getMockProfile(): { id: string; name: string; username: string; profile_image_url: string } {
     return {
+      id: 'dev_user_' + Date.now(), // 開発用一意ID
       name: 'オカダヤスヒロ (Dev)',
-      profileImageUrl: '/images/x_icon/icon_yacchin.jpg' // 既存のyacchin画像を使用
+      username: 'okadayasuhiro_dev',
+      profile_image_url: '/images/x_icon/icon_yacchin.jpg' // 既存のyacchin画像を使用
     };
   }
 }

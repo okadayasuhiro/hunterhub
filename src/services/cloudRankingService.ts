@@ -275,19 +275,20 @@ export class CloudRankingService {
             }
           }
         } else {
-          // 他のユーザーの場合：現在のUserProfile状態を優先
+          // 🌐 他のユーザーの場合：DynamoDB UserProfileからグローバル表示情報を取得
           const userProfile = userProfiles.get(score.userId);
-          if (userProfile?.xId && userProfile.xDisplayName) { // xLinked → xId で判定
-            // 現在X連携中の場合はX名を表示
+          if (userProfile?.xId && userProfile?.xDisplayName) {
+            // X連携中の場合：X表示名を使用
             finalDisplayName = userProfile.xDisplayName;
             finalUsername = userProfile.xDisplayName;
           } else if (userProfile?.username) {
-            // X連携していない、または解除済みの場合はusernameを表示
+            // X未連携の場合：ハンター名を表示
             finalDisplayName = userProfile.username;
+            finalUsername = userProfile.username;
           } else {
-            // UserProfileが見つからない場合は過去のdisplayNameを使用（フォールバック）
-            finalDisplayName = `ユーザー${score.userId.substring(0, 6)}`; // displayNameフィールド削除により直接生成
-            finalUsername = undefined; // displayNameフィールド削除
+            // UserProfileが見つからない場合：統一されたハンター名生成
+            finalDisplayName = await this.getConsistentDisplayName(score.userId);
+            finalUsername = finalDisplayName;
           }
         }
 

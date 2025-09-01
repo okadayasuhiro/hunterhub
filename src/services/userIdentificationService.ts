@@ -19,6 +19,8 @@ export interface UserProfile {
   isXLinked: boolean;
   xDisplayName?: string;
   xProfileImageUrl?: string; // X画像URL追加
+  xUsername?: string;        // X ユーザー名追加
+  xId?: string;             // X ユーザーID追加
   xLinkedAt?: string;
   // 旧システム（非推奨）
   username?: string;
@@ -398,18 +400,86 @@ export class UserIdentificationService {
   /**
    * X連携を設定（画像付き・実際のOAuth用）
    */
-  public async linkXAccountWithImage(xDisplayName: string, xProfileImageUrl: string): Promise<void> {
+  public async linkXAccountWithImage(xDisplayName: string, xProfileImageUrl: string, xUsername?: string, xId?: string): Promise<void> {
     await this.getCurrentUserId(); // ユーザー初期化を保証
     
     if (this.currentUser) {
       this.currentUser.isXLinked = true;
       this.currentUser.xDisplayName = xDisplayName;
       this.currentUser.xProfileImageUrl = xProfileImageUrl;
+      this.currentUser.xUsername = xUsername; // X ユーザー名を追加
+      this.currentUser.xId = xId; // X ユーザーIDを追加
       this.currentUser.xLinkedAt = new Date().toISOString();
       
       this.saveUserProfile(this.currentUser);
-      console.log(`✅ X account linked with image: ${xDisplayName}`);
+      
+      // 🌐 DynamoDBにも保存（グローバル表示用）
+      await this.updateCloudUserProfile();
+      
+      console.log(`✅ X account linked with full profile: ${xDisplayName}`);
       console.log(`📸 Profile image: ${xProfileImageUrl}`);
+      console.log(`🆔 X ID: ${xId}, Username: ${xUsername}`);
+    }
+  }
+
+  /**
+   * DynamoDB UserProfileの更新（グローバル表示用）
+   */
+  private async updateCloudUserProfile(): Promise<void> {
+    if (!this.currentUser) return;
+
+    try {
+      const { generateClient } = await import('aws-amplify/api');
+      const { updateUserProfile, createUserProfile } = await import('../graphql/mutations');
+      const { getUserProfile } = await import('../graphql/queries');
+      const client = generateClient();
+
+      // 既存UserProfileを確認
+      const existingResult = await client.graphql({
+        query: getUserProfile,
+        variables: { id: this.currentUser.userId }
+      });
+
+      const existingProfile = (existingResult as any).data?.getUserProfile;
+
+      if (existingProfile) {
+        // 既存プロファイル更新
+        const updateInput = {
+          id: this.currentUser.userId,
+          username: this.currentUser.hunterName,
+          xId: this.currentUser.xId || null,
+          xDisplayName: this.currentUser.xDisplayName || null,
+          xUsername: this.currentUser.xUsername || null,
+          xProfileImageUrl: this.currentUser.xProfileImageUrl || null
+        };
+
+        await client.graphql({
+          query: updateUserProfile,
+          variables: { input: updateInput }
+        });
+
+        console.log('✅ UserProfile updated in DynamoDB (X連携情報含む)');
+      } else {
+        // 新規プロファイル作成
+        const createInput = {
+          id: this.currentUser.userId,
+          username: this.currentUser.hunterName,
+          xId: this.currentUser.xId || null,
+          xDisplayName: this.currentUser.xDisplayName || null,
+          xUsername: this.currentUser.xUsername || null,
+          xProfileImageUrl: this.currentUser.xProfileImageUrl || null
+        };
+
+        await client.graphql({
+          query: createUserProfile,
+          variables: { input: createInput }
+        });
+
+        console.log('✅ UserProfile created in DynamoDB (X連携情報含む)');
+      }
+    } catch (error) {
+      console.error('❌ Failed to update cloud user profile:', error);
+      // エラーでも連携処理は継続（ローカル保存は完了済み）
     }
   }
 
@@ -442,6 +512,8 @@ export class UserIdentificationService {
       this.currentUser.isXLinked = false;
       delete this.currentUser.xDisplayName;
       delete this.currentUser.xProfileImageUrl;
+      delete this.currentUser.xUsername; // X ユーザー名も削除
+      delete this.currentUser.xId; // X ユーザーIDも削除
       delete this.currentUser.xLinkedAt;
       
       this.saveUserProfile(this.currentUser);

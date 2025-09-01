@@ -129,13 +129,22 @@ const XCallbackPage: React.FC = () => {
 
         // X認証処理
         console.log('🔐 X認証: トークン交換中...');
-        const { name, profileImageUrl } = await xAuthService.handleCallback(code, state);
-        console.log('✅ X認証: 認証成功 -', name);
+        const userProfile = await xAuthService.handleCallback(code, state);
+        console.log('✅ X認証: 認証成功 -', userProfile.name);
+
+        // 🔒 重複チェック: 同じXアカウントの既存連携確認
+        console.log('🔍 X認証: 重複チェック中...');
+        const isDuplicate = await xAuthService.checkXAccountDuplicate(userProfile.id);
+        
+        if (isDuplicate) {
+          console.error('❌ X認証: このXアカウントは既に他のユーザーと連携済みです');
+          throw new Error('このXアカウントは既に他のユーザーと連携されています。別のXアカウントでお試しください。');
+        }
 
         // ユーザーサービスに連携情報を保存
         console.log('💾 X認証: ユーザー情報保存中...');
-        await userService.linkXAccountWithImage(name, profileImageUrl);
-        console.log('✅ X認証: 連携完了');
+        await userService.linkXAccountWithImage(userProfile.name, userProfile.profile_image_url, userProfile.username, userProfile.id);
+        console.log('✅ X認携: 連携完了');
         // X連携完了フラグを設定してHeaderの更新をトリガー
         sessionStorage.setItem('x-link-completed', 'true');
         setStatus('success');

@@ -23,9 +23,16 @@ export class XAuthService {
   private config: XAuthConfig;
 
   private constructor() {
+    // 環境別リダイレクトURIの自動判定
+    const isProduction = window.location.hostname === 'hantore.net' || 
+                        window.location.hostname.includes('amplifyapp.com');
+    const redirectUri = isProduction 
+      ? 'https://hantore.net/x-callback'
+      : 'http://localhost:5173/x-callback';
+
     this.config = {
       clientId: import.meta.env.VITE_X_CLIENT_ID || '',
-      redirectUri: import.meta.env.VITE_X_REDIRECT_URI || `${window.location.origin}/x-callback`,
+      redirectUri,
       scopes: ['tweet.read', 'users.read'] // プロフィール情報とツイート読み取り
     };
     
@@ -41,6 +48,35 @@ export class XAuthService {
       XAuthService.instance = new XAuthService();
     }
     return XAuthService.instance;
+  }
+
+  /**
+   * X アカウント重複チェック
+   */
+  public async checkXAccountDuplicate(xId: string): Promise<boolean> {
+    try {
+      const { generateClient } = await import('aws-amplify/api');
+      const { listUserProfiles } = await import('../graphql/queries');
+      const client = generateClient();
+
+      // xIdで既存ユーザーを検索
+      const result = await client.graphql({
+        query: listUserProfiles,
+        variables: {
+          filter: {
+            xId: { eq: xId }
+          },
+          limit: 1
+        }
+      });
+
+      const existingUsers = (result as any).data?.listUserProfiles?.items || [];
+      return existingUsers.length > 0;
+      
+    } catch (error) {
+      console.error('❌ Failed to check X account duplicate:', error);
+      return false; // エラー時は重複なしとして処理
+    }
   }
 
   /**
@@ -155,7 +191,7 @@ export class XAuthService {
   /**
    * コールバック処理（プロキシ経由）
    */
-  public async handleCallback(code: string, state: string): Promise<{ name: string; profileImageUrl: string }> {
+  public async handleCallback(code: string, state: string): Promise<{ id: string; name: string; username: string; profile_image_url: string }> {
     try {
       console.log('🔄 Using proxy for X authentication...');
       const proxy = XAuthProxy.getInstance();
