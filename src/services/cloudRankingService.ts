@@ -309,7 +309,10 @@ export class CloudRankingService {
       };
 
     } catch (error) {
-      console.error('Failed to fetch cloud rankings:', error);
+      // 🚨 緊急修正: DNS/接続エラーの詳細ログ抑制
+      if (import.meta.env.DEV) {
+        console.warn(`⚠️ Cloud connection failed for ${gameType}:`, error);
+      }
       
       // エラー時は空のランキングを返す
       return {
@@ -447,7 +450,10 @@ export class CloudRankingService {
       return topPlayer;
       
     } catch (error) {
-      console.error(`❌ Failed to get optimized top player for ${gameType}:`, error);
+      // 🚨 緊急修正: DNS/接続エラーのログ抑制
+      if (import.meta.env.DEV) {
+        console.warn(`⚠️ Top player fetch failed for ${gameType}`);
+      }
       return null;
     }
   }
@@ -687,7 +693,10 @@ export class CloudRankingService {
       return totalCount;
       
     } catch (error) {
-      console.error(`❌ Failed to get total player count for ${gameType}:`, error);
+      // 🚨 緊急修正: DNS/接続エラーのログ抑制
+      if (import.meta.env.DEV) {
+        console.warn(`⚠️ Total count fetch failed for ${gameType}`);
+      }
       return 0;
     }
   }
@@ -755,7 +764,10 @@ export class CloudRankingService {
       return totalCount;
       
     } catch (error) {
-      console.error(`❌ Failed to get optimized total player count for ${gameType}:`, error);
+      // 🚨 緊急修正: DNS/接続エラーのログ抑制
+      if (import.meta.env.DEV) {
+        console.warn(`⚠️ Player count fetch failed for ${gameType}`);
+      }
       // フォールバック: 従来版を使用
       return this.getTotalPlayerCount(gameType);
     }

@@ -257,7 +257,10 @@ export class GameHistoryService {
       return sortedHistories;
 
     } catch (error) {
-      console.error(`❌ Failed to load ${gameType} game history from cloud:`, error);
+      // 🚨 緊急修正: DNS/接続エラーのログ抑制
+      if (import.meta.env.DEV) {
+        console.warn(`⚠️ Game history fetch failed for ${gameType}`);
+      }
       
       // フォールバック：ローカルストレージから取得
       return this.getFromLocalStorage<T>(gameType);
