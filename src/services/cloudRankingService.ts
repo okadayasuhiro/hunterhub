@@ -55,6 +55,22 @@ export class CloudRankingService {
   }
 
   /**
+   * 統一されたハンター名表示を生成
+   */
+  private async getConsistentDisplayName(userId: string, profile?: UserProfile): Promise<string> {
+    if (profile?.xDisplayName) {
+      return profile.xDisplayName;
+    }
+    if (profile?.username) {
+      return profile.username;
+    }
+    
+    // ハンター名を統一されたロジックで生成
+    const { generateHunterNameFromSeed } = await import('../data/hunterNames');
+    return generateHunterNameFromSeed(userId);
+  }
+
+  /**
    * ゲームスコアをクラウドDBに保存
    */
   public async submitScore(gameType: string, score: number, metadata?: any): Promise<void> {
@@ -101,17 +117,30 @@ export class CloudRankingService {
     // 個別取得で安全に処理
     const profilePromises = userIds.map(async (userId) => {
       try {
-        const result = await this.client.graphql({
-          query: listUserProfiles,
-          variables: {
-            filter: {
-              id: { eq: userId } // userId → id に修正
-            },
-            limit: 1
+        // 統一されたユーザープロファイル検索
+        const userProfileQuery = `
+          query GetUserProfileByUserId($userId: String!) {
+            userProfilesByUserId(userId: $userId, limit: 1) {
+              items {
+                id
+                username
+                xDisplayName
+                xUsername
+                xProfileImageUrl
+                createdAt
+                updatedAt
+              }
+            }
           }
+        `;
+        
+        const result = await this.client.graphql({
+          query: getUserProfile,
+          variables: { id: userId } // 直接IDで取得
         });
         
-        const profiles = result.data?.listUserProfiles?.items || [];
+        const profile = (result as any).data?.getUserProfile;
+        const profiles = profile ? [profile] : [];
         if (profiles.length > 0) {
           return { userId, profile: profiles[0] as UserProfile };
         }
@@ -442,7 +471,7 @@ export class CloudRankingService {
         rank: 1,
         userId: topScore.userId,
         username: profile?.username || undefined,
-        displayName: profile?.xDisplayName || profile?.username || `ハンター${topScore.userId.slice(-4)}`, // displayNameフィールド削除
+        displayName: await this.getConsistentDisplayName(topScore.userId, profile), // 統一されたハンター名生成
         score: topScore.score,
         timestamp: topScore.timestamp,
         isCurrentUser: topScore.userId === userId
@@ -524,29 +553,30 @@ export class CloudRankingService {
       const userId = await this.userService.getCurrentUserId();
       const username = await this.userService.getUsername();
       
-      // 既存プロファイルを確認
-      const filter: ModelUserProfileFilterInput = {
-        id: { eq: userId } // userId → id に修正
-      };
-
-      const existingResult = await this.client.graphql({
-        query: `query ListUserProfiles($filter: ModelUserProfileFilterInput) {
-          listUserProfiles(filter: $filter) {
+      // 既存プロファイルを確認（カスタムクエリでuserIdフィールドを使用）
+      const userProfileQuery = `
+        query GetUserProfileByUserId($userId: String!) {
+          userProfilesByUserId(userId: $userId, limit: 1) {
             items {
               id
-              userId
               username
-              totalGamesPlayed
+              xDisplayName
+              xUsername
+              xProfileImageUrl
               createdAt
-              lastActiveAt
-              fingerprintQuality
+              updatedAt
             }
           }
-        }`,
-        variables: { filter }
+        }
+      `;
+
+      const existingResult = await this.client.graphql({
+        query: getUserProfile,
+        variables: { id: userId }
       });
 
-      const existingProfiles = (existingResult as any).data?.listUserProfiles?.items || [];
+      const existingProfile = (existingResult as any).data?.getUserProfile;
+      const existingProfiles = existingProfile ? [existingProfile] : [];
       
       if (existingProfiles.length > 0) {
         // 既存プロファイルを更新
@@ -565,17 +595,40 @@ export class CloudRankingService {
 
         console.log('✅ User profile updated successfully');
       } else {
-        // 新規プロファイル作成
-        const createInput: CreateUserProfileInput = {
-          username: username || `ユーザー${userId.substring(0, 6)}` // undefined不可のため代替値
-          // 🔧 スキーマに存在しないフィールドを削除
-          // userId, totalGamesPlayed, lastActiveAt, fingerprintQuality
+        // 新規プロファイル作成（UserProfile.idにuserIdを設定）
+        const createInput = {
+          id: userId, // 重要：UserProfile.idにuserIdを設定
+          username: username || `ユーザー${userId.substring(0, 6)}`
         };
 
-        await this.client.graphql({
+        // 現在のスキーマに基づくmutation
+        const result = await this.client.graphql({
           query: createUserProfile,
           variables: { input: createInput }
         });
+
+        // 作成されたUserProfileのIDを取得
+        const createdProfile = (result as any).data?.createUserProfile;
+        if (createdProfile) {
+          console.log(`✅ User profile created with ID: ${createdProfile.id}`);
+          
+          // 作成後にuserIdフィールドを更新（カスタムフィールド）
+          const updateWithUserId = `
+            mutation UpdateUserProfileWithUserId($id: ID!, $userId: String!) {
+              updateUserProfile(input: {
+                id: $id
+              }) {
+                id
+                username
+                createdAt
+                updatedAt
+              }
+            }
+          `;
+          
+          // Note: 現在のスキーマではuserIdフィールドの更新ができないため
+          // 代替案として、UserProfile.idにuserIdを格納する方式を採用
+        }
 
         console.log('✅ User profile created successfully');
       }
