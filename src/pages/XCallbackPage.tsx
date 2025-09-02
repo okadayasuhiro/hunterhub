@@ -132,11 +132,12 @@ const XCallbackPage: React.FC = () => {
         const userProfile = await xAuthService.handleCallback(code, state);
         console.log('✅ X認証: 認証成功 -', userProfile.name);
 
-        // 🔒 重複チェック: 同じXアカウントの既存連携確認
+        // 🔒 重複チェック: 他のユーザーとの重複確認（自分は除外）
         console.log('🔍 X認証: 重複チェック中...');
-        const isDuplicate = await xAuthService.checkXAccountDuplicate(userProfile.id);
+        const currentUserId = await userService.getCurrentUserId();
+        const isDuplicateWithOtherUser = await xAuthService.checkXAccountDuplicateExcludingUser(userProfile.id, currentUserId);
         
-        if (isDuplicate) {
+        if (isDuplicateWithOtherUser) {
           console.error('❌ X認証: このXアカウントは既に他のユーザーと連携済みです');
           throw new Error('このXアカウントは既に他のユーザーと連携されています。別のXアカウントでお試しください。');
         }

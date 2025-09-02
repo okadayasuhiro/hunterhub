@@ -80,6 +80,46 @@ export class XAuthService {
   }
 
   /**
+   * X アカウント重複チェック（指定ユーザー除外）
+   */
+  public async checkXAccountDuplicateExcludingUser(xId: string, excludeUserId: string): Promise<boolean> {
+    try {
+      const { generateClient } = await import('aws-amplify/api');
+      const { listUserProfiles } = await import('../graphql/queries');
+      const client = generateClient();
+
+      // xIdで既存ユーザーを検索（指定ユーザーは除外）
+      const result = await client.graphql({
+        query: listUserProfiles,
+        variables: {
+          filter: {
+            xId: { eq: xId }
+          },
+          limit: 10 // 複数取得して除外処理
+        }
+      });
+
+      const existingUsers = (result as any).data?.listUserProfiles?.items || [];
+      
+      // 指定ユーザー以外で同じxIdを持つユーザーが存在するかチェック
+      const duplicateUsers = existingUsers.filter((user: any) => user.id !== excludeUserId);
+      
+      console.log('🔍 重複チェック結果:', {
+        xId: xId.substring(0, 10) + '...',
+        totalUsers: existingUsers.length,
+        excludeUserId: excludeUserId.substring(0, 8) + '...',
+        duplicateUsers: duplicateUsers.length
+      });
+      
+      return duplicateUsers.length > 0;
+      
+    } catch (error) {
+      console.error('❌ Failed to check X account duplicate (excluding user):', error);
+      return false; // エラー時は重複なしとして処理
+    }
+  }
+
+  /**
    * X OAuth認証URLを生成
    */
   public async generateAuthUrl(): Promise<string> {
