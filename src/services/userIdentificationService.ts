@@ -154,8 +154,23 @@ export class UserIdentificationService {
 
       console.log(`🔄 Loaded existing user: ${profile.userId.substring(0, 8)}... (${profile.hunterName})`);
       
+      // 🔧 重要：currentUserを設定してから復元実行
+      this.currentUser = profile;
+      
       // 🔄 DynamoDBからX連携状態を復元
+      console.log('🔍 DynamoDB復元開始前の状態:', {
+        isXLinked: profile.isXLinked,
+        hasXDisplayName: !!profile.xDisplayName,
+        userId: profile.userId.substring(0, 8) + '...'
+      });
+      
       await this.restoreXLinkFromCloudIfNeeded();
+      
+      console.log('🔍 DynamoDB復元後の状態:', {
+        isXLinked: this.currentUser?.isXLinked,
+        hasXDisplayName: !!this.currentUser?.xDisplayName,
+        xDisplayName: this.currentUser?.xDisplayName
+      });
       
       return profile;
     } catch (error) {
@@ -430,7 +445,18 @@ export class UserIdentificationService {
    * DynamoDBからX連携状態を復元
    */
   private async restoreXLinkFromCloudIfNeeded(): Promise<void> {
-    if (!this.currentUser) return;
+    console.log('🔍 restoreXLinkFromCloudIfNeeded 開始');
+    
+    if (!this.currentUser) {
+      console.log('❌ currentUser が null のため復元スキップ');
+      return;
+    }
+
+    console.log('🔍 復元対象ユーザー:', {
+      userId: this.currentUser.userId.substring(0, 8) + '...',
+      currentXLinked: this.currentUser.isXLinked,
+      currentXDisplayName: this.currentUser.xDisplayName
+    });
 
     try {
       const { generateClient } = await import('aws-amplify/api');
