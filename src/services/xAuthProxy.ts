@@ -39,9 +39,15 @@ export class XAuthProxy {
     console.log('🔄 Exchanging code via AWS Lambda...');
     
     try {
-      // AWS API Gateway endpoint - 正しいステージパス
-      const apiEndpoint = import.meta.env.VITE_AWS_API_ENDPOINT || 
-                          'https://w0oo7bi7xe.execute-api.ap-northeast-1.amazonaws.com/Stage/x-auth/exchange';
+      // AWS API Gateway endpoint - 正しいステージパス（環境変数を修正）
+      let apiEndpoint = import.meta.env.VITE_AWS_API_ENDPOINT || 
+                        'https://w0oo7bi7xe.execute-api.ap-northeast-1.amazonaws.com/Stage/x-auth/exchange';
+      
+      // 🔧 緊急修正: 古いdevパスをStageパスに自動修正
+      if (apiEndpoint.includes('/dev/x-auth/exchange')) {
+        apiEndpoint = apiEndpoint.replace('/dev/x-auth/exchange', '/Stage/x-auth/exchange');
+        console.log('🔧 Auto-corrected endpoint path: dev → Stage');
+      }
       
       // 現在のユーザーIDを取得してリクエストに含める
       const { UserIdentificationService } = await import('./userIdentificationService');
