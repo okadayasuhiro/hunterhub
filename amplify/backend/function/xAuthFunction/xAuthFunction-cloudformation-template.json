@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"14.0.0\",\"stackType\":\"function-Lambda\",\"metadata\":{\"whyContinueWithGen1\":\"Prefer not to answer\"}}",
+  "Description": "Lambda Function resource stack creation using Amplify CLI",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -14,6 +14,12 @@
       "Type": "String"
     },
     "s3Key": {
+      "Type": "String"
+    },
+    "xClientId": {
+      "Type": "String"
+    },
+    "xClientSecret": {
       "Type": "String"
     }
   },
@@ -47,12 +53,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "hunterhubd328c7fe",
+            "xAuthFunction",
             {
               "Fn::Join": [
                 "",
                 [
-                  "hunterhubd328c7fe",
+                  "xAuthFunction",
                   "-",
                   {
                     "Ref": "env"
@@ -70,8 +76,12 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
-            "X_CLIENT_ID": "VE1jYm8xdDR5RUdub0RNZXhsTXE6MTpjaQ",
-            "X_CLIENT_SECRET": "SyjAQ55KZ3dZL7xXv4n0cFMX81YxMMpVr-5jdBNp58p0A744pn"
+            "X_CLIENT_ID": {
+              "Ref": "xClientId"
+            },
+            "X_CLIENT_SECRET": {
+              "Ref": "xClientSecret"
+            }
           }
         },
         "Role": {
@@ -91,12 +101,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "hunterhubLambdaRolec97ae91c",
+            "hunterhubLambdaRole7551bc28",
             {
               "Fn::Join": [
                 "",
                 [
-                  "hunterhubLambdaRolec97ae91c",
+                  "hunterhubLambdaRole7551bc28",
                   "-",
                   {
                     "Ref": "env"

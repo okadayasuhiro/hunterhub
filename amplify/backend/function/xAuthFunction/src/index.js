@@ -1,6 +1,6 @@
 /**
- * AWS Lambda - X (Twitter) OAuth 2.0 認証関数
- * 既存関数を安全に更新・世界最高のエンジニアによる実装
+ * AWS Lambda - X (Twitter) OAuth 2.0 認証専用関数
+ * 世界最高のエンジニアによる安全で効率的な実装
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
 
@@ -46,18 +46,15 @@ const httpsRequest = (options, postData) => {
  * メインハンドラー
  */
 exports.handler = async (event) => {
-  console.log(`🚀 Lambda X-Auth Handler invoked:`, JSON.stringify({
+  console.log(`🚀 xAuthFunction invoked:`, JSON.stringify({
     httpMethod: event.httpMethod,
     path: event.path,
-    resource: event.resource,
     headers: Object.keys(event.headers || {}),
-    hasBody: !!event.body,
-    userAgent: event.headers ? event.headers['User-Agent'] : 'unknown'
+    hasBody: !!event.body
   }, null, 2));
 
   // CORS プリフライト対応
   if (event.httpMethod === 'OPTIONS') {
-    console.log('🔧 CORS preflight request handled');
     return {
       statusCode: 200,
       headers: corsHeaders,
@@ -65,35 +62,11 @@ exports.handler = async (event) => {
     };
   }
 
-  // X認証エンドポイントのチェック
-  if (event.path && event.path.includes('x-auth')) {
-    return await handleXAuth(event);
-  }
-
-  // デフォルトレスポンス（既存機能保持）
-  console.log('📝 Default endpoint accessed');
-  return {
-    statusCode: 200,
-    headers: corsHeaders,
-    body: JSON.stringify({
-      message: 'HunterHub Lambda Function',
-      timestamp: new Date().toISOString(),
-      environment: process.env.ENV || 'unknown'
-    })
-  };
-};
-
-/**
- * X認証処理専用ハンドラー
- */
-async function handleXAuth(event) {
-  console.log('🔐 X-Auth endpoint accessed');
-
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
       headers: corsHeaders,
-      body: JSON.stringify({ success: false, error: 'Method not allowed for X-Auth' })
+      body: JSON.stringify({ success: false, error: 'Method not allowed' })
     };
   }
 
@@ -155,9 +128,7 @@ async function handleXAuth(event) {
     console.log('🔑 Environment variables check:', {
       hasClientId: !!X_CLIENT_ID,
       hasClientSecret: !!X_CLIENT_SECRET,
-      clientIdLength: X_CLIENT_ID?.length || 0,
-      env: process.env.ENV || 'unknown',
-      region: process.env.REGION || 'unknown'
+      clientIdLength: X_CLIENT_ID?.length || 0
     });
 
     if (!X_CLIENT_ID || !X_CLIENT_SECRET) {
@@ -211,8 +182,7 @@ async function handleXAuth(event) {
         headers: corsHeaders,
         body: JSON.stringify({
           success: false,
-          error: 'Token exchange failed',
-          details: tokenResponse.data
+          error: 'Token exchange failed'
         })
       };
     }
@@ -249,8 +219,7 @@ async function handleXAuth(event) {
         headers: corsHeaders,
         body: JSON.stringify({
           success: false,
-          error: 'User profile fetch failed',
-          details: userResponse.data
+          error: 'User profile fetch failed'
         })
       };
     }
@@ -283,7 +252,7 @@ async function handleXAuth(event) {
     };
 
   } catch (error) {
-    console.error('❌ X-Auth processing error:', {
+    console.error('❌ Lambda execution error:', {
       message: error.message,
       stack: error.stack
     });
@@ -298,4 +267,4 @@ async function handleXAuth(event) {
       })
     };
   }
-}
+};
