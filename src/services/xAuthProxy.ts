@@ -84,7 +84,7 @@ export class XAuthProxy {
           code,
           state,
           userId, // DynamoDB更新用
-          redirectUri: import.meta.env.VITE_X_REDIRECT_URI || `${window.location.origin}/x-callback`,
+          redirectUri: `${window.location.origin}/x-callback`, // 実際の認証時と同じURIを送信
           codeVerifier // PKCE用のcode_verifier追加
         }),
       });
