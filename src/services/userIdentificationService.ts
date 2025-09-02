@@ -59,7 +59,7 @@ export class UserIdentificationService {
     }
 
     // 既存プロファイルの確認
-    const existingProfile = this.loadUserProfile();
+    const existingProfile = await this.loadUserProfile();
     if (existingProfile) {
       this.currentUser = existingProfile;
       await this.updateLastActive();
@@ -121,7 +121,7 @@ export class UserIdentificationService {
   /**
    * 既存ユーザープロファイルの読み込み
    */
-  private loadUserProfile(): UserProfile | null {
+  private async loadUserProfile(): Promise<UserProfile | null> {
     try {
       const profileData = localStorage.getItem(this.STORAGE_KEYS.USER_PROFILE);
       if (!profileData) return null;
@@ -153,6 +153,10 @@ export class UserIdentificationService {
       }
 
       console.log(`🔄 Loaded existing user: ${profile.userId.substring(0, 8)}... (${profile.hunterName})`);
+      
+      // 🔄 DynamoDBからX連携状態を復元
+      await this.restoreXLinkFromCloudIfNeeded();
+      
       return profile;
     } catch (error) {
       console.error('❌ Error loading user profile:', error);
@@ -419,6 +423,48 @@ export class UserIdentificationService {
       console.log(`✅ X account linked with full profile: ${xDisplayName}`);
       console.log(`📸 Profile image: ${xProfileImageUrl}`);
       console.log(`🆔 X ID: ${xId}, Username: ${xUsername}`);
+    }
+  }
+
+  /**
+   * DynamoDBからX連携状態を復元
+   */
+  private async restoreXLinkFromCloudIfNeeded(): Promise<void> {
+    if (!this.currentUser) return;
+
+    try {
+      const { generateClient } = await import('aws-amplify/api');
+      const { getUserProfile } = await import('../graphql/queries');
+      const client = generateClient();
+
+      // DynamoDBから最新のユーザープロファイルを取得
+      const cloudResult = await client.graphql({
+        query: getUserProfile,
+        variables: { id: this.currentUser.userId }
+      });
+
+      const cloudProfile = (cloudResult as any).data?.getUserProfile;
+      
+      if (cloudProfile && cloudProfile.xId && cloudProfile.xDisplayName) {
+        console.log('🔄 DynamoDBからX連携情報を復元中...', {
+          cloudXId: cloudProfile.xId,
+          cloudDisplayName: cloudProfile.xDisplayName,
+          localXLinked: this.currentUser.isXLinked
+        });
+
+        // LocalStorageを最新のDynamoDB情報で更新
+        this.currentUser.isXLinked = true;
+        this.currentUser.xDisplayName = cloudProfile.xDisplayName;
+        this.currentUser.xUsername = cloudProfile.xUsername;
+        this.currentUser.xId = cloudProfile.xId;
+        this.currentUser.xProfileImageUrl = cloudProfile.xProfileImageUrl;
+        this.currentUser.xLinkedAt = cloudProfile.updatedAt || new Date().toISOString();
+        
+        this.saveUserProfile(this.currentUser);
+        console.log('✅ X連携状態をDynamoDBから復元完了');
+      }
+    } catch (error) {
+      console.error('❌ Failed to restore X link from cloud:', error);
     }
   }
 

@@ -31,6 +31,14 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
             const linked = await userService.isXLinked();
             const profileImageUrl = await userService.getXProfileImageUrl();
             const xName = linked ? await userService.getXDisplayName() : '';
+            
+            console.log('🔄 Header loadUserInfo:', {
+                name,
+                linked,
+                profileImageUrl,
+                xName
+            });
+            
             setDisplayName(name);
             setIsXLinked(linked);
             setXProfileImageUrl(profileImageUrl || '');
@@ -125,8 +133,15 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                 console.log('🔄 X連携完了を検出、ユーザー情報を更新中...');
                 // フラグをクリアして重複実行を防ぐ
                 sessionStorage.removeItem('x-link-completed');
-                // ユーザー情報を再読み込み
-                loadUserInfo();
+                // ユーザー情報を再読み込み（遅延実行で確実に更新）
+                setTimeout(async () => {
+                    await loadUserInfo();
+                    console.log('🔄 Header状態更新完了:', {
+                        displayName,
+                        isXLinked,
+                        hasProfileImage: !!xProfileImageUrl
+                    });
+                }, 500);
             }
         };
 
