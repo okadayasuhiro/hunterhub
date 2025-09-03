@@ -7,19 +7,27 @@ import GameRankingTable from '../components/GameRankingTable';
 const TriggerTimingInstructionsPage: React.FC = () => {
     const navigate = useNavigate();
     const [topPlayerCount, setTopPlayerCount] = useState<number>(0);
+    const [topPlayer, setTopPlayer] = useState<any>(null);
 
     useEffect(() => {
-        const loadTopPlayerCount = async () => {
+        const loadTopPlayerData = async () => {
             try {
                 const rankingService = HybridRankingService.getInstance();
-                const data = await rankingService.getRankings('trigger-timing', 10);
-                setTopPlayerCount(data.totalCount);
+                
+                // トップランカー情報を取得
+                const topPlayersData = await rankingService.getAllTopPlayersOptimized();
+                const targetTopPlayer = topPlayersData.target;
+                setTopPlayer(targetTopPlayer);
+                
+                // 総プレイヤー数を取得
+                const result = await rankingService.getTotalPlayCountOptimized('target');
+                setTopPlayerCount(result);
             } catch (error) {
-                console.error('Failed to load top player count:', error);
+                console.error('Failed to load top player data:', error);
             }
         };
 
-        loadTopPlayerCount();
+        loadTopPlayerData();
     }, []);
 
     const handleStartGame = () => {
@@ -151,11 +159,11 @@ const TriggerTimingInstructionsPage: React.FC = () => {
                             <span>{topPlayerCount}位中 上位10位まで表示</span>
                         </div>
 
-                        {/* Phase 1では仮のランキング表示 */}
-                        <div className="text-center py-8 text-gray-500">
-                            <p>ランキング機能はPhase 2で実装予定です</p>
-                            <p className="text-sm mt-2">現在は基本ゲーム機能のテスト中</p>
-                        </div>
+                        {/* 実際のランキング表示（X連携対応） */}
+                        <GameRankingTable 
+                            gameType="target"
+                            limit={10}
+                        />
                     </div>
                 </div>
             </div>
