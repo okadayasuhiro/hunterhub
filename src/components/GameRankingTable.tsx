@@ -207,9 +207,8 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
             // 各エントリーにX連携情報を追加（全ユーザー対象）
             const extendedRankings = data.rankings.map(entry => {
                 // CloudRankingServiceから既にX連携情報が含まれているかチェック
-                const hasXLinkedName = entry.displayName && 
-                    entry.displayName !== `ユーザー${entry.userId.substring(0, 6)}` &&
-                    !entry.displayName.startsWith('ハンター');
+                // 🔧 X連携判定ロジック修正：xDisplayNameの存在で判定
+                const hasXLinkedName = !!(entry.xDisplayName && entry.xProfileImageUrl);
                 
                 // デバッグログ追加（開発環境のみ）
                 if (import.meta.env.DEV) {
@@ -225,10 +224,12 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                 
                 return {
                     ...entry,
-                    // 現在ユーザーの場合はUserServiceから、他ユーザーはCloudRankingServiceから
-                    isXLinked: entry.userId === currentUserId ? isCurrentUserXLinked : (entry.xLinked || hasXLinkedName),
-                    xDisplayName: entry.userId === currentUserId ? currentUserXName : (entry.xDisplayName || (hasXLinkedName ? entry.displayName : undefined)),
-                    xProfileImageUrl: entry.userId === currentUserId ? currentUserXImageUrl : entry.xProfileImageUrl
+                    // X連携判定：xDisplayNameとxProfileImageUrlの存在で判定
+                    isXLinked: hasXLinkedName,
+                    // 表示名：X連携済みならxDisplayName、未連携ならdisplayName
+                    displayName: hasXLinkedName ? (entry.xDisplayName || entry.displayName) : entry.displayName,
+                    xDisplayName: entry.xDisplayName,
+                    xProfileImageUrl: entry.xProfileImageUrl
                 };
             });
             
