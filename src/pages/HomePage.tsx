@@ -322,8 +322,8 @@ const HomePage: React.FC = () => {
     const notices: Notice[] = [
         {
             id: '1',
-            date: '08.30',
-            title: 'ハントレをリリースしました！',
+            date: '09.05',
+            title: 'いくつかの不具合を修正しました',
             type: 'event'
         },
         {

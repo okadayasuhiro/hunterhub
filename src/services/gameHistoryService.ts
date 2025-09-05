@@ -109,7 +109,18 @@ export class GameHistoryService {
         variables: { input }
       });
 
-      console.log(`✅ ${gameType} game history saved to cloud:`, result);
+      try {
+        const created = (result as any)?.data?.createGameHistory;
+        console.log(`✅ ${gameType} game history saved to cloud:`, {
+          id: created?.id,
+          userId: created?.userId?.substring(0, 8) + '...',
+          gameType: created?.gameType,
+          score: created?.score,
+          timestamp: created?.timestamp
+        });
+      } catch {
+        console.log(`✅ ${gameType} game history saved to cloud (no-detail log)`);
+      }
 
       // ローカルストレージからも削除（移行完了）
       this.clearLocalHistory(gameType);
@@ -133,6 +144,11 @@ export class GameHistoryService {
       const userId = await this.userService.getCurrentUserId();
 
       console.log(`📖 Loading ${gameType} game history from cloud...`);
+      console.log(`🔍 GameHistory query params:`, {
+        userId: userId.substring(0, 8) + '...',
+        gameType,
+        limit
+      });
 
       // 修正: gameHistoriesByUserIdクエリを使用してuserIdでインデックス検索
       // 注意: byUserIdインデックスにSort Keyが定義されていないため、sortDirectionは使用不可
@@ -152,49 +168,118 @@ export class GameHistoryService {
       //   limit
       // });
 
-      // 🚨 緊急修正2: より安全なアプローチ - 全データ取得後にフィルタリング
-      const result = await getClient().graphql({
-        query: `
-          query ListGameHistoriesByUser($filter: ModelGameHistoryFilterInput, $limit: Int) {
-            listGameHistories(filter: $filter, limit: $limit) {
-              items {
-                id
-                userId
-                gameType
-                score
-                details
-                timestamp
-                createdAt
-                updatedAt
-                __typename
+      // 🚀 ページネーションで全件走査（first matchが先頭ページにいないケースに対応）
+      const PAGE_SIZE = 200;
+      let nextToken: string | null | undefined = undefined;
+      let scannedItems: CloudGameHistory[] = [];
+      let page = 0;
+
+      do {
+        const pageResult = await getClient().graphql({
+          query: `
+            query ListGameHistoriesByUser($filter: ModelGameHistoryFilterInput, $limit: Int, $nextToken: String) {
+              listGameHistories(filter: $filter, limit: $limit, nextToken: $nextToken) {
+                items {
+                  id
+                  userId
+                  gameType
+                  score
+                  details
+                  timestamp
+                  createdAt
+                  updatedAt
+                  __typename
+                }
+                nextToken
               }
             }
+          `,
+          variables: {
+            // サーバー側は userId だけで絞り込み、gameType はクライアント側で厳密フィルタ
+            filter: { userId: { eq: userId } },
+            limit: PAGE_SIZE,
+            nextToken
           }
-        `,
-        variables: {
-          filter: {
-            userId: { eq: userId },
-            gameType: { eq: gameType }
-          },
-          limit: 200 // 十分な数を取得
+        });
+
+        const data = (pageResult as any).data?.listGameHistories;
+        const items = (data?.items || []) as CloudGameHistory[];
+        nextToken = data?.nextToken || null;
+        scannedItems = scannedItems.concat(items);
+
+        console.log(`🔎 Page ${++page} scanned: +${items.length}, total: ${scannedItems.length}, hasNext: ${!!nextToken}`);
+
+        // 目標件数に達したら早期終了（後段でさらにgameTypeで絞ってlimit適用）
+        if (scannedItems.length >= PAGE_SIZE * 3) {
+          // セーフティブレーク（過剰クエリ防止）。必要なら閾値は調整
+          break;
         }
-      });
+      } while (nextToken);
 
-      // 🔍 詳細デバッグ: GraphQLレスポンスの生データを確認
-      const resultData = (result as any).data;
-      // console.log(`🔍 DETAILED DEBUG: GraphQL response for ${gameType}:`, {
-      //   hasData: !!resultData,
-      //   hasListGameHistories: !!resultData?.listGameHistories,
-      //   hasItems: !!resultData?.listGameHistories?.items,
-      //   rawResponse: resultData?.listGameHistories
-      // });
-
-      const allHistories = ((result as any).data?.listGameHistories?.items || []) as CloudGameHistory[];
+      // クライアント側でuserIdとgameTypeで厳密フィルタ
+      const allHistories = scannedItems;
       
-      // クライアント側でuserIdとgameTypeでフィルタリング
-      const cloudHistories = allHistories.filter(history => 
+      const cloudHistories = allHistories.filter(history =>
         history.userId === userId && history.gameType === gameType
       );
+
+      // フォールバック: 0件の場合、userIdのみで再取得して型内訳を確認
+      let effectiveHistories = cloudHistories;
+      if (effectiveHistories.length === 0) {
+        try {
+          // フォールバックもページネーションで実施
+          let fbNext: string | null | undefined = undefined;
+          let fbCollected: CloudGameHistory[] = [];
+          let fbPage = 0;
+          do {
+            const fallback = await getClient().graphql({
+              query: `
+                query ListGameHistoriesUserOnly($filter: ModelGameHistoryFilterInput, $limit: Int, $nextToken: String) {
+                  listGameHistories(filter: $filter, limit: $limit, nextToken: $nextToken) {
+                    items {
+                      id
+                      userId
+                      gameType
+                      score
+                      timestamp
+                    }
+                    nextToken
+                  }
+                }
+              `,
+              variables: {
+                filter: { userId: { eq: userId } },
+                limit: PAGE_SIZE,
+                nextToken: fbNext
+              }
+            });
+            const fbData = (fallback as any).data?.listGameHistories;
+            const fbItemsPage = (fbData?.items || []) as CloudGameHistory[];
+            fbNext = fbData?.nextToken || null;
+            fbCollected = fbCollected.concat(fbItemsPage);
+            console.log(`🔎 FB Page ${++fbPage} scanned: +${fbItemsPage.length}, total: ${fbCollected.length}, hasNext: ${!!fbNext}`);
+            if (fbCollected.length >= PAGE_SIZE * 3) break;
+          } while (fbNext);
+          const fbItems = fbCollected;
+          const byTypeCount = fbItems.reduce<Record<string, number>>((acc, cur) => {
+            const key = cur.gameType || 'unknown';
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+          }, {});
+          console.log(`🧪 Fallback check for ${gameType}:`, {
+            totalForUser: fbItems.length,
+            byTypeCount: JSON.stringify(byTypeCount),
+            sample: fbItems.slice(0, 3).map(i => ({ id: i.id, gt: i.gameType, sc: i.score, ts: i.timestamp }))
+          });
+          const fbFiltered = fbItems.filter(h => h.gameType === gameType);
+          if (fbFiltered.length > 0) {
+            console.log(`🧪 Fallback found ${fbFiltered.length} ${gameType} histories for user (using userId-only scan).`);
+            effectiveHistories = fbFiltered;
+          }
+        } catch (fbErr) {
+          console.warn(`⚠️ Fallback query failed for ${gameType}:`, fbErr);
+        }
+      }
       
       // console.log(`🔍 FILTER DEBUG: ${gameType} filtering results:`, {
       //   totalHistories: allHistories.length,
@@ -259,7 +344,7 @@ export class GameHistoryService {
       // }
       
       // DynamoDBからの結果をアプリケーション側でソート（新しい順）し、指定された件数に制限
-      const sortedHistories = cloudHistories
+      const sortedHistories = effectiveHistories
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // playedAt → timestamp
         .slice(0, limit) // 指定された件数に制限
         .map(item => JSON.parse(item.details) as T); // gameData → details

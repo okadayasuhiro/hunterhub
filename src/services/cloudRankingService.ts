@@ -513,6 +513,15 @@ export class CloudRankingService {
         isCurrentUser: topScore.userId === userId
       };
 
+      if (import.meta.env.DEV) {
+        console.log(`🏆 Top player for ${gameType}:`, {
+          userId: topPlayer.userId,
+          displayName: topPlayer.displayName,
+          score: topPlayer.score,
+          timestamp: topPlayer.timestamp
+        });
+      }
+
       const endTime = performance.now();
       if (import.meta.env.DEV) {
         console.log(`🚀 Optimized top player for ${gameType}: ${(endTime - startTime).toFixed(2)}ms`);

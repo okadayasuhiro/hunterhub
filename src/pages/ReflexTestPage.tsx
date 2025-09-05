@@ -293,38 +293,36 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             setResults(prev => [...prev, newResult]);
             setGameState('clicked');
 
+            // 最終ラウンド到達時は保存を即時実行（タイマーや離脱で失われないように）
+            if (currentRound >= MAX_TESTS) {
+                const finalResultsImmediate = [...results, newResult];
+                console.log('💾 Saving reflex history immediately (no delay)...');
+                saveGameHistory(finalResultsImmediate);
+            }
+
             nextTestTimerRef.current = setTimeout(async () => {
                 if (currentRound >= MAX_TESTS) {
-                    // 5回連続成功でゲーム完了
+                    // 5回連続成功でゲーム完了（保存はすでに実行済み）
                     const finalResults = [...results, newResult];
                     const avgTime = finalResults.reduce((sum, r) => sum + r.time, 0) / finalResults.length;
-                    
-                    // まずゲーム履歴を保存
-                    saveGameHistory(finalResults);
                     setGameState('finished');
                     setIsTestRunning(false);
                     
-                    // 少し待ってから現在スコアでの順位を取得（保存処理完了後）
+                    // 少し待ってから現在スコアでの順位を取得
                     setTimeout(async () => {
                         try {
                             console.log('Fetching current score rank after game completion...');
                             const rankingService = HybridRankingService.getInstance();
-                            
-                            // 現在のプレイスコア（DynamoDBに保存されるのと同じ形式）で順位を計算
                             const { averageSuccessTime, weightedScore } = calculateWeightedScore(finalResults);
                             console.log('Current play score (averageSuccessTime):', averageSuccessTime, 'weightedScore:', weightedScore);
-                            
                             const rankResult = await rankingService.getCurrentScoreRank('reflex', weightedScore);
                             console.log('Optimized score rank result:', rankResult);
-                            
                             if (rankResult.isTop10 && rankResult.rank) {
-                                // 10位以内の場合
                                 console.log('🏆 Top 10 rank found:', rankResult.rank, 'out of', rankResult.totalPlayers);
                                 setCurrentRank(rankResult.rank);
                                 setTotalPlayers(rankResult.totalPlayers);
-                                setRankingUpdateKey(prev => prev + 1); // ランキングテーブル更新
+                                setRankingUpdateKey(prev => prev + 1);
                             } else {
-                                // ランキング圏外の場合
                                 console.log('📍 Out of ranking:', rankResult.totalPlayers, 'total players');
                                 setCurrentRank(null);
                                 setTotalPlayers(rankResult.totalPlayers);
@@ -333,7 +331,6 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                             console.error('Failed to get current score rank:', error);
                         }
                     }, 1000);
-                    
                     navigate('/reflex/result');
                 } else {
                     setCurrentRound(prev => prev + 1);
@@ -353,9 +350,11 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
             setResults(finalResults);
             setGameState('clicked');
 
-            // フライングでゲーム終了
+            // フライング発生時も保存は即時実行
+            console.log('💾 Saving reflex history immediately (flying)...');
+            saveGameHistory(finalResults);
+            // フライングでゲーム終了（表示維持のため遅延後に遷移）
             nextTestTimerRef.current = setTimeout(() => {
-                saveGameHistory(finalResults);
                 setGameState('finished');
                 setIsTestRunning(false);
                 navigate('/reflex/result');
