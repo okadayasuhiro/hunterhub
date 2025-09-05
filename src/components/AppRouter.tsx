@@ -24,6 +24,7 @@ const TriggerTimingGamePage = lazy(() => import('../pages/TriggerTimingGamePage'
 const TriggerTimingResultPage = lazy(() => import('../pages/TriggerTimingResultPage'));
 const XCallbackPage = lazy(() => import('../pages/XCallbackPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const MyHistoryPage = lazy(() => import('../pages/MyHistoryPage'));
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -54,6 +55,9 @@ const AppRouter: React.FC = () => {
                         <Routes>
                             {/* ホームページ（即座読み込み） */}
                             <Route path="/" element={<HomePage />} />
+
+                            {/* マイ履歴ページ */}
+                            <Route path="/my/history" element={<MyHistoryPage />} />
 
                             {/* 反射神経テスト（遅延読み込み） */}
                             <Route path="/reflex" element={<Navigate to="/reflex/instructions" replace />} />
