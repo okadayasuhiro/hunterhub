@@ -175,7 +175,7 @@ export class GameHistoryService {
       let page = 0;
 
       do {
-        const pageResult = await getClient().graphql({
+        const pageResult: any = await getClient().graphql({
           query: `
             query ListGameHistoriesByUser($filter: ModelGameHistoryFilterInput, $limit: Int, $nextToken: String) {
               listGameHistories(filter: $filter, limit: $limit, nextToken: $nextToken) {
@@ -202,7 +202,7 @@ export class GameHistoryService {
           }
         });
 
-        const data = (pageResult as any).data?.listGameHistories;
+        const data: { items?: CloudGameHistory[]; nextToken?: string | null } | undefined = (pageResult as any).data?.listGameHistories;
         const items = (data?.items || []) as CloudGameHistory[];
         nextToken = data?.nextToken || null;
         scannedItems = scannedItems.concat(items);
@@ -232,7 +232,7 @@ export class GameHistoryService {
           let fbCollected: CloudGameHistory[] = [];
           let fbPage = 0;
           do {
-            const fallback = await getClient().graphql({
+            const fallback: any = await getClient().graphql({
               query: `
                 query ListGameHistoriesUserOnly($filter: ModelGameHistoryFilterInput, $limit: Int, $nextToken: String) {
                   listGameHistories(filter: $filter, limit: $limit, nextToken: $nextToken) {
@@ -253,7 +253,7 @@ export class GameHistoryService {
                 nextToken: fbNext
               }
             });
-            const fbData = (fallback as any).data?.listGameHistories;
+            const fbData: { items?: CloudGameHistory[]; nextToken?: string | null } | undefined = (fallback as any).data?.listGameHistories;
             const fbItemsPage = (fbData?.items || []) as CloudGameHistory[];
             fbNext = fbData?.nextToken || null;
             fbCollected = fbCollected.concat(fbItemsPage);
