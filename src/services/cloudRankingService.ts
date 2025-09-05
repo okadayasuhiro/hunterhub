@@ -207,21 +207,35 @@ export class CloudRankingService {
     try {
       const userId = await this.userService.getCurrentUserId();
       
-      const filter: ModelGameScoreFilterInput = {
-        gameType: { eq: gameType }
-      };
+      const filter: ModelGameScoreFilterInput = { gameType: { eq: gameType } };
 
-
-
-      const result = await this.client.graphql({
-        query: listGameScores,
-        variables: { 
-          filter
-          // limitを削除して全データを取得
+      // ページネーションで全走査（最小フィールドのみ）
+      const minimalQuery = `
+        query ListGameScoresMinimal($filter: ModelGameScoreFilterInput, $limit: Int, $nextToken: String) {
+          listGameScores(filter: $filter, limit: $limit, nextToken: $nextToken) {
+            items { userId score timestamp }
+            nextToken
+          }
         }
-      });
+      `;
 
-      const gameScores = result.data?.listGameScores?.items || [];
+      let nextToken: string | null = null;
+      const PAGE_SIZE = 2000;
+      const allScores: GameScore[] = [] as any;
+
+      do {
+        const variables: any = { filter, limit: PAGE_SIZE };
+        if (nextToken) variables.nextToken = nextToken;
+        const pageRes: any = await this.client.graphql({ query: minimalQuery, variables });
+        const items: Array<{ userId: string; score: number; timestamp: string }> = pageRes?.data?.listGameScores?.items || [];
+        nextToken = pageRes?.data?.listGameScores?.nextToken || null;
+        // 既存型に合わせて最低限のフィールドで詰める
+        for (const it of items) {
+          allScores.push({ userId: it.userId, gameType: gameType as any, score: it.score, timestamp: it.timestamp } as unknown as GameScore);
+        }
+      } while (nextToken);
+
+      const gameScores = allScores;
       
       // デバッグ: 生データの確認
       // console.log(`🔍 Debug: Raw scores count for ${gameType}:`, gameScores.length);

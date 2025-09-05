@@ -121,7 +121,8 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
     // ハンバーガーメニューが開かれた時にも統計を更新
     useEffect(() => {
         if (showHamburgerMenu) {
-            loadGameStats();
+            // メニューを開いたときだけ順位も取得（軽量・直列）
+            loadGameStats(true);
         }
     }, [showHamburgerMenu]);
 
@@ -180,65 +181,67 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
     };
 
     // トレーニング統計情報を取得
-    const loadGameStats = async () => {
-        const stats: {[key: string]: {playCount: number, rank: number | null}} = {};
-        
+    const loadGameStats = async (withRank: boolean = false) => {
+        const stats: { [key: string]: { playCount: number; rank: number | null } } = {};
+
         try {
             const currentUserId = await userService.getCurrentUserId();
-            // ハンバーガーメニュー統計情報を取得
-            
+
             for (let i = 0; i < gameLinksWithStats.length; i++) {
                 try {
                     const game = gameLinksWithStats[i];
                     if (!game || !game.showStats || !game.gameType) {
                         continue;
                     }
-                    
-                    // ランキングサービスから統計情報を取得
+
+                    // 軽量化: ヘッダーでは個人プレイ回数のみ取得（ランキング全走査は行わない）
                     const hybridRankingService = HybridRankingService.getInstance();
-                    const rankings = await hybridRankingService.getRankings(game.gameType, 1000);
-                    
-                    // 統計情報を処理
-                    
-                    // 現在ユーザーのランク情報を取得（userRankから）
-                    const userRank = rankings.userRank;
-                    
-                    // 現在ユーザーの全プレイ記録数を取得（クラウドから）
+
                     let userPlayCount = 0;
                     try {
-                        // ハンバーガーメニューでもクラウドから正確な個人プレイ回数を取得
                         userPlayCount = await hybridRankingService.getUserPlayCount(game.gameType);
                         console.log(`🔍 Header: ${game.gameType} play count from cloud:`, userPlayCount);
                     } catch (cloudError) {
                         console.error('Cloud access error, falling back to localStorage:', cloudError);
-                        // フォールバック: LocalStorageから取得
                         try {
                             const allScores = JSON.parse(localStorage.getItem('hunterhub_global_scores') || '[]');
-                            const userScores = allScores.filter((score: any) => 
+                            const userScores = allScores.filter((score: any) =>
                                 score.userId === currentUserId && score.gameType === game.gameType
                             );
                             userPlayCount = userScores.length;
-                            console.log(`🔍 Header: ${game.gameType} play count fallback from localStorage:`, userPlayCount);
+                            console.log(
+                                `🔍 Header: ${game.gameType} play count fallback from localStorage:`,
+                                userPlayCount
+                            );
                         } catch (localStorageError) {
                             console.error('LocalStorage access error:', localStorageError);
                             userPlayCount = 0;
                         }
                     }
-                    
-                    // 統計情報を保存
-                    
+
+                    // 必要時のみ、トップ10内に自分がいる場合の順位を軽量取得
+                    let rank: number | null = null;
+                    if (withRank) {
+                        try {
+                            const topResult = await hybridRankingService.getRankings(game.gameType, 10);
+                            const me = topResult.rankings.find((e: any) => e.userId === currentUserId);
+                            rank = me ? me.rank : null;
+                        } catch (rankErr) {
+                            console.warn(`Failed to load rank for ${game.gameType}:`, rankErr);
+                            rank = null;
+                        }
+                    }
+
                     stats[game.gameType] = {
                         playCount: userPlayCount,
-                        rank: userRank ? userRank.rank : null
+                        rank
                     };
                 } catch (error) {
                     console.error('Error loading game stats:', error);
-                    // エラーが発生した場合は無視して次へ
                 }
             }
         } catch (error) {
             console.error('Error getting current user ID:', error);
-            // デフォルト値を設定
             for (let i = 0; i < gameLinksWithStats.length; i++) {
                 const game = gameLinksWithStats[i];
                 if (game && game.showStats) {
@@ -246,7 +249,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                 }
             }
         }
-        
+
         setGameStats(stats);
     };
 
