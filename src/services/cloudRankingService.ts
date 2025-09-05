@@ -472,28 +472,41 @@ export class CloudRankingService {
     try {
       const userId = await this.userService.getCurrentUserId();
       
-      const filter: ModelGameScoreFilterInput = {
-        gameType: { eq: gameType }
-      };
+      const filter: ModelGameScoreFilterInput = { gameType: { eq: gameType } };
 
-      // 修正: 全データを取得して正確な1位を確保
-      const result = await this.client.graphql({
-        query: listGameScores,
-        variables: { 
-          filter
-          // limitを削除して全データを取得（1位の正確性を保証）
+      // ページネーションで全走査（最小フィールドのみ取得）
+      const minimalQuery = `
+        query ListGameScoresMinimal($filter: ModelGameScoreFilterInput, $limit: Int, $nextToken: String) {
+          listGameScores(filter: $filter, limit: $limit, nextToken: $nextToken) {
+            items { userId score timestamp }
+            nextToken
+          }
         }
-      });
+      `;
 
-      const gameScores = result.data?.listGameScores?.items || [];
-      
-      if (gameScores.length === 0) {
+      let nextToken: string | null = null;
+      let bestScoreItem: { userId: string; score: number; timestamp: string } | null = null;
+      const PAGE_SIZE = 2000; // 現状データ量を1リクエストで取得可能
+
+      do {
+        const variables: any = { filter, limit: PAGE_SIZE };
+        if (nextToken) variables.nextToken = nextToken;
+
+        const pageRes: any = await this.client.graphql({ query: minimalQuery, variables });
+        const items: Array<{ userId: string; score: number; timestamp: string }> = pageRes?.data?.listGameScores?.items || [];
+        nextToken = pageRes?.data?.listGameScores?.nextToken || null;
+
+        for (const item of items) {
+          if (!bestScoreItem || item.score < bestScoreItem.score) {
+            bestScoreItem = item;
+          }
+        }
+      } while (nextToken);
+
+      if (!bestScoreItem) {
         return null;
       }
-      
-      // スコアソート（1位のみ必要）
-      const sortedScores = this.sortScoresByGameType(gameScores as GameScore[], gameType);
-      const topScore = sortedScores[0];
+      const topScore = bestScoreItem as unknown as GameScore;
       
       if (!topScore) {
         return null;
