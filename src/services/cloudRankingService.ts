@@ -55,6 +55,41 @@ export class CloudRankingService {
   }
 
   /**
+   * 特定ユーザーの総プレイ回数を取得
+   */
+  public async getUserTotalPlayCount(userId: string, gameType: string): Promise<number> {
+    try {
+      const { generateClient } = await import('aws-amplify/api');
+      const client = generateClient();
+
+      // GameScoreテーブルから特定ユーザーのスコア数をカウント
+      const result = await client.graphql({
+        query: `
+          query ListGameScoresByUser($filter: ModelGameScoreFilterInput) {
+            listGameScores(filter: $filter, limit: 10000) {
+              items {
+                id
+              }
+            }
+          }
+        `,
+        variables: {
+          filter: {
+            userId: { eq: userId },
+            gameType: { eq: gameType }
+          }
+        }
+      });
+
+      const scores = (result as any).data?.listGameScores?.items || [];
+      return scores.length;
+    } catch (error) {
+      console.error(`❌ Failed to get user total play count for ${gameType}:`, error);
+      return 0;
+    }
+  }
+
+  /**
    * 統一されたハンター名表示を生成
    */
   private async getConsistentDisplayName(userId: string, profile?: UserProfile): Promise<string> {

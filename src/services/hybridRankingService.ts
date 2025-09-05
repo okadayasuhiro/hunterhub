@@ -325,11 +325,14 @@ export class HybridRankingService {
    */
   public async getUserPlayCount(gameType: string): Promise<number> {
     try {
-      // クラウドから現在ユーザーの全プレイ記録を取得
-      const cloudResult = await this.cloudService.getRankings(gameType, 10000);
-      // 現在ユーザーのスコア数をカウント
-      const userScores = cloudResult.rankings.filter(entry => entry.isCurrentUser);
-      return userScores.length;
+      // 🔧 修正: 直接GameScoreテーブルから現在ユーザーのプレイ回数を取得
+      const userService = await import('../services/userIdentificationService');
+      const currentUserId = await userService.UserIdentificationService.getInstance().getCurrentUserId();
+      
+      // CloudRankingServiceから直接プレイ回数を取得
+      const playCount = await this.cloudService.getUserTotalPlayCount(currentUserId, gameType);
+      console.log(`🔍 Header: ${gameType} actual play count for user:`, playCount);
+      return playCount;
     } catch (error) {
       console.error('Failed to get user play count from cloud:', error);
       return 0;
