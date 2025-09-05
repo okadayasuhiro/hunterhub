@@ -155,8 +155,8 @@ export class GameHistoryService {
       // 🚨 緊急修正2: より安全なアプローチ - 全データ取得後にフィルタリング
       const result = await getClient().graphql({
         query: `
-          query ListAllGameHistories($limit: Int) {
-            listGameHistories(limit: $limit) {
+          query ListGameHistoriesByUser($filter: ModelGameHistoryFilterInput, $limit: Int) {
+            listGameHistories(filter: $filter, limit: $limit) {
               items {
                 id
                 userId
@@ -172,6 +172,10 @@ export class GameHistoryService {
           }
         `,
         variables: {
+          filter: {
+            userId: { eq: userId },
+            gameType: { eq: gameType }
+          },
           limit: 200 // 十分な数を取得
         }
       });
