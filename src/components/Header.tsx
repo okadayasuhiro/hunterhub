@@ -317,6 +317,21 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
 
                 {/* メニュー項目 */}
                 <div className="relative z-10 flex-1 overflow-y-auto flex flex-col">
+                    {/* マイページ系セクション */}
+                    <div className="py-2 border-b border-white/20">
+                        <button
+                            onClick={() => handleGameLinkClick('/my/history')}
+                            className="w-full text-left px-6 py-3 text-white hover:bg-white/20 transition-colors duration-200 group"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="font-medium text-white group-hover:text-blue-100 transition-colors duration-200">
+                                    わたしのトレーニング履歴 β版
+                                </div>
+                                <CircleArrowRight className="w-5 h-5 text-white/80 group-hover:text-white transition-colors duration-200" />
+                            </div>
+                        </button>
+                    </div>
+
                     {/* トレーニングセクション */}
                     <div className="py-2">
 

@@ -1,11 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { GameHistoryService } from '../services/gameHistoryService';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
 import {
   ResponsiveContainer,
-  LineChart,
+  ComposedChart,
   Line,
+  Area,
+  Scatter,
   CartesianGrid,
   XAxis,
   YAxis,
@@ -18,7 +21,14 @@ type GameTab = 'reflex' | 'target' | 'sequence';
 const DAYS_30_MS = 30 * 24 * 60 * 60 * 1000;
 
 const MyHistoryPage: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<GameTab>('reflex');
+  const todayJP = useMemo(() => new Date().toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }), []);
+  const [selectedDate, setSelectedDate] = useState<string | null>(todayJP);
+
+  const handleBackToHome = () => {
+    navigate('/');
+  };
 
   const gameHistoryService = useMemo(() => GameHistoryService.getInstance(), []);
 
@@ -54,33 +64,55 @@ const MyHistoryPage: React.FC = () => {
 
   const cutoff = useMemo(() => Date.now() - DAYS_30_MS, []);
 
-  const chartData = useMemo(() => {
-    if (activeTab === 'reflex') {
-      const src = (reflexData || []).filter(h => new Date(h.date).getTime() >= cutoff);
-      // 昇順
-      src.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      // 平均反応時間(ms) → 秒
-      return src.map(h => ({
-        date: new Date(h.date).toLocaleDateString('ja-JP'),
-        value: Number((h.averageTime / 1000).toFixed(5))
-      }));
+  // 共通フォーマッタと日付整形
+  const getDecimals = (tab: GameTab) => (tab === 'reflex' ? 5 : 3);
+  const toJPDate = (isoOrDateStr: string) => new Date(isoOrDateStr).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' });
+  const metricOf = (tab: GameTab, item: any): number => {
+    if (tab === 'reflex') return (item.averageTime ?? 0) / 1000; // 秒
+    if (tab === 'target') return item.totalTime ?? 0;            // 秒
+    return item.completionTime ?? 0;                             // 秒
+  };
+
+  // 集計: 日毎に average/min/max/allRecords[] を計算
+  const { chartData, scatterData, detailedByDate } = useMemo(() => {
+    const src = activeTab === 'reflex' ? (reflexData || [])
+      : activeTab === 'target' ? (targetData || [])
+      : (sequenceData || []);
+
+    const filtered = src.filter((h: any) => new Date(h.date).getTime() >= cutoff);
+
+    const byDate: Record<string, number[]> = {};
+    const detailed: Record<string, { value: number; time: string }[]> = {};
+
+    const decimals = getDecimals(activeTab);
+
+    for (const item of filtered) {
+      const d = toJPDate(item.date);
+      const v = Number(metricOf(activeTab, item).toFixed(decimals));
+      (byDate[d] ||= []).push(v);
+      const baseTs = (item as any).__timestamp || item.date;
+      (detailed[d] ||= []).push({ value: v, time: new Date(baseTs).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Tokyo' }) });
     }
-    if (activeTab === 'target') {
-      const src = (targetData || []).filter(h => new Date(h.date).getTime() >= cutoff);
-      src.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      // 合計時間(秒)
-      return src.map(h => ({
-        date: new Date(h.date).toLocaleDateString('ja-JP'),
-        value: Number(h.totalTime.toFixed(3))
-      }));
-    }
-    const src = (sequenceData || []).filter(h => new Date(h.date).getTime() >= cutoff);
-    src.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    // 完了時間(秒)
-    return src.map(h => ({
-      date: new Date(h.date).toLocaleDateString('ja-JP'),
-      value: Number(h.completionTime.toFixed(3))
-    }));
+
+    const aggregated = Object.entries(byDate).map(([date, values]) => {
+      const sum = values.reduce((a, b) => a + b, 0);
+      const avg = values.length > 0 ? Number((sum / values.length).toFixed(decimals)) : 0;
+      const min = values.length > 0 ? Math.min(...values) : 0;
+      const max = values.length > 0 ? Math.max(...values) : 0;
+      return {
+        date,
+        average: avg,
+        min: Number(min.toFixed(decimals)),
+        range: Number((max - min).toFixed(decimals)),
+        allRecords: values.map(v => Number(v.toFixed(decimals)))
+      };
+    });
+
+    aggregated.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    const scatter = aggregated.flatMap(d => d.allRecords.map(v => ({ date: d.date, value: v })));
+
+    return { chartData: aggregated, scatterData: scatter, detailedByDate: detailed };
   }, [activeTab, reflexData, targetData, sequenceData, cutoff]);
 
   const isLoading = (activeTab === 'reflex' && loadingReflex)
@@ -93,12 +125,20 @@ const MyHistoryPage: React.FC = () => {
       ? '合計時間(秒)'
       : '完了時間(秒)';
 
+  // 詳細エリア用の選択日データ（デフォルトは今日、クリックで更新）
+  const selectedDetails = useMemo(() => {
+    const d = selectedDate;
+    const list = d ? (detailedByDate[d] || []) : [];
+    // 成績良い順（小さいほど良い）→ 値昇順、同点は時刻昇順
+    const sorted = [...list].sort((a, b) => a.value !== b.value ? a.value - b.value : a.time.localeCompare(b.time));
+    return sorted.map((r, idx) => ({ ...r, rank: idx + 1 }));
+  }, [detailedByDate, selectedDate]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">マイ履歴</h1>
-          <p className="text-gray-600 text-sm mt-1">直近30日間のプレイ推移を表示</p>
+          <h1 className="text-xl md:text-3xl font-bold text-gray-800">わたしのトレーニング履歴 β版</h1>
         </div>
 
         {/* タブ */}
@@ -120,8 +160,17 @@ const MyHistoryPage: React.FC = () => {
           ))}
         </div>
 
+        {/* 説明ブロック */}
+        <div className="mt-6 bg-white rounded-xl shadow p-4 md:p-5 text-sm text-gray-700 leading-relaxed">
+          <p className="mb-1">このグラフは直近5日の推移を表します。</p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><span className="font-medium text-blue-700">青い線</span>: その日の平均値</li>
+            <li><span className="font-medium text-sky-600">水色の帯</span>: 最小値〜最大値（ブレの幅）</li>
+          </ul>
+        </div>
+
         {/* グラフ */}
-        <div className="mt-6 bg-white rounded-xl shadow p-4 md:p-6">
+        <div className="mt-4 bg-white rounded-xl shadow p-4 md:p-6">
           {isLoading ? (
             <div className="py-16 text-center text-gray-500">読み込み中...</div>
           ) : chartData.length === 0 ? (
@@ -129,16 +178,60 @@ const MyHistoryPage: React.FC = () => {
           ) : (
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
+                <ComposedChart
+                  data={chartData}
+                  margin={{ top: 10, right: 10, bottom: 10, left: 0 }}
+                  onClick={(state: any) => {
+                    const label = state && state.activeLabel;
+                    if (label) setSelectedDate(label);
+                  }}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} label={{ value: yAxisLabel, angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }} />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} allowDuplicatedCategory={false} />
+                  <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip formatter={(v: any) => v} />
                   <Legend />
-                  <Line type="monotone" dataKey="value" name={yAxisLabel} stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
-                </LineChart>
+                  {/* 水色の帯: min〜max（minとrangeの積み上げで表現） */}
+                  <Area type="monotone" dataKey="min" stackId="range" stroke="none" fill="transparent" />
+                  <Area type="monotone" dataKey="range" stackId="range" name="範囲(min-max)" stroke="#93c5fd" fill="#93c5fd" fillOpacity={0.3} />
+                  {/* 青い線: 平均 */}
+                  <Line type="monotone" dataKey="average" name={yAxisLabel} stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
+                  {/* グレーの点: 個別記録 */}
+                  <Scatter data={scatterData} legendType="none" fill="#9ca3af" line={false} shape="circle" />
+                </ComposedChart>
               </ResponsiveContainer>
             </div>
+          )}
+        </div>
+
+        {/* 戻るボタン */}
+        <div className="text-center mt-6">
+          <button
+            onClick={handleBackToHome}
+            className="w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300"
+          >
+            戻る
+          </button>
+        </div>
+
+        {/* 詳細表示エリア */}
+        <div className="mt-4 bg-white rounded-xl shadow p-4 md:p-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm text-gray-600">詳細表示日</div>
+            <div className="text-base font-semibold text-gray-800">{selectedDate || todayJP}</div>
+          </div>
+          {selectedDetails.length === 0 ? (
+            <div className="py-4 text-center text-gray-500">この日はプレイ記録がありません</div>
+          ) : (
+            <ul className="space-y-2">
+              {selectedDetails.map((r) => (
+                <li key={`${r.time}-${r.value}`} className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700 w-24">{r.time}</span>
+                  <span className="text-gray-900 flex-1 text-right mr-4">{r.value.toFixed(getDecimals(activeTab))}</span>
+                  <span className="text-gray-500 w-16 text-right">#{r.rank}</span>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </div>

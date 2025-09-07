@@ -347,7 +347,12 @@ export class GameHistoryService {
       const sortedHistories = effectiveHistories
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // playedAt → timestamp
         .slice(0, limit) // 指定された件数に制限
-        .map(item => JSON.parse(item.details) as T); // gameData → details
+        .map(item => {
+          const parsed = JSON.parse(item.details) as any; // gameData → details
+          // 元レコードのタイムスタンプを付与（詳細表示の時刻用）
+          parsed.__timestamp = item.timestamp;
+          return parsed as T;
+        });
 
       console.log(`✅ Loaded ${sortedHistories.length} ${gameType} histories from cloud`);
       
