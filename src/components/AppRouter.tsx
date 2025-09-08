@@ -19,9 +19,7 @@ const AnimalQuizAnswerResultPage = lazy(() => import('../pages/AnimalQuizAnswerR
 const TermsPage = lazy(() => import('../pages/TermsPage'));
 const PrivacyPage = lazy(() => import('../pages/PrivacyPage'));
 const AnimalQuizResultPage = lazy(() => import('../pages/AnimalQuizResultPage'));
-const TriggerTimingInstructionsPage = lazy(() => import('../pages/TriggerTimingInstructionsPage'));
-const TriggerTimingGamePage = lazy(() => import('../pages/TriggerTimingGamePage'));
-const TriggerTimingResultPage = lazy(() => import('../pages/TriggerTimingResultPage'));
+const TriggerTimingPage = lazy(() => import('../pages/TriggerTimingPage'));
 const XCallbackPage = lazy(() => import('../pages/XCallbackPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const MyHistoryPage = lazy(() => import('../pages/MyHistoryPage'));
@@ -84,11 +82,11 @@ const AppRouter: React.FC = () => {
                             <Route path="/animal-quiz/answer-result" element={<AnimalQuizAnswerResultPage />} />
                             <Route path="/animal-quiz/result" element={<AnimalQuizResultPage />} />
 
-                            {/* トリガータイミングトレーニング（遅延読み込み） */}
+                            {/* トリガータイミングトレーニング（単一ファイル） */}
                             <Route path="/trigger-timing" element={<Navigate to="/trigger-timing/instructions" replace />} />
-                            <Route path="/trigger-timing/instructions" element={<TriggerTimingGamePage mode="instructions" />} />
-                            <Route path="/trigger-timing/game" element={<TriggerTimingGamePage mode="game" />} />
-                            <Route path="/trigger-timing/result" element={<TriggerTimingGamePage mode="result" />} />
+                            <Route path="/trigger-timing/instructions" element={<TriggerTimingPage mode="instructions" />} />
+                            <Route path="/trigger-timing/game" element={<TriggerTimingPage mode="game" />} />
+                            <Route path="/trigger-timing/result" element={<TriggerTimingPage mode="result" />} />
 
                             {/* ランキング（遅延読み込み） */}
                             <Route path="/ranking" element={<RankingPage />} />

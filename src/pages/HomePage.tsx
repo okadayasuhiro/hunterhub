@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy, Crown, Bell, Calendar } from 'lucide-react';
 import SEO from '../components/SEO';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
@@ -322,15 +322,15 @@ const HomePage: React.FC = () => {
     const notices: Notice[] = [
         {
             id: '1',
-            date: '09.05',
-            title: 'いくつかの不具合を修正しました',
+            date: '09.07',
+            title: '私のトレーニング履歴 β版を追加しました。',
             type: 'event'
         },
         {
             id: '2',
-            date: '08.31',
-            title: '新規トレーニングメニューを追加しました',
-            type: 'update'
+            date: '09.05',
+            title: 'いくつかの不具合を修正しました',
+            type: 'event'
         }
     ];
     const [lastResults, setLastResults] = useState<{
@@ -701,6 +701,18 @@ const HomePage: React.FC = () => {
 
             {/* お知らせセクション */}
             <NoticeSection notices={memoizedNotices} />
+
+            {/* わたしのトレーニング履歴 リンクブロック */}
+            <div className="py-4 px-4">
+                <div className="max-w-6xl mx-auto">
+                    <Link to="/my/history" className="block bg-white rounded-xl shadow-lg border-0 p-5 hover:shadow-xl transition flex items-center justify-between">
+                        <div>
+                            <h2 className="text-lg font-semibold text-gray-800">わたしのトレーニング履歴 β版</h2>
+                            <p className="text-sm text-gray-600 mt-1">自分のトレーニング結果をグラフで確認できます</p>
+                        </div>
+                    </Link>
+                </div>
+            </div>
 
                         {/* ゲーム選択セクション */}
             <div className="py-4 px-4">
