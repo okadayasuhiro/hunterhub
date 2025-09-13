@@ -655,8 +655,13 @@ export class UserIdentificationService {
             input: {
               id: existingProfile.id,
               // 🔧 スキーマに存在するフィールドのみ使用
+              // 解除時はusernameもハンター名に戻す
+              username: this.currentUser.hunterName,
               xDisplayName: this.currentUser.xDisplayName || null,
-              xProfileImageUrl: this.currentUser.xProfileImageUrl || null
+              xProfileImageUrl: this.currentUser.xProfileImageUrl || null,
+              // 解除時はこれらも確実にクリア
+              xUsername: this.currentUser.xUsername || null,
+              xId: this.currentUser.xId || null
               // xLinked, xLinkedAt は存在しないため削除
             }
           }

@@ -289,10 +289,13 @@ export class CloudRankingService {
    * 統一されたハンター名表示を生成
    */
   private async getConsistentDisplayName(userId: string, profile?: UserProfile): Promise<string> {
-    if (profile?.xDisplayName) {
-      return profile.xDisplayName;
+    // X連携名はxId/xUsernameとセットで有効とみなす
+    const anyProfile: any = profile as any;
+    if (anyProfile?.xDisplayName && anyProfile?.xUsername && anyProfile?.xId) {
+      return anyProfile.xDisplayName as string;
     }
-    if (profile?.username) {
+    // ハンター名パターン（数字ベース）のみをusernameとして採用
+    if (profile?.username && /^ハンター\d+$/.test(profile.username)) {
       return profile.username;
     }
     
@@ -376,6 +379,7 @@ export class CloudRankingService {
                 username
                 xDisplayName
                 xUsername
+                xId
                 xProfileImageUrl
                 createdAt
                 updatedAt
@@ -385,12 +389,11 @@ export class CloudRankingService {
         `;
         
         const result = await this.client.graphql({
-          query: getUserProfile,
-          variables: { id: userId } // 直接IDで取得
+          query: userProfileQuery,
+          variables: { userId }
         });
         
-        const profile = (result as any).data?.getUserProfile;
-        const profiles = profile ? [profile] : [];
+        const profiles = (result as any).data?.userProfilesByUserId?.items || [];
         if (profiles.length > 0) {
           return { userId, profile: profiles[0] as UserProfile };
         }
@@ -541,11 +544,11 @@ export class CloudRankingService {
         } else {
           // 🌐 他のユーザーの場合：DynamoDB UserProfileからグローバル表示情報を取得
           const userProfile = userProfiles.get(score.userId);
-          if (userProfile?.xId && userProfile?.xDisplayName) {
+          if ((userProfile as any)?.xId && (userProfile as any)?.xUsername && (userProfile as any)?.xDisplayName) {
             // X連携中の場合：X表示名を使用
             finalDisplayName = userProfile.xDisplayName;
             finalUsername = userProfile.xDisplayName;
-          } else if (userProfile?.username) {
+          } else if (userProfile?.username && /^ハンター\d+$/.test(userProfile.username)) {
             // X未連携の場合：ハンター名を表示
             finalDisplayName = userProfile.username;
             finalUsername = userProfile.username;
@@ -558,7 +561,7 @@ export class CloudRankingService {
 
         // X連携情報を取得
         const userProfile = userProfiles.get(score.userId);
-        const isXLinked = !!(userProfile?.xId && userProfile?.xUsername); // xLinked → xId+xUsername で判定
+        const isXLinked = !!((userProfile as any)?.xId && (userProfile as any)?.xUsername && (userProfile as any)?.xDisplayName);
         const xDisplayName = userProfile?.xDisplayName || undefined;
         const xProfileImageUrl = userProfile?.xProfileImageUrl || undefined;
         
