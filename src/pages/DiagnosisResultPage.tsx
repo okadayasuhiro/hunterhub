@@ -76,97 +76,97 @@ export default function DiagnosisResultPage() {
         console.log('getAnimalImagePath called with:', animalId);
         switch (animalId) {
             case 'nihon_shika':
-                return '/images/animals/nihon_shika.png';
+                return '/images/animals/nihon_shika.webp';
             case 'tsukinowaguma':
-                return '/images/animals/tsukinowaguma.png';
+                return '/images/animals/tsukinowaguma.webp';
             case 'kinkurohajiro':
-                return '/images/animals/kinkurohajiro.png';
+                return '/images/animals/kinkurohajiro.webp';
             case 'noinu':
-                return '/images/animals/noinu.png';
+                return '/images/animals/noinu.webp';
             case 'magamo':
-                return '/images/animals/magamo.png';
+                return '/images/animals/magamo.webp';
             case 'kiji':
-                return '/images/animals/kiji.png';
+                return '/images/animals/kiji.webp';
             case 'hidorigamo':
-                return '/images/animals/hidorigamo.png';
+                return '/images/animals/hidorigamo.webp';
             case 'inoshishi':
-                return '/images/animals/inoshishi.png';
+                return '/images/animals/inoshishi.webp';
             case 'nyunai_suzume':
-                return '/images/animals/nyunai_suzume.png';
+                return '/images/animals/nyunai_suzume.webp';
             case 'no_usagi':
-                return '/images/animals/no_usagi.png';
+                return '/images/animals/no_usagi.webp';
             case 'hashibuto_garasu':
-                return '/images/animals/hashibuto_garasu.png';
+                return '/images/animals/hashibuto_garasu.webp';
             case 'ten':
-                return '/images/animals/ten.png';
+                return '/images/animals/ten.webp';
             case 'hiyodori':
-                return '/images/animals/hiyodori.png';
+                return '/images/animals/hiyodori.webp';
             case 'miyamagarasu':
-                return '/images/animals/miyamagarasu.png';
+                return '/images/animals/miyamagarasu.webp';
             case 'kojukei':
-                return '/images/animals/kojukei.png';
+                return '/images/animals/kojukei.webp';
             case 'ezo_raicho':
-                return '/images/animals/ezo_raicho.png';
+                return '/images/animals/ezo_raicho.webp';
             case 'hashiboso_garasu':
-                return '/images/animals/hashiboso_garasu.png';
+                return '/images/animals/hashiboso_garasu.webp';
             case 'hoshihajiro':
-                return '/images/animals/hoshihajiro.png';
+                return '/images/animals/hoshihajiro.webp';
             case 'araiguma':
-                return '/images/animals/araiguma.png';
+                return '/images/animals/araiguma.webp';
             case 'kogamo':
-                return '/images/animals/kogamo.png';
+                return '/images/animals/kogamo.webp';
             case 'yuki_usagi':
-                return '/images/animals/yuki_usagi.png';
+                return '/images/animals/yuki_usagi.webp';
             case 'nutria':
-                return '/images/animals/nutria.png';
+                return '/images/animals/nutria.webp';
             case 'onagagamo':
-                return '/images/animals/onagagamo.png';
+                return '/images/animals/onagagamo.webp';
             case 'kurogamo':
-                return '/images/animals/kurogamo.png';
+                return '/images/animals/kurogamo.webp';
             case 'kijibato':
-                return '/images/animals/kijibato.png';
+                return '/images/animals/kijibato.webp';
             case 'higuma':
-                return '/images/animals/higuma.png';
+                return '/images/animals/higuma.webp';
             case 'taiwan_risu':
-                return '/images/animals/taiwan_risu.png';
+                return '/images/animals/taiwan_risu.webp';
             case 'itachi_male':
-                return '/images/animals/itachi_male.png';
+                return '/images/animals/itachi_male.webp';
             case 'suzugamo':
-                return '/images/animals/suzugamo.png';
+                return '/images/animals/suzugamo.webp';
             case 'yamadori':
-                return '/images/animals/yamadori.png';
+                return '/images/animals/yamadori.webp';
             case 'tanuki':
-                return '/images/animals/tanuki.png';
+                return '/images/animals/tanuki.webp';
             case 'mukudori':
-                return '/images/animals/mukudori.png';
+                return '/images/animals/mukudori.webp';
             case 'noneko':
-                return '/images/animals/noneko.png';
+                return '/images/animals/noneko.webp';
             case 'shima_risu':
-                return '/images/animals/shima_risu.png';
+                return '/images/animals/shima_risu.webp';
             case 'hakubishin':
-                return '/images/animals/hakubishin.png';
+                return '/images/animals/hakubishin.webp';
             case 'anaguma':
-                return '/images/animals/anaguma.png';
+                return '/images/animals/anaguma.webp';
             case 'yoshigamo':
-                return '/images/animals/yoshigamo.png';
+                return '/images/animals/yoshigamo.webp';
             case 'suzume':
-                return '/images/animals/suzume.png';
+                return '/images/animals/suzume.webp';
             case 'siberia_itachi':
-                return '/images/animals/siberia_itachi.png';
+                return '/images/animals/siberia_itachi.webp';
             case 'yamashigi':
-                return '/images/animals/yamashigi.png';
+                return '/images/animals/yamashigi.webp';
             case 'tashigi':
-                return '/images/animals/tashigi.png';
+                return '/images/animals/tashigi.webp';
             case 'kitsune':
-                return '/images/animals/kitsune.png';
+                return '/images/animals/kitsune.webp';
             case 'mink':
-                return '/images/animals/mink.png';
+                return '/images/animals/mink.webp';
             case 'karugamo':
-                return '/images/animals/karugamo.png';
+                return '/images/animals/karugamo.webp';
             case 'hashibirogamo':
-                return '/images/animals/hashibirogamo.png';
+                return '/images/animals/hashibirogamo.webp';
             case 'kawau':
-                return '/images/animals/kawau.png';
+                return '/images/animals/kawau.webp';
             default:
                 return '/images/animals/default.png';
         }

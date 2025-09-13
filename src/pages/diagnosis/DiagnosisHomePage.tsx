@@ -26,22 +26,22 @@ export default function DiagnosisHomePage() {
     const sampleAnimals = [
         {
             name: 'タヌキ',
-            image: '/images/animals/tanuki.png',
+            image: '/images/animals/tanuki.webp',
             catchphrase: 'トリックスターの化け上手'
         },
         {
             name: 'キツネ',
-            image: '/images/animals/kitsune.png',
+            image: '/images/animals/kitsune.webp',
             catchphrase: 'クールで狡猾な情報屋'
         },
         {
             name: 'ヒグマ',
-            image: '/images/animals/higuma.png',
+            image: '/images/animals/higuma.webp',
             catchphrase: '圧倒的暴君・森の支配者'
         },
         {
             name: 'マガモ',
-            image: '/images/animals/magamo.png',
+            image: '/images/animals/magamo.webp',
             catchphrase: '汎用性高い戦略家'
         }
     ];

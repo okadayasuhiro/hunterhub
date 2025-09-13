@@ -101,7 +101,7 @@ const DiagnosisGalleryPage: React.FC = () => {
                                         <div className="absolute w-3/4 h-3/4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full"></div>
                                         {/* 動物画像 */}
                                         <img
-                                            src={`/images/animals/${animal.id}.png`}
+                                            src={`/images/animals/${animal.id}.webp`}
                                             alt={animal.name}
                                             className="w-1/2 h-1/2 object-cover transition-transform duration-300 hover:scale-110 relative z-10"
                                             onError={(e) => {
