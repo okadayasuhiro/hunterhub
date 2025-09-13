@@ -401,7 +401,8 @@ const HomePage: React.FC = () => {
         staleTime: 5 * 60 * 1000, // 5分間キャッシュ
         gcTime: 10 * 60 * 1000, // 10分間保持
         retry: 2,
-        refetchOnWindowFocus: false
+        refetchOnWindowFocus: false,
+        enabled: false // 二重取得を回避（手書き取得を優先）
     });
 
     // 本番最適化: DEV環境のみログ出力
@@ -492,8 +493,7 @@ const HomePage: React.FC = () => {
             const startTime = performance.now();
             try {
                 
-                // 初回ロード時にLocalStorageからクラウドへ移行
-                await gameHistoryService.migrateLocalToCloud();
+                // 最上位の初期マイグレーションで実行済みのため二重実行を避ける
 
                 // 反射神経テストの最新記録
                 const reflexLatest = await gameHistoryService.getLatestGameHistory<ReflexGameHistory>('reflex');
@@ -833,10 +833,7 @@ const HomePage: React.FC = () => {
                             playCount={playCounts[gameCardConfigs[1].gameType]}
                             topPlayer={topPlayers[gameCardConfigs[1].gameType]}
                         />
-                    </div>
-                    
-                    {/* 2行目: カウントアップ・トレーニング */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                        {/* カウントアップ・トレーニング */}
                         <GameCard
                             key={gameCardConfigs[2].gameType}
                             title={gameCardConfigs[2].title}
@@ -848,7 +845,6 @@ const HomePage: React.FC = () => {
                             playCount={playCounts[gameCardConfigs[2].gameType]}
                             topPlayer={topPlayers[gameCardConfigs[2].gameType]}
                         />
-                        
                         {/* 狩猟鳥獣クイズ */}
                         <GameCard
                             title="狩猟鳥獣クイズ（獣類）"
