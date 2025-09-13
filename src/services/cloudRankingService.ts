@@ -523,14 +523,14 @@ export class CloudRankingService {
       // ランキング形式に変換
       const rankings: CloudRankingEntry[] = await Promise.all(sortedScores.slice(0, limit).map(async (score, index) => {
         let finalDisplayName = `ユーザー${score.userId.substring(0, 6)}`;
-        let finalUsername = undefined;
+        let finalUsername: string | undefined = undefined;
 
         // 現在ユーザーの場合はUserService（LocalStorage）を最優先
         if (score.userId === userId) {
           if (currentUserXLinked && currentUserXDisplayName) {
             if (!currentUserXDisplayName.startsWith('ハンター')) {
               finalDisplayName = currentUserXDisplayName;
-              finalUsername = currentUserXDisplayName;
+              finalUsername = currentUserXDisplayName || undefined;
             }
           } else {
             // X連携解除時はUserServiceからハンター名を取得
@@ -544,15 +544,23 @@ export class CloudRankingService {
         } else {
           // 🌐 他のユーザーの場合：DynamoDB UserProfileからグローバル表示情報を取得
           const userProfile = userProfiles.get(score.userId);
-          if ((userProfile as any)?.xId && (userProfile as any)?.xUsername && (userProfile as any)?.xDisplayName) {
+          if (userProfile && (userProfile as any).xId && (userProfile as any).xUsername && (userProfile as any).xDisplayName) {
             // X連携中の場合：X表示名を使用
-            finalDisplayName = userProfile.xDisplayName;
-            finalUsername = userProfile.xDisplayName;
-          } else if (userProfile?.username && /^ハンター\d+$/.test(userProfile.username)) {
-            // X未連携の場合：ハンター名を表示
-            finalDisplayName = userProfile.username;
-            finalUsername = userProfile.username;
+            finalDisplayName = (userProfile as any).xDisplayName as string;
+            finalUsername = (userProfile as any).xDisplayName as string;
+          } else if (userProfile && userProfile.username) {
+            const un = userProfile.username;
+            if (un && /^ハンター\d+$/.test(un)) {
+              // X未連携の場合：ハンター名を表示
+              finalDisplayName = un;
+              finalUsername = un;
+            } else {
+              // ユーザー名が任意文字列の場合は採用せずフォールバック
+              finalDisplayName = await this.getConsistentDisplayName(score.userId);
+              finalUsername = finalDisplayName;
+            }
           } else {
+            // X未連携の場合：ハンター名を表示
             // UserProfileが見つからない場合：統一されたハンター名生成
             finalDisplayName = await this.getConsistentDisplayName(score.userId);
             finalUsername = finalDisplayName;
@@ -561,7 +569,7 @@ export class CloudRankingService {
 
         // X連携情報を取得
         const userProfile = userProfiles.get(score.userId);
-        const isXLinked = !!((userProfile as any)?.xId && (userProfile as any)?.xUsername && (userProfile as any)?.xDisplayName);
+        const isXLinked = !!(userProfile && (userProfile as any).xId && (userProfile as any).xUsername && (userProfile as any).xDisplayName);
         const xDisplayName = userProfile?.xDisplayName || undefined;
         const xProfileImageUrl = userProfile?.xProfileImageUrl || undefined;
         
