@@ -169,10 +169,11 @@ export class GameHistoryService {
       // });
 
       // 🚀 ページネーションで全件走査（first matchが先頭ページにいないケースに対応）
-      const PAGE_SIZE = 200;
+      const PAGE_SIZE = 50; // 小さめにして往復回数を抑制
       let nextToken: string | null | undefined = undefined;
       let scannedItems: CloudGameHistory[] = [];
       let page = 0;
+      const targetCount = Math.max(1, Math.min(50, limit)); // 取得必要数（上限50）
 
       do {
         const pageResult: any = await getClient().graphql({
@@ -209,8 +210,14 @@ export class GameHistoryService {
 
         console.log(`🔎 Page ${++page} scanned: +${items.length}, total: ${scannedItems.length}, hasNext: ${!!nextToken}`);
 
+        // 早期終了: 目的のgameTypeの件数が必要数に達したら終了
+        const foundForType = scannedItems.filter(h => h.userId === userId && h.gameType === gameType).length;
+        if (foundForType >= targetCount) {
+          break;
+        }
+
         // 目標件数に達したら早期終了（後段でさらにgameTypeで絞ってlimit適用）
-        if (scannedItems.length >= PAGE_SIZE * 3) {
+        if (scannedItems.length >= PAGE_SIZE * 2) {
           // セーフティブレーク（過剰クエリ防止）。必要なら閾値は調整
           break;
         }
@@ -258,7 +265,10 @@ export class GameHistoryService {
             fbNext = fbData?.nextToken || null;
             fbCollected = fbCollected.concat(fbItemsPage);
             console.log(`🔎 FB Page ${++fbPage} scanned: +${fbItemsPage.length}, total: ${fbCollected.length}, hasNext: ${!!fbNext}`);
-            if (fbCollected.length >= PAGE_SIZE * 3) break;
+            // 早期終了: 目的件数が集まったら終了
+            const fbFound = fbCollected.filter(h => h.gameType === gameType).length;
+            if (fbFound >= targetCount) break;
+            if (fbCollected.length >= PAGE_SIZE * 2) break;
           } while (fbNext);
           const fbItems = fbCollected;
           const byTypeCount = fbItems.reduce<Record<string, number>>((acc, cur) => {
