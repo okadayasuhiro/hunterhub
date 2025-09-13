@@ -383,7 +383,7 @@ export class GameHistoryService {
    * 最新のゲーム履歴を取得（最適化版）
    */
   public async getLatestGameHistory<T extends GameHistoryData>(
-    gameType: 'reflex' | 'target' | 'sequence'
+    gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing'
   ): Promise<T | null> {
     // 最適化: 最新1件のみ取得（limit=1）
     const histories = await this.getGameHistory<T>(gameType, 1);
