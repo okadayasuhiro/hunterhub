@@ -190,7 +190,7 @@ const TriggerTimingGamePage: React.FC<TriggerTimingGamePageProps> = ({ mode }) =
       <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-indigo-50 p-4">
         <div className="max-w-md mx-auto">
           <div className="bg-white rounded-lg shadow p-6">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">射撃タイミング・トレーニング</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">トリガータイミング・トレーニング</h1>
             <p className="text-gray-600 mb-6">中央の目印に向かってくる円を、最も良いタイミングで停止させよう。5ラウンドの合計点で勝負。</p>
             <button onClick={() => navigate('/trigger-timing/game')} className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg">トレーニング開始</button>
             <button onClick={() => navigate('/')} className="w-1/2 mx-auto block mt-3 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 rounded-lg">戻る</button>

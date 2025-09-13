@@ -148,6 +148,14 @@ export class HybridRankingService {
   }
 
   /**
+   * 週間ランキング（暫定: 時間範囲ベース）
+   */
+  public async getWeeklyRankings(gameType: string, limit: number = 10): Promise<RankingData> {
+    // 一時措置: 総合ランキングにフォールバック
+    return this.getRankings(gameType, limit);
+  }
+
+  /**
    * 特定スコアでの順位を計算（結果画面用）- 最適化版
    */
   public async getCurrentScoreRank(gameType: string, currentScore: number): Promise<OptimizedScoreRankResult> {
@@ -174,6 +182,7 @@ export class HybridRankingService {
     reflex: RankingEntry | null;
     target: RankingEntry | null;
     sequence: RankingEntry | null;
+    triggerTiming?: RankingEntry | null;
   }> {
     console.log('🏅 Fetching all cloud top players...');
 
@@ -184,7 +193,8 @@ export class HybridRankingService {
       return {
         reflex: cloudTopPlayers.reflex ? this.convertCloudEntryToLocal(cloudTopPlayers.reflex) : null,
         target: cloudTopPlayers.target ? this.convertCloudEntryToLocal(cloudTopPlayers.target) : null,
-        sequence: cloudTopPlayers.sequence ? this.convertCloudEntryToLocal(cloudTopPlayers.sequence) : null
+        sequence: cloudTopPlayers.sequence ? this.convertCloudEntryToLocal(cloudTopPlayers.sequence) : null,
+        triggerTiming: (cloudTopPlayers as any).triggerTiming ? this.convertCloudEntryToLocal((cloudTopPlayers as any).triggerTiming) : null
       };
     } catch (error) {
       console.error('❌ Cloud top players fetch failed:', error);
@@ -200,6 +210,7 @@ export class HybridRankingService {
     reflex: RankingEntry | null;
     target: RankingEntry | null;
     sequence: RankingEntry | null;
+    triggerTiming?: RankingEntry | null;
   }> {
     if (import.meta.env.DEV) {
       console.log('🚀 Fetching optimized cloud top players...');
@@ -215,7 +226,8 @@ export class HybridRankingService {
       return {
         reflex: cloudTopPlayers.reflex ? this.convertCloudEntryToLocal(cloudTopPlayers.reflex) : null,
         target: cloudTopPlayers.target ? this.convertCloudEntryToLocal(cloudTopPlayers.target) : null,
-        sequence: cloudTopPlayers.sequence ? this.convertCloudEntryToLocal(cloudTopPlayers.sequence) : null
+        sequence: cloudTopPlayers.sequence ? this.convertCloudEntryToLocal(cloudTopPlayers.sequence) : null,
+        triggerTiming: (cloudTopPlayers as any).triggerTiming ? this.convertCloudEntryToLocal((cloudTopPlayers as any).triggerTiming) : null
       };
     } catch (error) {
       console.error('❌ Optimized cloud top players fetch failed:', error);

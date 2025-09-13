@@ -16,6 +16,7 @@ import type {
   ModelUserProfileFilterInput
 } from '../API';
 import { UserIdentificationService } from './userIdentificationService';
+import { getCurrentWeekInfoTokyo, getCurrentWeekRangeTokyo } from '../utils/week';
 
 export interface CloudRankingEntry {
   rank: number;
@@ -42,6 +43,9 @@ export class CloudRankingService {
   private static instance: CloudRankingService;
   private client = generateClient();
   private userService: UserIdentificationService;
+  // 週次フィールド対応の検出キャッシュ
+  private static weeklySupportChecked: boolean = false;
+  private static weeklySupported: boolean = false;
 
   private constructor() {
     this.userService = UserIdentificationService.getInstance();
@@ -52,6 +56,198 @@ export class CloudRankingService {
       CloudRankingService.instance = new CloudRankingService();
     }
     return CloudRankingService.instance;
+  }
+
+  /**
+   * 週次フィールド（weekKey/sortScore）をスキーマがサポートしているか軽量検出
+   */
+  private async checkWeeklySupport(): Promise<boolean> {
+    if (CloudRankingService.weeklySupportChecked) {
+      return CloudRankingService.weeklySupported;
+    }
+    try {
+      const probeQuery = `
+        query ProbeWeeklyFields($limit: Int) {
+          listGameScores(limit: $limit) {
+            items { id weekKey sortScore }
+          }
+        }
+      `;
+      const res: any = await this.client.graphql({ query: probeQuery, variables: { limit: 1 } });
+      const items = res?.data?.listGameScores?.items;
+      CloudRankingService.weeklySupported = Array.isArray(items);
+    } catch (err) {
+      CloudRankingService.weeklySupported = false;
+    } finally {
+      CloudRankingService.weeklySupportChecked = true;
+    }
+    return CloudRankingService.weeklySupported;
+  }
+
+  /**
+   * 週間ランキング（暫定: weekKey未導入でも時間範囲で抽出）
+   * - スキーマに weekKey/sortScore があればGSI移行予定
+   */
+  public async getWeeklyRankings(gameType: string, limit: number = 10): Promise<CloudRankingResult> {
+    try {
+      const userId = await this.userService.getCurrentUserId();
+      const { startISO, endExclusiveISO } = getCurrentWeekRangeTokyo();
+
+      // 週範囲で時間フィルタ
+      const filter: ModelGameScoreFilterInput = {
+        gameType: { eq: gameType },
+        timestamp: { between: [startISO, endExclusiveISO] }
+      } as any;
+
+      const minimalQuery = `
+        query ListGameScoresWeekly($filter: ModelGameScoreFilterInput, $limit: Int, $nextToken: String) {
+          listGameScores(filter: $filter, limit: $limit, nextToken: $nextToken) {
+            items { userId score timestamp }
+            nextToken
+          }
+        }
+      `;
+
+      let nextToken: string | null = null;
+      const PAGE_SIZE = 2000;
+      const allScores: GameScore[] = [] as any;
+
+      do {
+        const variables: any = { filter, limit: PAGE_SIZE };
+        if (nextToken) variables.nextToken = nextToken;
+        const pageRes: any = await this.client.graphql({ query: minimalQuery, variables });
+        const items: Array<{ userId: string; score: number; timestamp: string }> = pageRes?.data?.listGameScores?.items || [];
+        nextToken = pageRes?.data?.listGameScores?.nextToken || null;
+        for (const it of items) {
+          allScores.push({ userId: it.userId, gameType: gameType as any, score: it.score, timestamp: it.timestamp } as unknown as GameScore);
+        }
+      } while (nextToken);
+
+      const sortedScores = this.sortScoresByGameType(allScores as GameScore[], gameType);
+      const userIds = sortedScores.slice(0, limit).map(s => s.userId);
+      const userProfiles = await this.getUserProfiles(userIds);
+
+      const rankings: CloudRankingEntry[] = await Promise.all(sortedScores.slice(0, limit).map(async (score, index) => {
+        const profile = userProfiles.get(score.userId);
+        const displayName = await this.getConsistentDisplayName(score.userId, profile);
+        return {
+          rank: index + 1,
+          userId: score.userId,
+          username: profile?.username || undefined,
+          displayName,
+          score: score.score,
+          timestamp: score.timestamp,
+          isCurrentUser: score.userId === userId,
+          xLinked: !!(profile?.xId && profile?.xUsername),
+          xDisplayName: profile?.xDisplayName || undefined,
+          xProfileImageUrl: profile?.xProfileImageUrl || undefined
+        };
+      }));
+
+      const totalPlayers = new Set(allScores.map(s => s.userId)).size;
+      return {
+        rankings,
+        userRank: rankings.find(r => r.isCurrentUser) || null,
+        totalPlayers,
+        totalCount: allScores.length,
+        lastUpdated: new Date().toISOString()
+      };
+
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.warn(`⚠️ Weekly ranking fetch failed for ${gameType}:`, error);
+      }
+      return {
+        rankings: [],
+        userRank: null,
+        totalPlayers: 0,
+        totalCount: 0,
+        lastUpdated: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
+   * 週間ランキング（GSI利用）
+   * スキーマに gameScoresByGameWeek が存在しない場合は例外→呼び出し側でフォールバック。
+   */
+  public async getWeeklyRankingsIndexed(gameType: string, limit: number = 10): Promise<CloudRankingResult> {
+    const userId = await this.userService.getCurrentUserId();
+    const weekKey = this.getCurrentWeekKey();
+    const gameWeekKey = `${gameType}#${weekKey}`;
+
+    // GSIクエリ（@index想定）
+    const query = `
+      query GameScoresByGameWeek($gameWeekKey: String!, $limit: Int, $nextToken: String) {
+        gameScoresByGameWeek(gameWeekKey: $gameWeekKey, limit: $limit, nextToken: $nextToken) {
+          items { userId score timestamp }
+          nextToken
+        }
+      }
+    `;
+
+    let nextToken: string | null = null;
+    const PAGE_SIZE = 1000;
+    const allScores: GameScore[] = [] as any;
+
+    do {
+      const variables: any = { gameWeekKey, limit: Math.min(PAGE_SIZE, limit * 50), nextToken };
+      const res: any = await this.client.graphql({ query, variables });
+      const items: Array<{ userId: string; score: number; timestamp: string }> = res?.data?.gameScoresByGameWeek?.items || [];
+      nextToken = res?.data?.gameScoresByGameWeek?.nextToken || null;
+      for (const it of items) {
+        allScores.push({ userId: it.userId, gameType: gameType as any, score: it.score, timestamp: it.timestamp } as unknown as GameScore);
+      }
+    } while (nextToken);
+
+    const sortedScores = this.sortScoresByGameType(allScores as GameScore[], gameType);
+    const userIds = sortedScores.slice(0, limit).map(s => s.userId);
+    const userProfiles = await this.getUserProfiles(userIds);
+
+    const rankings: CloudRankingEntry[] = await Promise.all(sortedScores.slice(0, limit).map(async (score, index) => {
+      const profile = userProfiles.get(score.userId);
+      const displayName = await this.getConsistentDisplayName(score.userId, profile);
+      return {
+        rank: index + 1,
+        userId: score.userId,
+        username: profile?.username || undefined,
+        displayName,
+        score: score.score,
+        timestamp: score.timestamp,
+        isCurrentUser: score.userId === userId,
+        xLinked: !!(profile?.xId && profile?.xUsername),
+        xDisplayName: profile?.xDisplayName || undefined,
+        xProfileImageUrl: profile?.xProfileImageUrl || undefined
+      };
+    }));
+
+    const totalPlayers = new Set(allScores.map(s => s.userId)).size;
+    return {
+      rankings,
+      userRank: rankings.find(r => r.isCurrentUser) || null,
+      totalPlayers,
+      totalCount: allScores.length,
+      lastUpdated: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 現在のISO週（東京）の weekKey を生成（例: 2025-37）
+   */
+  private getCurrentWeekKey(): string {
+    const wk = getCurrentWeekInfoTokyo();
+    const weekStr = String(wk.week).padStart(2, '0');
+    return `${wk.year}-${weekStr}`;
+  }
+
+  /**
+   * sortScore をゲームタイプごとに正規化
+   * - trigger-timing: 大きいほど上位 → 降順対応のため -score
+   * - その他（時間系）: 小さいほど上位 → そのまま
+   */
+  private normalizeSortScore(gameType: string, score: number): number {
+    if (gameType === 'trigger-timing') return -score;
+    return score;
   }
 
   /**
@@ -125,12 +321,31 @@ export class CloudRankingService {
         // displayName
       };
 
-      console.log('🌐 Submitting score to cloud:', input);
-      
-      const result = await this.client.graphql({
-        query: createGameScore,
-        variables: { input }
-      });
+      // 週次フィールド（weekKey/sortScore）対応がある場合は付与して送信。
+      // 未対応環境では安全にベースのmutationへフォールバック。
+      const weeklySupported = await this.checkWeeklySupport();
+      if (weeklySupported) {
+        const weekKey = this.getCurrentWeekKey();
+        const sortScore = this.normalizeSortScore(gameType, score);
+        const gameWeekKey = `${gameType}#${weekKey}`;
+        const extendedInput = { ...(input as any), weekKey, sortScore, gameWeekKey };
+        console.log('🌐 Submitting score to cloud (weekly):', extendedInput);
+        try {
+          // createGameScore は拡張後のスキーマでも同名で生成される想定。念のため生クエリで送信。
+          const mutation = `
+            mutation CreateGameScoreWeekly($input: CreateGameScoreInput!) {
+              createGameScore(input: $input) { id }
+            }
+          `;
+          await this.client.graphql({ query: mutation, variables: { input: extendedInput } });
+        } catch (err) {
+          console.warn('⚠️ Weekly fields mutation failed. Fallback to base mutation.');
+          await this.client.graphql({ query: createGameScore, variables: { input } });
+        }
+      } else {
+        console.log('🌐 Submitting score to cloud:', input);
+        await this.client.graphql({ query: createGameScore, variables: { input } });
+      }
 
 
 
@@ -431,12 +646,19 @@ export class CloudRankingService {
 
       const gameScores = result.data?.listGameScores?.items || [];
       
-      // 全スコアから現在スコアより良いスコアの数を数える
-      const betterScoresCount = gameScores.filter(score => score.score < currentScore).length;
+      // 全スコアから現在スコアより良いスコアの数を数える（ゲームタイプ別）
+      const betterScoresCount = gameScores.filter(score => {
+        if (gameType === 'trigger-timing') {
+          // Trigger Timing: スコアが大きいほど良い
+          return score.score > currentScore;
+        }
+        // それ以外（時間系）: スコアが小さいほど良い
+        return score.score < currentScore;
+      }).length;
       
       // 順位は「自分より良いスコア数 + 1」
       const rank = betterScoresCount + 1;
-      // 総順位数：全スコア数 + 現在のスコア（1つ）
+      // 総順位数：全スコア数
       const totalPlayers = gameScores.length;
       
       // 詳細デバッグ: 現在スコア周辺のスコアを確認
@@ -511,8 +733,16 @@ export class CloudRankingService {
         nextToken = pageRes?.data?.listGameScores?.nextToken || null;
 
         for (const item of items) {
-          if (!bestScoreItem || item.score < bestScoreItem.score) {
-            bestScoreItem = item;
+          if (gameType === 'trigger-timing') {
+            // 大きいほど良い
+            if (!bestScoreItem || item.score > bestScoreItem.score) {
+              bestScoreItem = item;
+            }
+          } else {
+            // 小さいほど良い（時間系）
+            if (!bestScoreItem || item.score < bestScoreItem.score) {
+              bestScoreItem = item;
+            }
           }
         }
       } while (nextToken);
@@ -572,18 +802,20 @@ export class CloudRankingService {
     reflex: CloudRankingEntry | null;
     target: CloudRankingEntry | null;
     sequence: CloudRankingEntry | null;
+    triggerTiming?: CloudRankingEntry | null;
   }> {
     try {
-      const [reflex, target, sequence] = await Promise.all([
+      const [reflex, target, sequence, triggerTiming] = await Promise.all([
         this.getTopPlayer('reflex'),
         this.getTopPlayer('target'),
-        this.getTopPlayer('sequence')
+        this.getTopPlayer('sequence'),
+        this.getTopPlayer('trigger-timing')
       ]);
 
-      return { reflex, target, sequence };
+      return { reflex, target, sequence, triggerTiming };
     } catch (error) {
       console.error('❌ Failed to fetch all top players:', error);
-      return { reflex: null, target: null, sequence: null };
+      return { reflex: null, target: null, sequence: null, triggerTiming: null };
     }
   }
 
@@ -595,14 +827,16 @@ export class CloudRankingService {
     reflex: CloudRankingEntry | null;
     target: CloudRankingEntry | null;
     sequence: CloudRankingEntry | null;
+    triggerTiming?: CloudRankingEntry | null;
   }> {
     const startTime = performance.now();
     
     try {
-      const [reflex, target, sequence] = await Promise.all([
+      const [reflex, target, sequence, triggerTiming] = await Promise.all([
         this.getTopPlayerOptimized('reflex'),
         this.getTopPlayerOptimized('target'),
-        this.getTopPlayerOptimized('sequence')
+        this.getTopPlayerOptimized('sequence'),
+        this.getTopPlayerOptimized('trigger-timing')
       ]);
 
       const endTime = performance.now();
@@ -610,10 +844,10 @@ export class CloudRankingService {
         console.log(`🚀 Optimized all top players: ${(endTime - startTime).toFixed(2)}ms`);
       }
 
-      return { reflex, target, sequence };
+      return { reflex, target, sequence, triggerTiming };
     } catch (error) {
       console.error('❌ Failed to fetch optimized all top players:', error);
-      return { reflex: null, target: null, sequence: null };
+      return { reflex: null, target: null, sequence: null, triggerTiming: null };
     }
   }
 
@@ -714,8 +948,11 @@ export class CloudRankingService {
    */
   private sortScoresByGameType(scores: GameScore[], gameType: string): GameScore[] {
     return scores.sort((a, b) => {
-      // reflex, target, sequence: 全て小さいほど良い（ミリ秒）
-      // sequence も完了時間なので小さいほど良い
+      // trigger-timing: 大きいほど良い（ポイント）
+      if (gameType === 'trigger-timing') {
+        return b.score - a.score; // 降順（大きいほど良い）
+      }
+      // reflex, target, sequence: 小さいほど良い（時間系）
       return a.score - b.score; // 昇順（小さいほど良い）
     });
   }
@@ -920,7 +1157,7 @@ export class CloudRankingService {
       // 3. 10位以内判定
       if (top10Result.rankings.length < 10) {
         // 全体で10人未満の場合
-        const exactRank = this.calculateExactRank(currentScore, top10Result.rankings);
+        const exactRank = this.calculateExactRank(currentScore, top10Result.rankings, gameType);
         console.log(`✅ Small pool rank: ${exactRank}/${totalPlayers}`);
         return {
           rank: exactRank,
@@ -933,9 +1170,13 @@ export class CloudRankingService {
       const top10Threshold = top10Result.rankings[9].score; // 10位のスコア
       console.log(`🎯 10th place threshold: ${top10Threshold}, current: ${currentScore}`);
       
-      if (currentScore <= top10Threshold) {
+      const isTop10 = gameType === 'trigger-timing'
+        ? currentScore >= top10Threshold // 大きいほど上位
+        : currentScore <= top10Threshold; // 小さいほど上位
+
+      if (isTop10) {
         // 10位以内の場合
-        const exactRank = this.calculateExactRank(currentScore, top10Result.rankings);
+        const exactRank = this.calculateExactRank(currentScore, top10Result.rankings, gameType);
         console.log(`✅ Top 10 rank: ${exactRank}/${totalPlayers}`);
         return {
           rank: exactRank,
@@ -967,9 +1208,16 @@ export class CloudRankingService {
   /**
    * 上位10件内での正確な順位を計算
    */
-  private calculateExactRank(currentScore: number, topRankings: CloudRankingEntry[]): number {
-    // 現在スコアより良いスコアの数を数える
-    const betterScoresCount = topRankings.filter(entry => entry.score < currentScore).length;
+  private calculateExactRank(currentScore: number, topRankings: CloudRankingEntry[], gameType: string): number {
+    // 現在スコアより良いスコアの数を数える（ゲームタイプ別）
+    const betterScoresCount = topRankings.filter(entry => {
+      if (gameType === 'trigger-timing') {
+        // 大きいほど上位
+        return entry.score > currentScore;
+      }
+      // 小さいほど上位
+      return entry.score < currentScore;
+    }).length;
     const rank = betterScoresCount + 1;
     console.log(`🔢 Exact rank calculation: ${betterScoresCount} better scores, rank: ${rank}`);
     return rank;

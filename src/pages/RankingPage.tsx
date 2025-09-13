@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Medal, Award, Clock, Target, Hash, User, Crown, Star } from 'lucide-react';
+import { Trophy, Medal, Award, Clock, Target, Hash, User, Crown, Star, Calendar } from 'lucide-react';
 import SEO from '../components/SEO';
 import { HybridRankingService } from '../services/hybridRankingService';
 import type { RankingData, RankingEntry } from '../services/hybridRankingService';
 import { UserIdentificationService } from '../services/userIdentificationService';
+import { getCurrentWeekInfoTokyo } from '../utils/week';
 
-type GameType = 'reflex' | 'target' | 'sequence';
+type GameType = 'reflex' | 'target' | 'sequence' | 'trigger-timing';
 
 interface GameInfo {
   id: GameType;
@@ -41,11 +42,21 @@ const GAMES: GameInfo[] = [
     unit: 's',
     description: '完了時間が短いほど上位'
   }
+  ,
+  {
+    id: 'trigger-timing',
+    name: 'トリガータイミング',
+    icon: <Target className="w-5 h-5" />,
+    color: 'bg-blue-600',
+    unit: 'pt',
+    description: '得点が高いほど上位'
+  }
 ];
 
 const RankingPage: React.FC = () => {
   const [selectedGame, setSelectedGame] = useState<GameType>('reflex');
   const [rankingData, setRankingData] = useState<RankingData | null>(null);
+  const [selectedTab, setSelectedTab] = useState<'weekly' | 'overall'>('weekly');
   const [loading, setLoading] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string>('');
 
@@ -110,9 +121,11 @@ const RankingPage: React.FC = () => {
   };
 
   const selectedGameInfo = GAMES.find(g => g.id === selectedGame);
+  const week = getCurrentWeekInfoTokyo();
+  const weekTitle = `${week.year}年 第${String(week.week).padStart(2, '0')}週`;
 
   return (
-    <div className="min-h-screen glass-light">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-indigo-50">
       <SEO 
         title="ランキング - ハントレ"
         description="ハントレの全ゲームランキングを確認。反射神経、ターゲット追跡、カウントアップの各トレーニングで上位を目指そう！"
@@ -123,13 +136,23 @@ const RankingPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         {/* ヘッダー */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2 flex items-center justify-center gap-3">
-            <Trophy className="w-10 h-10 text-yellow-500" />
+          <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-3">
+            <Trophy className="w-10 h-10 text-yellow-600" />
             ランキング
           </h1>
-          <p className="text-blue-100 text-lg">
+          <p className="text-gray-600 text-lg">
             あなたの実力を他のプレイヤーと比較してみよう！
           </p>
+          <div className="mt-4 flex items-center justify-between max-w-3xl mx-auto">
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-white bg-blue-600 rounded-full px-2 py-[2px] shadow-sm">
+              <Calendar size={12} className="text-white/90" />
+              {weekTitle}
+            </span>
+            <div className="inline-flex rounded-lg overflow-hidden border border-gray-200 bg-white">
+              <button onClick={() => setSelectedTab('weekly')} className={`${selectedTab==='weekly'?'bg-blue-600 text-white':'bg-white text-gray-700 hover:bg-gray-50'} px-4 py-2 text-sm font-medium transition-colors`}>週間</button>
+              <button onClick={() => setSelectedTab('overall')} className={`${selectedTab==='overall'?'bg-blue-600 text-white':'bg-white text-gray-700 hover:bg-gray-50'} px-4 py-2 text-sm font-medium transition-colors`}>総合</button>
+            </div>
+          </div>
         </div>
 
         {/* ゲーム選択タブ */}
@@ -138,31 +161,17 @@ const RankingPage: React.FC = () => {
             <button
               key={game.id}
               onClick={() => setSelectedGame(game.id)}
-              className={`flex items-center gap-3 px-6 py-3 rounded-lg transition-all duration-200 ${
-                selectedGame === game.id
-                  ? `${game.color} text-white shadow-lg transform scale-105`
-                  : 'glass-card text-blue-100 hover:text-white hover:scale-105'
-              }`}
+              className={`flex items-center gap-3 px-6 py-3 rounded-lg transition-all duration-200 ${selectedGame===game.id?'bg-blue-600 text-white shadow-lg transform scale-105':'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'}`}
             >
-              {game.icon}
               <span className="font-medium">{game.name}</span>
             </button>
           ))}
         </div>
 
-        {/* 選択されたゲームの説明 */}
-        {selectedGameInfo && (
-          <div className="glass-card p-4 mb-6 text-center">
-            <p className="text-blue-100">
-              <span className="font-medium text-white">{selectedGameInfo.name}</span>
-              {' - '}
-              {selectedGameInfo.description}
-            </p>
-          </div>
-        )}
+
 
         {/* ランキング表示 */}
-        <div className="glass-card p-6">
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
@@ -171,7 +180,7 @@ const RankingPage: React.FC = () => {
           ) : rankingData && rankingData.rankings.length > 0 ? (
             <>
               {/* 統計情報 */}
-              <div className="flex justify-between items-center mb-6 text-sm text-blue-200">
+              <div className="flex justify-between items-center mb-6 text-sm text-gray-500">
                 <span>総プレイヤー数: {rankingData.totalPlayers}人</span>
                 <span>最終更新: {new Date(rankingData.lastUpdated).toLocaleString('ja-JP')}</span>
               </div>
@@ -181,11 +190,7 @@ const RankingPage: React.FC = () => {
                 {rankingData.rankings.map((entry) => (
                   <div
                     key={`${entry.userId}-${entry.timestamp}`}
-                    className={`p-4 rounded-lg transition-all duration-200 ${
-                      entry.isCurrentUser
-                        ? 'bg-blue-500/30 border-2 border-blue-400 transform scale-105'
-                        : 'glass-light hover:bg-white/10'
-                    }`}
+                    className={`p-4 rounded-lg transition-all duration-200 ${entry.isCurrentUser ? 'bg-blue-50 border-2 border-blue-400' : 'bg-white border border-gray-100 hover:bg-gray-50'}`}
                   >
                     {/* デスクトップレイアウト（md以上） */}
                     <div className="hidden md:flex items-center justify-between">
@@ -193,22 +198,18 @@ const RankingPage: React.FC = () => {
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                           {getRankIcon(entry.rank)}
-                          <span className={`text-2xl font-bold ${
-                            entry.rank <= 3 ? 'text-yellow-300' : 'text-blue-200'
-                          }`}>
+                          <span className={`text-2xl font-bold ${entry.rank <= 3 ? 'text-yellow-600' : 'text-gray-700'}`}>
                             #{entry.rank}
                           </span>
                         </div>
 
                         {/* ユーザー名 */}
                         <div className="flex items-center gap-2">
-                          <User className="w-5 h-5 text-blue-300" />
-                          <span className={`font-medium ${
-                            entry.isCurrentUser ? 'text-white' : 'text-blue-100'
-                          }`}>
+                          <User className="w-5 h-5 text-gray-400" />
+                          <span className={`font-medium ${entry.isCurrentUser ? 'text-blue-900' : 'text-gray-800'}`}>
                             {entry.displayName}
                             {entry.isCurrentUser && (
-                              <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
+                              <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
                                 あなた
                               </span>
                             )}
@@ -218,12 +219,10 @@ const RankingPage: React.FC = () => {
 
                       {/* 右側: スコアと日時 */}
                       <div className="text-right">
-                        <div className={`text-xl font-bold ${
-                          entry.isCurrentUser ? 'text-white' : 'text-blue-100'
-                        }`}>
+                        <div className={`text-xl font-mono font-bold ${entry.isCurrentUser ? 'text-blue-900' : 'text-gray-900'}`}>
                           {formatScore(entry.score, selectedGame)}
                         </div>
-                        <div className="text-xs text-blue-300">
+                        <div className="text-xs text-gray-500">
                           {new Date(entry.timestamp).toLocaleDateString('ja-JP')}
                         </div>
                       </div>

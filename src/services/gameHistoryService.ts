@@ -1,7 +1,7 @@
 // ゲーム履歴管理サービス（DynamoDB + LocalStorage ハイブリッド）
 import { generateClient } from 'aws-amplify/api';
 import { Amplify } from 'aws-amplify';
-import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
+import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory, TriggerTimingHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import { UserIdentificationService } from './userIdentificationService';
 // import { gameHistoriesByUserId } from '../graphql/queries'; // 存在しないため削除
@@ -65,7 +65,7 @@ interface CloudGameHistory {
 }
 
 // ゲーム履歴の統合型
-type GameHistoryData = ReflexGameHistory | TargetTrackingHistory | SequenceGameHistory;
+type GameHistoryData = ReflexGameHistory | TargetTrackingHistory | SequenceGameHistory | TriggerTimingHistory;
 
 export class GameHistoryService {
   private static instance: GameHistoryService;
@@ -84,7 +84,7 @@ export class GameHistoryService {
    * ゲーム履歴をクラウドに保存
    */
   public async saveGameHistory<T extends GameHistoryData>(
-    gameType: 'reflex' | 'target' | 'sequence',
+    gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing',
     gameData: T
   ): Promise<void> {
     try {
@@ -137,7 +137,7 @@ export class GameHistoryService {
    * ゲーム履歴をクラウドから取得
    */
   public async getGameHistory<T extends GameHistoryData>(
-    gameType: 'reflex' | 'target' | 'sequence',
+    gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing',
     limit: number = 10
   ): Promise<T[]> {
     try {
@@ -401,7 +401,7 @@ export class GameHistoryService {
   /**
    * 特定ゲームタイプの移行
    */
-  private async migrateGameTypeToCloud(gameType: 'reflex' | 'target' | 'sequence'): Promise<void> {
+  private async migrateGameTypeToCloud(gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing'): Promise<void> {
     const localHistories = this.getFromLocalStorage<GameHistoryData>(gameType);
     
     if (localHistories.length === 0) {
@@ -430,7 +430,7 @@ export class GameHistoryService {
    * ゲーム履歴をクラウドのみに保存（移行専用：LocalStorageは削除しない）
    */
   private async saveGameHistoryToCloud<T extends GameHistoryData>(
-    gameType: 'reflex' | 'target' | 'sequence',
+    gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing',
     gameData: T
   ): Promise<void> {
     const userId = await this.userService.getCurrentUserId();
@@ -459,7 +459,7 @@ export class GameHistoryService {
    * ローカルストレージに保存（フォールバック）
    */
   private saveToLocalStorage<T extends GameHistoryData>(
-    gameType: 'reflex' | 'target' | 'sequence',
+    gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing',
     gameData: T
   ): void {
     const storageKey = this.getStorageKey(gameType);
@@ -474,7 +474,7 @@ export class GameHistoryService {
    * ローカルストレージから取得
    */
   private getFromLocalStorage<T extends GameHistoryData>(
-    gameType: 'reflex' | 'target' | 'sequence'
+    gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing'
   ): T[] {
     const storageKey = this.getStorageKey(gameType);
     const historyData = localStorage.getItem(storageKey);
@@ -492,7 +492,7 @@ export class GameHistoryService {
   /**
    * ローカルストレージをクリア
    */
-  private clearLocalHistory(gameType: 'reflex' | 'target' | 'sequence'): void {
+  private clearLocalHistory(gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing'): void {
     const storageKey = this.getStorageKey(gameType);
     localStorage.removeItem(storageKey);
     console.log(`🗑️ Cleared local ${gameType} history after cloud migration`);
@@ -501,11 +501,12 @@ export class GameHistoryService {
   /**
    * ストレージキーを取得
    */
-  private getStorageKey(gameType: 'reflex' | 'target' | 'sequence'): string {
+  private getStorageKey(gameType: 'reflex' | 'target' | 'sequence' | 'trigger-timing'): string {
     switch (gameType) {
       case 'reflex': return STORAGE_KEYS.REFLEX_HISTORY;
       case 'target': return STORAGE_KEYS.TARGET_HISTORY;
       case 'sequence': return STORAGE_KEYS.SEQUENCE_HISTORY;
+      case 'trigger-timing': return STORAGE_KEYS.TRIGGER_TIMING_HISTORY;
     }
   }
 }

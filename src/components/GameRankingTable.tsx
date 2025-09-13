@@ -257,6 +257,8 @@ const GameRankingTable: React.FC<GameRankingTableProps> = ({ gameType, limit = 1
                 return `${(score / 1000).toFixed(3)}s`;
             case 'sequence':
                 return `${(score / 1000).toFixed(3)}s`;
+            case 'trigger-timing':
+                return `${score.toFixed(3)}`;
             default:
                 return score.toString();
         }

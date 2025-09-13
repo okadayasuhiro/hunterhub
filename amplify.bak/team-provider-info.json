@@ -1,0 +1,66 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-hunterhub-dev-e104e-authRole",
+      "UnauthRoleArn": "arn:aws:iam::181851924322:role/amplify-hunterhub-dev-e104e-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::181851924322:role/amplify-hunterhub-dev-e104e-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-hunterhub-dev-e104e-deployment",
+      "UnauthRoleName": "amplify-hunterhub-dev-e104e-unauthRole",
+      "StackName": "amplify-hunterhub-dev-e104e",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:181851924322:stack/amplify-hunterhub-dev-e104e/6c72fea0-78fd-11f0-a5ce-0a8df3f2b20b",
+      "AmplifyAppId": "d202ov1d7n8aaj"
+    },
+    "categories": {
+      "api": {
+        "hunterhub": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d202ov1d7n8aaj",
+          "type": "manual"
+        }
+      },
+      "function": {
+        "hunterhubd328c7fe": {
+          "deploymentBucketName": "amplify-hunterhub-dev-e104e-deployment",
+          "s3Key": "amplify-builds/hunterhubd328c7fe-4d5645724e6d6d6f6346-build.zip"
+        }
+      }
+    }
+  },
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-hunterhub-prod-e104e-authRole",
+      "UnauthRoleArn": "arn:aws:iam::181851924322:role/amplify-hunterhub-prod-e104e-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::181851924322:role/amplify-hunterhub-prod-e104e-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-hunterhub-prod-e104e-deployment",
+      "UnauthRoleName": "amplify-hunterhub-prod-e104e-unauthRole",
+      "StackName": "amplify-hunterhub-prod-e104e",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:181851924322:stack/amplify-hunterhub-prod-e104e/6c72fea0-78fd-11f0-a5ce-0a8df3f2b20b",
+      "AmplifyAppId": "d202ov1d7n8aaj"
+    },
+    "categories": {
+      "api": {
+        "hantore": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d202ov1d7n8aaj",
+          "type": "manual"
+        }
+      },
+      "function": {
+        "hunterhubd328c7fe": {
+          "deploymentBucketName": "amplify-hunterhub-prod-e104e-deployment",
+          "s3Key": "amplify-builds/hunterhubd328c7fe-4d5645724e6d6d6f6346-build.zip"
+        },
+        "xAuthFunction": {
+          "xClientId": "VE1jYm8xdDR5RUdub0RNZXhsTXE6MTpjaQ",
+          "xClientSecret": "SyjAQ55KZ3dZL7xXv4n0cFMX81YxMMpVr-5jdBNp58p0A744pn"
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Zap, Crosshair, Hash, Target, Compass, Clock, Trophy, Crown, Bell, Calendar } from 'lucide-react';
+import { getCurrentWeekInfoTokyo } from '../utils/week';
 import SEO from '../components/SEO';
 import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
+import type { TriggerTimingHistory } from '../types/game';
 import { STORAGE_KEYS } from '../types/game';
 import { HybridRankingService } from '../services/hybridRankingService';
 import { GameHistoryService } from '../services/gameHistoryService';
@@ -47,6 +49,31 @@ interface GameCardProps {
     topPlayer?: RankingEntry | null;
     isComingSoon?: boolean;
 }
+
+// スコア演出: 数値をふわっとカウントアップ表示
+const CountUpNumber: React.FC<{ value: number; durationMs?: number; decimals?: number; suffix?: string; className?: string; }>
+ = ({ value, durationMs = 800, decimals = 3, suffix = '', className }) => {
+    const [display, setDisplay] = React.useState(0);
+    const fromRef = React.useRef(0);
+    const startRef = React.useRef<number | null>(null);
+    React.useEffect(() => {
+        const from = fromRef.current;
+        const to = value;
+        startRef.current = null;
+        let raf: number;
+        const step = (ts: number) => {
+            if (startRef.current == null) startRef.current = ts;
+            const t = Math.min(1, (ts - startRef.current) / durationMs);
+            const eased = t * (2 - t); // easeOutQuad
+            setDisplay(from + (to - from) * eased);
+            if (t < 1) raf = requestAnimationFrame(step);
+        };
+        raf = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(raf);
+    }, [value, durationMs]);
+    React.useEffect(() => { fromRef.current = value; }, [value]);
+    return <span className={className}>{display.toFixed(decimals)}{suffix}</span>;
+};
 
 // 広告カードコンポーネント
 const AdCard: React.FC = React.memo(() => {
@@ -123,6 +150,8 @@ const NoticeSection: React.FC<{ notices: Notice[] }> = ({ notices }) => {
 
 const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon, path, lastResult, imageSrc, playCount, topPlayer, isComingSoon = false }) => {
     const navigate = useNavigate();
+    const week = getCurrentWeekInfoTokyo();
+    const weekTitle = `${week.year}年`;
     
 
     
@@ -165,13 +194,19 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                         placeholder="読み込み中..."
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    {/* 鬼モードラベル（トリガー系のみ） */}
+                    {title.includes('トリガー') && (
+                        <div className="absolute top-2 left-2 px-2 py-1 text-xs font-bold bg-red-600 text-white rounded-md shadow-sm">
+                            鬼モード
+                        </div>
+                    )}
                     {/* クイズ系ゲームの場合は免許ラベル、その他はプレイ回数を表示 */}
                     {title.includes('クイズ') ? (
                         <div className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-red-500 text-white rounded-md shadow-sm">
                             狩猟免許 未取得者向け
                         </div>
                     ) : playCount !== undefined && (
-                        <div className="absolute bottom-0 right-0 px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105 text-white" style={{ backgroundColor: '#2f76ac' }}>
+                        <div className="absolute bottom-0 right-0 px-2 py-1 text-sm font-medium transform transition-transform duration-500 group-hover:scale-105 text-white bg-blue-600">
                             Total {playCount} plays
                         </div>
                     )}
@@ -189,60 +224,58 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                 
                 {/* 1位プレイヤー表示（診断系ゲーム以外のみ） */}
                 {!isDiagnosisGame && (
-                    <div className="mb-4 p-3 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border border-yellow-200">
+                    <div className="mb-3 p-3 rounded-xl shadow-sm border bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200">
                         {topPlayer ? (
                             <>
                                 {/* デスクトップレイアウト（md以上） */}
-                                <div className="hidden md:flex items-center justify-between">
-                                    <div className="flex items-center">
-                                        <Crown className="w-4 h-4 text-yellow-600 mr-2" />
-                                        <span className="text-sm font-medium text-gray-700 mr-2">1位</span>
-                                        <span className="text-md font-bold text-yellow-700">
-                                            {title.includes('反射神経')
-                                                ? `${((topPlayer?.score || 0) / 1000).toFixed(5)}s`
-                                                : title.includes('ターゲット') || title.includes('カウントアップ')
-                                                ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
-                                                : `${topPlayer?.score}`
-                                            }
+                                <div className="hidden md:block">
+                                    {/* 1段目: 週チップ（左） / ハンター名（右） */}
+                                    <div className="flex items-center justify-between">
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-white bg-blue-600 rounded-full px-2 py-[2px] shadow-sm">
+                                            <Calendar size={10} className="text-white/90" />
+                                            {weekTitle}
+                                        </span>
+                                        <span className="text-sm text-yellow-900/80 truncate max-w-[60%]" title={topPlayer?.displayName}>
+                                            {topPlayer?.displayName}
                                         </span>
                                     </div>
-                                    <div className="relative group">
-                                        <span 
-                                            className="text-sm text-yellow-700 truncate max-w-[160px] inline-block cursor-help"
-                                            title={topPlayer?.displayName}
-                                        >
-                                            {topPlayer?.displayName}
-                                        </span>
-                                        
-                                        {/* ホバーツールチップ */}
-                                        <div className="absolute right-0 top-full mt-1 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none">
-                                            {topPlayer?.displayName}
+                                    {/* 2段目: 1位（左） / スコア（右） */}
+                                    <div className="flex items-center justify-between mt-1">
+                                        <div className="flex items-center text-yellow-800 font-extrabold">
+                                            <Crown className="w-4 h-4 text-yellow-700 mr-1" />
+                                            <span>1位</span>
                                         </div>
+                                        <CountUpNumber
+                                            value={title.includes('反射神経') ? (topPlayer?.score || 0) / 1000 : title.includes('ターゲット') || title.includes('カウントアップ') ? (topPlayer?.score || 0) / 1000 : (topPlayer?.score || 0)}
+                                            decimals={title.includes('トリガー') ? 3 : title.includes('反射神経') ? 5 : (title.includes('ターゲット') || title.includes('カウントアップ')) ? 3 : 0}
+                                            suffix={title.includes('トリガー') ? 'pt' : (title.includes('反射神経') || title.includes('ターゲット') || title.includes('カウントアップ') ? 's' : '')}
+                                            className="text-md font-mono font-extrabold text-yellow-800"
+                                        />
                                     </div>
                                 </div>
                                 
                                 {/* モバイルレイアウト（md未満） */}
                                 <div className="md:hidden">
-                                    {/* 上段：1位 + スコア */}
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center">
-                                            <Crown className="w-4 h-4 text-yellow-600 mr-2" />
-                                            <span className="text-sm font-medium text-gray-700">1位</span>
-                                        </div>
-                                        <span className="text-md font-bold text-yellow-700">
-                                            {title.includes('反射神経')
-                                                ? `${((topPlayer?.score || 0) / 1000).toFixed(5)}s`
-                                                : title.includes('ターゲット') || title.includes('カウントアップ')
-                                                ? `${((topPlayer?.score || 0) / 1000).toFixed(3)}s`
-                                                : `${topPlayer?.score}`
-                                            }
+                                    {/* 1段目: 週チップ / ハンター名 */}
+                                    <div className="flex items-center justify-between">
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-white bg-blue-600 rounded-full px-2 py-[2px] shadow-sm">
+                                            <Calendar size={10} className="text-white/90" />
+                                            {weekTitle}
                                         </span>
+                                        <span className="text-sm text-yellow-900/80 truncate max-w-[60%]">{topPlayer?.displayName}</span>
                                     </div>
-                                    {/* 下段：ユーザー名 */}
-                                    <div className="ml-6">
-                                        <span className="text-sm text-yellow-700 truncate block">
-                                            {topPlayer?.displayName}
-                                        </span>
+                                    {/* 2段目: 1位 / スコア */}
+                                    <div className="flex items-center justify-between mt-1">
+                                        <div className="flex items-center text-yellow-800 font-extrabold">
+                                            <Crown className="w-4 h-4 text-yellow-700 mr-1" />
+                                            <span>1位</span>
+                                        </div>
+                                        <CountUpNumber
+                                            value={title.includes('反射神経') ? (topPlayer?.score || 0) / 1000 : title.includes('ターゲット') || title.includes('カウントアップ') ? (topPlayer?.score || 0) / 1000 : (topPlayer?.score || 0)}
+                                            decimals={title.includes('トリガー') ? 3 : title.includes('反射神経') ? 5 : (title.includes('ターゲット') || title.includes('カウントアップ')) ? 3 : 0}
+                                            suffix={title.includes('トリガー') ? 'pt' : (title.includes('反射神経') || title.includes('ターゲット') || title.includes('カウントアップ') ? 's' : '')}
+                                            className="text-md font-mono font-extrabold text-yellow-800"
+                                        />
                                     </div>
                                 </div>
                             </>
@@ -295,7 +328,7 @@ const GameCard: React.FC<GameCardProps> = React.memo(({ title, description, icon
                 )}
                 
                 <div className="mt-auto">
-                    <button className="w-full px-8 py-3 bg-blue-500 text-white rounded-lg text-sm font-medium group-hover:bg-blue-600 transition-all duration-300 shadow-md group-hover:shadow-lg">
+                    <button className="w-full px-8 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium group-hover:bg-blue-600 transition-all duration-300 shadow-md group-hover:shadow-lg">
                         トレーニングする
                     </button>
                 </div>
@@ -322,8 +355,8 @@ const HomePage: React.FC = () => {
     const notices: Notice[] = [
         {
             id: '1',
-            date: '09.07',
-            title: '私のトレーニング履歴 β版を追加しました。',
+            date: '09.13',
+            title: 'トリガートレーニング（鬼モード）をしました',
             type: 'event'
         },
         {
@@ -337,18 +370,21 @@ const HomePage: React.FC = () => {
         reflex?: LastResult;
         target?: LastResult;
         sequence?: LastResult;
+        triggerTiming?: LastResult;
     }>({});
     
     const [playCounts, setPlayCounts] = useState<{
         reflex?: number;
         target?: number;
         sequence?: number;
+        triggerTiming?: number;
     }>({});
     
     const [topPlayers, setTopPlayers] = useState<{
         reflex?: RankingEntry | null;
         target?: RankingEntry | null;
         sequence?: RankingEntry | null;
+        triggerTiming?: RankingEntry | null;
     }>({});
 
     // Phase 2: 基本キャッシュ - サービスインスタンスをメモ化
@@ -574,6 +610,41 @@ const HomePage: React.FC = () => {
                         sequence: 0
                     }));
                 }
+
+                // トリガータイミングの総プレイ回数
+                try {
+                    const totalPlayCountTT = await hybridRankingService.getTotalPlayCountOptimized('trigger-timing');
+                    if (totalPlayCountTT > 0) {
+                        setPlayCounts(prev => ({
+                            ...prev,
+                            triggerTiming: totalPlayCountTT
+                        }));
+                    } else {
+                        throw new Error('Zero play count returned from cloud');
+                    }
+                } catch (error) {
+                    console.error('❌ HomePage: Failed to get trigger-timing total play count from cloud:', error);
+                    setPlayCounts(prev => ({
+                        ...prev,
+                        triggerTiming: 0
+                    }));
+                }
+
+                // トリガートレーニングの最新記録
+                const ttHistory = await gameHistoryService.getGameHistory<TriggerTimingHistory>('trigger-timing');
+                const ttLatest = ttHistory.length > 0 ? ttHistory[0] : null;
+                if (ttLatest) {
+                    setLastResults(prev => ({
+                        ...prev,
+                        triggerTiming: {
+                            primaryStat: '合計得点',
+                            primaryValue: `${ttLatest.totalScore.toFixed(3)}pt`,
+                            secondaryStat: '平均得点',
+                            secondaryValue: `${ttLatest.averageScore.toFixed(3)}pt`,
+                            date: new Date(ttLatest.date).toLocaleDateString('ja-JP')
+                        }
+                    }));
+                }
             } catch (error) {
                 console.error('Failed to load last results:', error);
             } finally {
@@ -632,7 +703,7 @@ const HomePage: React.FC = () => {
             "@type": "Organization",
             "name": "ハントレ開発チーム"
         },
-        "keywords": "ハンタートレーニング,狩猟,射撃,反射神経,トレーニング,診断"
+        "keywords": "ハントレ,ハンタートレーニング,狩猟,射撃,ハンター,トレーニング,反射神経,診断,鳥獣"
     };
 
     return (
@@ -705,10 +776,12 @@ const HomePage: React.FC = () => {
             {/* わたしのトレーニング履歴 リンクブロック */}
             <div className="py-4 px-4">
                 <div className="max-w-6xl mx-auto">
-                    <Link to="/my/history" className="block bg-white rounded-xl shadow-lg border-0 p-5 hover:shadow-xl transition flex items-center justify-between">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-800">わたしのトレーニング履歴 β版</h2>
-                            <p className="text-sm text-gray-600 mt-1">自分のトレーニング結果をグラフで確認できます</p>
+                    <Link to="/my/history" className="relative block bg-white rounded-xl shadow-lg border-0 p-5 hover:shadow-xl transition overflow-hidden">
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-800">わたしのトレーニング履歴 β版</h2>
+                                <p className="text-sm text-gray-600 mt-1">自分のトレーニング結果をグラフで確認できます</p>
+                            </div>
                         </div>
                     </Link>
                 </div>
@@ -720,6 +793,18 @@ const HomePage: React.FC = () => {
 
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* トリガータイミングトレーニング（新規追加） */}
+                        <GameCard
+                            key={'trigger-timing'}
+                            title={'トリガートレーニング'}
+                            description={'トリガーを引く最適な瞬間を見極める集中力トレーニング。合計ポイントを競います。'}
+                            icon={<></>}
+                            path={'/trigger-timing/instructions'}
+                            lastResult={lastResults.triggerTiming}
+                            imageSrc={'/panel6.webp'}
+                            playCount={playCounts.triggerTiming}
+                            topPlayer={topPlayers.triggerTiming}
+                        />
                         {/* 反射神経トレーニング */}
                         <GameCard
                             key={gameCardConfigs[0].gameType}
