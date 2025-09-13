@@ -221,6 +221,9 @@ export default function DiagnosisResultPage() {
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-slate-800 mb-2">診断結果</h1>
                     <p className="text-slate-600">あなたの狩猟鳥獣タイプは...</p>
+                    <p className="text-sm text-slate-600 mt-3 leading-relaxed max-w-2xl mx-auto">
+                        ここでは、あなたの回答傾向をもとに導き出されたタイプを、狩猟鳥獣にたとえて紹介します。解説は性格の方向性をイメージしやすいように要点を整理し、日常やチーム作業で活かせるヒントも含めています。診断は娯楽的なコンテンツであり、優劣を決めるものではありません。結果は気軽にシェアして楽しんでください。
+                    </p>
 
                     {/* 統合型表示のみ - 切替ボタン削除 */}
                 </div>

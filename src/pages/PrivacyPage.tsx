@@ -149,6 +149,31 @@ const PrivacyPage: React.FC = () => {
                         </section>
 
                         <section>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">6-1. 広告配信（Google AdSense等）について</h2>
+                            <p>
+                                当サイトでは、第三者配信事業者（例：Google AdSense）が Cookie を使用して、ユーザーの過去のアクセス情報に基づく広告を配信することがあります。
+                                Google は、広告 Cookie（例えば <code>DoubleClick</code> Cookie）を使用することで、ユーザーに適切な広告を表示できます。これらの Cookie は匿名の識別子のみを扱い、個人を特定できる情報は含みません。
+                            </p>
+                            <ul className="list-disc list-inside mt-3 ml-4 space-y-2">
+                                <li>
+                                    <strong>パーソナライズ広告の無効化：</strong>
+                                    ユーザーは Google の広告設定からパーソナライズ広告を無効にできます（
+                                    <a href="https://adssettings.google.com/authenticated" target="_blank" rel="noopener noreferrer" className="text-green-700 underline">広告設定</a>）。
+                                </li>
+                                <li>
+                                    <strong>第三者配信事業者の Cookie 無効化：</strong>
+                                    Network Advertising Initiative（NAI）のオプトアウトページ（
+                                    <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" className="text-green-700 underline">NAI</a>
+                                    ）から、参加事業者の行動ターゲティング広告を一括で無効化できます。
+                                </li>
+                                <li>
+                                    <strong>Cookie の管理：</strong>
+                                    ブラウザの設定から Cookie を無効化または削除できます。無効化すると一部の機能（ランキング保持・利便性）が制限される場合があります。
+                                </li>
+                            </ul>
+                        </section>
+
+                        <section>
                             <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-green-600 pb-2">7. プライバシーポリシーの変更</h2>
                             <p>
                                 ハントレでは、必要に応じてこのプライバシーポリシーを変更することがあります。

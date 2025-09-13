@@ -168,6 +168,9 @@ export default function DiagnosisPage() {
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-slate-800 mb-2">狩猟鳥獣診断</h1>
                     <p className="text-slate-600">12の質問であなたにぴったりの動物を見つけます</p>
+                    <p className="text-sm text-slate-600 mt-3 leading-relaxed max-w-2xl mx-auto">
+                        設問はどれも正解・不正解のない心理テスト形式です。直感で選んだ回答から、あなたの「エネルギー」「思考」「社交」「安定」の4指標をスコア化し、最も近い狩猟鳥獣タイプを提示します。途中で戻って修正することもでき、最後にまとめて診断を実行します。スマートフォンでも快適に回答できるよう、軽量な画面構成で設計しています。
+                    </p>
                 </div>
 
                 {/* プログレスバー */}

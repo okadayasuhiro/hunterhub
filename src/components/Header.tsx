@@ -60,8 +60,8 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
         { name: 'ターゲット追跡', path: '/target/instructions', gameType: 'target', showStats: true },
         { name: 'カウントアップ', path: '/sequence/instructions', gameType: 'sequence', showStats: true },
         { name: '狩猟鳥獣（獣類）クイズ', path: '/animal-quiz/instructions', gameType: 'quiz', showStats: false },
-        // 初期リリース対象外: 狩猟動物診断を削除
-        // { name: '狩猟動物診断', path: '/diagnosis', gameType: 'diagnosis', showStats: false },
+        // 審査用の一時導線（小さく表示）
+        { name: '狩猟鳥獣診断（β）', path: '/diagnosis', gameType: 'diagnosis', showStats: false },
     ];
 
     // SNSシェアリンク
