@@ -9,8 +9,12 @@ const NotFoundPage: React.FC = () => {
     };
 
     return (
-        <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#ecf6ff' }}>
-            <div className="text-center px-4 py-10">
+        <div className="relative flex-1 overflow-hidden">
+            {/* 背景グラデーション（他ページに合わせた雰囲気） */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100/10 via-blue-300/40 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-transparent"></div>
+
+            <div className="relative z-10 flex items-center justify-center min-h-[60vh] text-center px-4 py-10">
                 <div className="mb-6">
                     <img src="/images/404deer.webp" alt="Not found deer" className="mx-auto w-48 h-48 object-contain" />
                 </div>
@@ -27,29 +31,6 @@ const NotFoundPage: React.FC = () => {
                     >
                         ホームに戻る
                     </button>
-                    <div className="text-xs text-gray-400">
-                        <p>人気のコンテンツへ</p>
-                        <div className="mt-2 flex items-center justify-center gap-3 flex-wrap">
-                            <button
-                                onClick={() => navigate('/reflex/instructions')}
-                                className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300"
-                            >
-                                反射神経テスト
-                            </button>
-                            <button
-                                onClick={() => navigate('/target/instructions')}
-                                className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300"
-                            >
-                                ターゲット追跡
-                            </button>
-                            <button
-                                onClick={() => navigate('/sequence/instructions')}
-                                className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300"
-                            >
-                                数字順序ゲーム
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
