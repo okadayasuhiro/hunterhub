@@ -21,7 +21,8 @@ const NewsPage: React.FC = () => {
 
   useEffect(() => {
     let canceled = false;
-    fetch('/news/all.json', { cache: 'no-cache' })
+    const url = `/news/all.json?v=${Date.now()}`;
+    fetch(url, { cache: 'no-cache' })
       .then(r => r.json())
       .then((json: NewsResponse) => {
         if (canceled) return;
