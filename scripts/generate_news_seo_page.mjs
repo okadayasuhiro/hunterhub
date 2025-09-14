@@ -35,8 +35,8 @@ function sourceDisplayName(sourceId) {
 function buildHtml({ items, generatedAt }) {
   const siteUrl = 'https://hantore.net';
   const pageUrl = `${siteUrl}/news`;
-  const title = '狩猟ニュース - ハントレ（最新7日・自動更新）';
-  const description = 'ハンター向け狩猟ニュースを毎日自動収集。北海道新聞・NHK・産経・朝日・秋田テレビ・岩手日報などから直近7日分を厳選表示。';
+  const title = '狩猟ニュース（直近7日・1日2回更新）｜ハントレ';
+  const description = 'ハンター向け狩猟ニュースを1日2回自動収集。北海道新聞・NHK・産経・朝日・秋田テレビ・岩手日報などから直近7日分を厳選してお届けします。';
 
   const ldItems = items.slice(0, MAX_ITEMS).map((it, idx) => ({
     '@type': 'ListItem',
@@ -57,6 +57,15 @@ function buildHtml({ items, generatedAt }) {
     url: pageUrl,
     numberOfItems: items.length,
     itemListElement: ldItems
+  };
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '狩猟ニュース', item: pageUrl }
+    ]
   };
 
   const listHtml = items.slice(0, MAX_ITEMS).map(it => {
@@ -83,6 +92,7 @@ function buildHtml({ items, generatedAt }) {
 <meta name="twitter:title" content="${title}">
 <meta name="twitter:description" content="${description}">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
+<script type="application/ld+json">${JSON.stringify(breadcrumbLd)}</script>
 <style>
 body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.6;margin:0;padding:0;background:#fafafa;color:#111}
 .header{background:#021D40;color:#fff;padding:16px}
@@ -108,8 +118,8 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-he
 <div class="container">
   <div class="updated">最終更新: ${new Date(generatedAt || Date.now()).toLocaleString('ja-JP')}</div>
   <ul class="news-list">${listHtml}</ul>
-  <div style="margin-top:16px;text-align:right">
-    <a href="/" class="back">ホームに戻る</a>
+  <div style="margin-top:16px;text-align:center">
+    <a href="/" style="display:inline-block;min-width:10rem;padding:10px 24px;background:#e5e7eb;color:#374151;border-radius:0.5rem;font-weight:500;text-decoration:none" onmouseover="this.style.background='#d1d5db'" onmouseout="this.style.background='#e5e7eb'">ホームに戻る</a>
   </div>
 </div>
 </body>

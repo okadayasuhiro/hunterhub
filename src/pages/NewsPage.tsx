@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import SEO from '../components/SEO';
 
 type NewsItem = {
   id: string;
@@ -48,9 +49,37 @@ const NewsPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      <SEO
+        title="狩猟ニュース（直近7日・1日2回更新）｜ハントレ"
+        description="ハンター向けの狩猟ニュースを1日2回自動収集。北海道新聞・NHK・産経・朝日・秋田テレビ・岩手日報などから直近7日分を厳選してお届けします。"
+        keywords="狩猟ニュース,ハンター,ヒグマ,エゾシカ,有害鳥獣,駆除,捕獲,ハントレ"
+        ogType="website"
+        structuredData={data ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "狩猟ニュース 最新一覧",
+          url: typeof window !== 'undefined' ? window.location.origin + '/news' : 'https://hantore.net/news',
+          numberOfItems: (data.items || []).length,
+          itemListElement: (data.items || []).slice(0, 20).map((it, idx) => ({
+            "@type": "ListItem",
+            position: idx + 1,
+            item: {
+              "@type": "NewsArticle",
+              headline: it.title,
+              url: it.link,
+              datePublished: it.publishedAt || undefined
+            }
+          }))
+        } : {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: "狩猟ニュース（直近7日・1日2回更新）｜ハントレ",
+          url: typeof window !== 'undefined' ? window.location.origin + '/news' : 'https://hantore.net/news'
+        }}
+      />
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">狩猟ニュース</h1>
-        <a href="/" className="max-w-40 px-8 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 transition-colors duration-300">ホームに戻る</a>
+        <a href="/" className="text-sm px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">トップへ戻る</a>
       </div>
       {error && (
         <div className="text-sm text-red-600 mb-4">{error}</div>
@@ -84,8 +113,8 @@ const NewsPage: React.FC = () => {
               </li>
             ))}
           </ul>
-          <div className="mt-6 text-right">
-            <a href="/" className="inline-block text-sm px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">ホームに戻る</a>
+          <div className="mt-6 text-center">
+            <a href="/" className="inline-block w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300">ホームに戻る</a>
           </div>
         </>
       )}
