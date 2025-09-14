@@ -1,32 +1,7 @@
 {
-  "source": "multi",
+  "source": "nhk",
   "generatedAt": "2025-09-14T12:27:23.698Z",
   "items": [
-    {
-      "id": "529b27e493b5fbe0ce6d01af4cb6f5c208fbc4ef61eeb7c2f6c2effa52bd4adb",
-      "source": "hokkaido-np",
-      "title": "夕張でヒグマ目撃　住初の住宅近く",
-      "link": "https://www.hokkaido-np.co.jp/article/1211591/",
-      "publishedAt": "2025-09-14T09:53:12.000Z",
-      "matchedKeywords": [
-        "目撃",
-        "ヒグマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
-    {
-      "id": "90a84d3c79c23c2396609db81c4d66a6464fcb55dd4fbff702cbc4c3fa1891a7",
-      "source": "hokkaido-np",
-      "title": "3日連続のクマ食害　札幌・清田の農園",
-      "link": "https://www.hokkaido-np.co.jp/article/1211571/",
-      "publishedAt": "2025-09-14T09:05:42.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
     {
       "id": "016e1d28cbad630d0be6c13edcb11fc2e8d72245b87d9c1f8067fa1956ecc5fd",
       "source": "nhk",
@@ -49,34 +24,6 @@
         "ヒグマ"
       ],
       "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "964e48d3b8ec2c1ca92f24169aa3e86e6013b2df6fd7bcc27751275948a2cbab",
-      "source": "sankei",
-      "title": "クマの市街地出没、SNSに目立つメガソーラー原因説「すみか奪ってる」「クマ被害増加」",
-      "link": "https://www.sankei.com/article/20250914-TMKKC5GVMJNSBKCK727V3OIRRY/",
-      "publishedAt": "2025-09-14T04:00:00.000Z",
-      "matchedKeywords": [
-        "出没",
-        "クマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
-    {
-      "id": "7e224c38854dadccc831d57f9e47f04fade62cca3728ce51f95a3f67b7b9c249",
-      "source": "hokkaido-np",
-      "title": "＜札幌圏ヒグマ出没情報＞恵庭、石狩で目撃",
-      "link": "https://www.hokkaido-np.co.jp/article/1211466/",
-      "publishedAt": "2025-09-13T13:13:23.000Z",
-      "matchedKeywords": [
-        "出没",
-        "目撃",
-        "クマ",
-        "ヒグマ"
-      ],
-      "score": 8,
       "excluded": false
     },
     {
@@ -114,21 +61,6 @@
         "鹿"
       ],
       "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "6ab6032f47dc0de08eed5f5683a6d6551ed69311d97281d78af83ed095054425",
-      "source": "hokkaido-np",
-      "title": "＜札幌圏ヒグマ出没情報＞石狩・浜益区で目撃",
-      "link": "https://www.hokkaido-np.co.jp/article/1211232/",
-      "publishedAt": "2025-09-12T13:46:14.000Z",
-      "matchedKeywords": [
-        "出没",
-        "目撃",
-        "クマ",
-        "ヒグマ"
-      ],
-      "score": 8,
       "excluded": false
     },
     {

@@ -4,10 +4,12 @@ import crypto from 'crypto';
 
 const FEEDS = [
   { id: 'hokkaido-np', url: 'https://www.hokkaido-np.co.jp/output/7/free/index.ad.xml' },
-  { id: 'sankei', url: 'https://assets.wor.jp/rss/rdf/sankei/affairs.rdf' }
+  { id: 'sankei', url: 'https://assets.wor.jp/rss/rdf/sankei/affairs.rdf' },
+  { id: 'nhk', url: 'https://www.nhk.or.jp/rss/news/cat1.xml' }
 ];
 const OUTPUT_HOKKAIDO = path.resolve(process.cwd(), 'public/news/hokkaido.json');
 const OUTPUT_SANKEI = path.resolve(process.cwd(), 'public/news/sankei.json');
+const OUTPUT_NHK = path.resolve(process.cwd(), 'public/news/nhk.json');
 const OUTPUT_ALL = path.resolve(process.cwd(), 'public/news/all.json');
 const EXCLUDE_PATH = path.resolve(process.cwd(), 'config/news_exclude.json');
 const MAX_ITEMS = 50;
@@ -20,7 +22,7 @@ const POSITIVE_KEYWORDS = [
 ];
 
 const NEGATIVE_KEYWORDS = [
-  '熊本','熊谷','熊野','くまモン','テディベア','ベアーズ'
+  '熊本','熊谷','熊野','くまモン','テディベア','ベアーズ','鹿児島'
 ];
 
 const STRONG_KEYWORDS = new Set([
@@ -189,9 +191,10 @@ async function main() {
   // per-source outputs
   const outH = { source: 'hokkaido-np', generatedAt: now, items: byId['hokkaido-np'] || [] };
   const outS = { source: 'sankei', generatedAt: now, items: byId['sankei'] || [] };
+  const outN = { source: 'nhk', generatedAt: now, items: byId['nhk'] || [] };
 
   // all combined (再ソート)
-  const combined = [...(byId['hokkaido-np'] || []), ...(byId['sankei'] || [])].sort((a, b) => {
+  const combined = [...(byId['hokkaido-np'] || []), ...(byId['sankei'] || []), ...(byId['nhk'] || [])].sort((a, b) => {
     const ta = a.publishedAt || '';
     const tb = b.publishedAt || '';
     if (ta === tb) return (b.score || 0) - (a.score || 0);
@@ -201,11 +204,13 @@ async function main() {
 
   ensureDirFor(OUTPUT_HOKKAIDO);
   ensureDirFor(OUTPUT_SANKEI);
+  ensureDirFor(OUTPUT_NHK);
   ensureDirFor(OUTPUT_ALL);
   fs.writeFileSync(OUTPUT_HOKKAIDO, JSON.stringify(outH, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_SANKEI, JSON.stringify(outS, null, 2), 'utf-8');
+  fs.writeFileSync(OUTPUT_NHK, JSON.stringify(outN, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_ALL, JSON.stringify(outAll, null, 2), 'utf-8');
-  console.log(`Wrote Hokkaido=${outH.items.length}, Sankei=${outS.items.length}, All=${outAll.items.length}`);
+  console.log(`Wrote Hokkaido=${outH.items.length}, Sankei=${outS.items.length}, NHK=${outN.items.length}, All=${outAll.items.length}`);
 }
 
 main().catch(err => {

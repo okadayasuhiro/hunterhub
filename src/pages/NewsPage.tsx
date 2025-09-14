@@ -62,6 +62,7 @@ const NewsPage: React.FC = () => {
                   {item.publishedAt ? new Date(item.publishedAt).toLocaleString() : ''}
                   {item.source === 'hokkaido-np' && <span> ・ 出典: 北海道新聞</span>}
                   {item.source === 'sankei' && <span> ・ 出典: 産経新聞</span>}
+                  {item.source === 'nhk' && <span> ・ 出典: NHKニュース</span>}
                 </div>
               </li>
             ))}
