@@ -833,7 +833,7 @@ const HomePage: React.FC = () => {
                     <Link to="/news" className="relative block bg-white rounded-xl shadow-lg border-0 p-5 hover:shadow-xl transition overflow-hidden">
                         <div className="relative z-10">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-semibold text-gray-800">狩猟ニュース</h2>
+                                <h2 className="text-lg font-semibold text-gray-800">狩猟関連ニュース</h2>
                                 <span className="text-sm text-gray-600 ml-3 truncate max-w-[60%]">直近7日の最新ニュース</span>
                             </div>
                         </div>

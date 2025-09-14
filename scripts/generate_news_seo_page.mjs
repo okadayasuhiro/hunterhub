@@ -108,6 +108,9 @@ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-he
 <div class="container">
   <div class="updated">最終更新: ${new Date(generatedAt || Date.now()).toLocaleString('ja-JP')}</div>
   <ul class="news-list">${listHtml}</ul>
+  <div style="margin-top:16px;text-align:right">
+    <a href="/" class="back">ホームに戻る</a>
+  </div>
 </div>
 </body>
 </html>`;
