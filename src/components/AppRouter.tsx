@@ -22,6 +22,7 @@ const AnimalQuizResultPage = lazy(() => import('../pages/AnimalQuizResultPage'))
 const TriggerTimingPage = lazy(() => import('../pages/TriggerTimingPage'));
 const XCallbackPage = lazy(() => import('../pages/XCallbackPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const NewsPage = lazy(() => import('../pages/NewsPage'));
 const MyHistoryPage = lazy(() => import('../pages/MyHistoryPage'));
 
 function ScrollToTop() {
@@ -90,6 +91,9 @@ const AppRouter: React.FC = () => {
 
                             {/* ランキング（遅延読み込み） */}
                             <Route path="/ranking" element={<RankingPage />} />
+
+                            {/* ニュース（遅延読み込み） */}
+                            <Route path="/news" element={<NewsPage />} />
 
                             {/* 狩猟鳥獣診断（遅延読み込み） */}
                             <Route path="/diagnosis" element={<DiagnosisHomePage />} />
