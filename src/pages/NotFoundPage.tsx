@@ -9,13 +9,13 @@ const NotFoundPage: React.FC = () => {
     };
 
     return (
-        <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#ecf6ff' }}>
+        <div className="flex-1 flex items-center justify-center">
             <div className="text-center px-4 py-10">
                 <div className="mb-6">
-                    <img src="/images/404deer.webp" alt="Not found deer" className="mx-auto w-48 h-48 object-contain" />
+                    <img src="/images/404deer.webp" alt="Not found deer" className="mx-auto w-72 h-72 object-contain" />
                 </div>
                 <h1 className="text-5xl font-semibold text-gray-800 mb-2">404</h1>
-                <h2 className="text-xl font-normal text-gray-600 mb-4">ページが見つかりません</h2>
+                <h2 className="text-xl font-normal text-gray-600 mb-4">Not Found</h2>
                 <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
                     お探しのページは存在しないか、移動された可能性があります。
                 </p>
