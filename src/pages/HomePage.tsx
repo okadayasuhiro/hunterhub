@@ -351,21 +351,21 @@ const HomePage: React.FC = () => {
     const ENABLE_TARGET_PANEL = true;
     const ENABLE_SEQUENCE_PANEL = true;
     
-    const [newsNotices, setNewsNotices] = useState<Notice[]>([]);
-    useEffect(() => {
-        const url = `/news/all.json?v=${Date.now()}`;
-        fetch(url, { cache: 'no-cache' })
-            .then(r => r.json())
-            .then((json: any) => {
-                const items: any[] = Array.isArray(json?.items) ? json.items : [];
-                const top2 = items.slice(0, 2).map((it: any) => ({
-                    id: it.id,
-                    date: it.publishedAt ? new Date(it.publishedAt).toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }).replace('/', '.') : '',
-                    title: it.title
-                })) as Notice[];
-                setNewsNotices(top2);
-            }).catch(() => {});
-    }, []);
+    // サンプルお知らせデータ（静的表記に戻す）
+    const notices: Notice[] = [
+        {
+            id: '1',
+            date: '09.13',
+            title: 'トリガートレーニング（鬼モード）をしました',
+            type: 'event'
+        },
+        {
+            id: '2',
+            date: '09.05',
+            title: 'いくつかの不具合を修正しました',
+            type: 'event'
+        }
+    ];
     const [lastResults, setLastResults] = useState<{
         reflex?: LastResult;
         target?: LastResult;
@@ -461,7 +461,7 @@ const HomePage: React.FC = () => {
     }, [shouldLoad]);
 
     // Phase 2: お知らせデータをメモ化（再レンダリング防止）
-    const memoizedNotices = useMemo(() => newsNotices, [newsNotices]);
+    const memoizedNotices = useMemo(() => notices, []);
 
     // Phase 2: ゲームカード設定をメモ化
     const gameCardConfigs = useMemo(() => [
@@ -812,21 +812,16 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* お知らせセクション */}
-            <div>
-                <NoticeSection notices={memoizedNotices} />
-                <div className="max-w-6xl mx-auto px-4 py-1 text-right">
-                    <Link to="/news" className="text-sm text-blue-600 hover:underline">もっとみる →</Link>
-                </div>
-            </div>
+            <NoticeSection notices={memoizedNotices} />
 
             {/* わたしのトレーニング履歴 リンクブロック */}
             <div className="py-4 px-4">
                 <div className="max-w-6xl mx-auto" ref={belowFoldRef}>
-                    <Link to="/my/history" className="relative block bg-white rounded-xl shadow-lg border-0 p-5 hover:shadow-xl transition overflow-hidden">
+                    <Link to="/news" className="relative block bg-white rounded-xl shadow-lg border-0 p-5 hover:shadow-xl transition overflow-hidden">
                         <div className="relative z-10 flex items-center justify-between">
                             <div>
-                                <h2 className="text-lg font-semibold text-gray-800">わたしのトレーニング履歴 β版</h2>
-                                <p className="text-sm text-gray-600 mt-1">自分のトレーニング結果をグラフで確認できます</p>
+                                <h2 className="text-lg font-semibold text-gray-800">狩猟ニュース</h2>
+                                <p className="text-sm text-gray-600 mt-1">直近7日の最新ニュースをまとめてチェック</p>
                             </div>
                         </div>
                     </Link>
