@@ -2,8 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
-const FEED_URL = 'https://www.hokkaido-np.co.jp/output/7/free/index.ad.xml';
-const OUTPUT_PATH = path.resolve(process.cwd(), 'public/news/hokkaido.json');
+const FEEDS = [
+  { id: 'hokkaido-np', url: 'https://www.hokkaido-np.co.jp/output/7/free/index.ad.xml' },
+  { id: 'sankei', url: 'https://assets.wor.jp/rss/rdf/sankei/affairs.rdf' }
+];
+const OUTPUT_HOKKAIDO = path.resolve(process.cwd(), 'public/news/hokkaido.json');
+const OUTPUT_SANKEI = path.resolve(process.cwd(), 'public/news/sankei.json');
+const OUTPUT_ALL = path.resolve(process.cwd(), 'public/news/all.json');
 const EXCLUDE_PATH = path.resolve(process.cwd(), 'config/news_exclude.json');
 const MAX_ITEMS = 50;
 
@@ -29,7 +34,7 @@ function stripCdata(text) {
 }
 
 function extractTag(xml, tag) {
-  const re = new RegExp(`<${tag}[^>]*>([\s\S]*?)<\/${tag}>`, 'i');
+  const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
   const m = xml.match(re);
   return m ? m[1].trim() : '';
 }
@@ -60,14 +65,14 @@ function readExcludeIds() {
   return new Set();
 }
 
-function matchKeywords(title) {
+function matchKeywords(text) {
   const matched = [];
   for (const kw of POSITIVE_KEYWORDS) {
-    if (title.includes(kw)) matched.push(kw);
+    if (text.includes(kw)) matched.push(kw);
   }
   const negatives = [];
   for (const kw of NEGATIVE_KEYWORDS) {
-    if (title.includes(kw)) negatives.push(kw);
+    if (text.includes(kw)) negatives.push(kw);
   }
   let score = 0;
   for (const kw of matched) score += STRONG_KEYWORDS.has(kw) ? 2 : 1;
@@ -77,17 +82,32 @@ function matchKeywords(title) {
 
 function parseItems(xml) {
   const items = [];
-  const re = /<item\b[\s\S]*?<\/item>/gi;
-  let m;
-  while ((m = re.exec(xml)) !== null) {
-    const block = m[0];
+  const parts = xml.split('<item');
+  if (parts.length <= 1) return items;
+  if (process.env.DEBUG) {
+    console.log('parts length:', parts.length - 1);
+  }
+  for (let i = 1; i < parts.length; i++) {
+    const after = parts[i];
+    const endIdx = after.indexOf('</item>');
+    if (process.env.DEBUG && i <= 3) {
+      console.log(`part#${i} has end?`, endIdx >= 0);
+      if (endIdx < 0) {
+        console.log(after.slice(0, 120));
+      }
+    }
+    if (endIdx === -1) continue;
+    const block = '<item' + after.slice(0, endIdx + '</item>'.length);
+
     let title = extractTag(block, 'title');
     title = stripCdata(title) || title;
+
+    let description = extractTag(block, 'description');
+    description = stripCdata(description) || description;
 
     let link = extractTag(block, 'link');
     link = stripCdata(link) || link;
     if (!link) {
-      // fallback: pick first URL
       link = extractFirstUrl(block);
     }
 
@@ -102,28 +122,38 @@ function parseItems(xml) {
       if (!isNaN(d.getTime())) publishedAtIso = d.toISOString();
     }
 
+    if (process.env.DEBUG && i <= 3) {
+      console.log(`title#${i}:`, title);
+      console.log(`link#${i}:`, link);
+    }
     if (!title || !link) continue;
-    items.push({ title, link, publishedAt: publishedAtIso });
+    items.push({ title, description, link, publishedAt: publishedAtIso });
   }
   return items;
 }
 
-async function main() {
-  const res = await fetch(FEED_URL, { headers: { 'User-Agent': 'hantore-news-fetcher/1.0' } });
-  if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+async function fetchAndFilter(feed) {
+  const res = await fetch(feed.url, { headers: { 'User-Agent': 'hantore-news-fetcher/1.0' } });
+  if (!res.ok) throw new Error(`Fetch failed ${feed.id}: ${res.status}`);
   const xml = await res.text();
-
+  if (process.env.DEBUG) {
+    console.log(`[${feed.id}] xml length: ${xml.length}, has <item>?`, xml.includes('<item>'));
+  }
   const rawItems = parseItems(xml);
+  if (process.env.DEBUG) {
+    console.log(`[${feed.id}] raw items: ${rawItems.length}`);
+  }
   const excludeIds = readExcludeIds();
-
   const filtered = [];
   for (const it of rawItems) {
-    const { matched, negatives, score } = matchKeywords(it.title);
+    const hay = `${it.title} ${it.description || ''}`;
+    const { matched, negatives, score } = matchKeywords(hay);
     if (matched.length < 1 || negatives.length > 0) continue;
     const id = sha256(it.link || `${it.title}|${it.publishedAt}`);
     if (excludeIds.has(id)) continue;
     filtered.push({
       id,
+      source: feed.id,
       title: it.title,
       link: it.link,
       publishedAt: it.publishedAt,
@@ -132,24 +162,50 @@ async function main() {
       excluded: false
     });
   }
-
   filtered.sort((a, b) => {
     const ta = a.publishedAt || '';
     const tb = b.publishedAt || '';
     if (ta === tb) return (b.score || 0) - (a.score || 0);
     return tb.localeCompare(ta);
   });
+  return filtered.slice(0, MAX_ITEMS);
+}
 
-  const limited = filtered.slice(0, MAX_ITEMS);
-  const out = {
-    source: 'hokkaido-np',
-    generatedAt: new Date().toISOString(),
-    items: limited
-  };
+async function main() {
+  const results = [];
+  for (const feed of FEEDS) {
+    try {
+      const items = await fetchAndFilter(feed);
+      results.push({ feedId: feed.id, items });
+    } catch (e) {
+      console.error(`Failed feed ${feed.id}:`, e.message || e);
+      results.push({ feedId: feed.id, items: [] });
+    }
+  }
 
-  ensureDirFor(OUTPUT_PATH);
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(out, null, 2), 'utf-8');
-  console.log(`Wrote ${limited.length} items to ${OUTPUT_PATH}`);
+  const now = new Date().toISOString();
+  const byId = Object.fromEntries(results.map(r => [r.feedId, r.items]));
+
+  // per-source outputs
+  const outH = { source: 'hokkaido-np', generatedAt: now, items: byId['hokkaido-np'] || [] };
+  const outS = { source: 'sankei', generatedAt: now, items: byId['sankei'] || [] };
+
+  // all combined (再ソート)
+  const combined = [...(byId['hokkaido-np'] || []), ...(byId['sankei'] || [])].sort((a, b) => {
+    const ta = a.publishedAt || '';
+    const tb = b.publishedAt || '';
+    if (ta === tb) return (b.score || 0) - (a.score || 0);
+    return tb.localeCompare(ta);
+  }).slice(0, MAX_ITEMS);
+  const outAll = { source: 'multi', generatedAt: now, items: combined };
+
+  ensureDirFor(OUTPUT_HOKKAIDO);
+  ensureDirFor(OUTPUT_SANKEI);
+  ensureDirFor(OUTPUT_ALL);
+  fs.writeFileSync(OUTPUT_HOKKAIDO, JSON.stringify(outH, null, 2), 'utf-8');
+  fs.writeFileSync(OUTPUT_SANKEI, JSON.stringify(outS, null, 2), 'utf-8');
+  fs.writeFileSync(OUTPUT_ALL, JSON.stringify(outAll, null, 2), 'utf-8');
+  console.log(`Wrote Hokkaido=${outH.items.length}, Sankei=${outS.items.length}, All=${outAll.items.length}`);
 }
 
 main().catch(err => {

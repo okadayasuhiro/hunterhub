@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 type NewsItem = {
   id: string;
+  source?: string;
   title: string;
   link: string;
   publishedAt?: string;
@@ -20,7 +21,7 @@ const NewsPage: React.FC = () => {
 
   useEffect(() => {
     let canceled = false;
-    fetch('/news/hokkaido.json', { cache: 'no-cache' })
+    fetch('/news/all.json', { cache: 'no-cache' })
       .then(r => r.json())
       .then((json: NewsResponse) => {
         if (canceled) return;
@@ -45,9 +46,7 @@ const NewsPage: React.FC = () => {
       )}
       {data && (
         <>
-          <div className="text-xs text-gray-500 mb-3">
-            出典: 北海道新聞 / 最終更新: {data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—'}
-          </div>
+          <div className="text-xs text-gray-500 mb-3">最終更新: {data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—'}</div>
           <ul className="space-y-2">
             {data.items.slice(0, 50).map(item => (
               <li key={item.id} className="border-b border-gray-200 pb-2">
@@ -61,6 +60,8 @@ const NewsPage: React.FC = () => {
                 </a>
                 <div className="text-xs text-gray-500">
                   {item.publishedAt ? new Date(item.publishedAt).toLocaleString() : ''}
+                  {item.source === 'hokkaido-np' && <span> ・ 出典: 北海道新聞</span>}
+                  {item.source === 'sankei' && <span> ・ 出典: 産経新聞</span>}
                 </div>
               </li>
             ))}

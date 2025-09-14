@@ -1,5 +1,5 @@
 {
-  "source": "hokkaido-np",
+  "source": "multi",
   "generatedAt": "2025-09-14T12:25:37.024Z",
   "items": [
     {
@@ -23,6 +23,31 @@
       "publishedAt": "2025-09-14T09:05:42.000Z",
       "matchedKeywords": [
         "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "964e48d3b8ec2c1ca92f24169aa3e86e6013b2df6fd7bcc27751275948a2cbab",
+      "source": "sankei",
+      "title": "クマの市街地出没、SNSに目立つメガソーラー原因説「すみか奪ってる」「クマ被害増加」",
+      "link": "https://www.sankei.com/article/20250914-TMKKC5GVMJNSBKCK727V3OIRRY/",
+      "publishedAt": "2025-09-14T04:00:00.000Z",
+      "matchedKeywords": [
+        "出没",
+        "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "c443ee87d85dd43063666b7d542c27d5c8265471f02bb977524af8a29ccf5aef",
+      "source": "sankei",
+      "title": "鹿児島・十島村で震度4　震源地はトカラ列島近海、マグニチュード4・4と推定",
+      "link": "https://www.sankei.com/article/20250913-O373EDQO7NOQBKA6TYLKFWF3II/",
+      "publishedAt": "2025-09-13T14:53:45.000Z",
+      "matchedKeywords": [
+        "鹿"
       ],
       "score": 2,
       "excluded": false
