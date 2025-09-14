@@ -15,9 +15,10 @@ const OUTPUT_ASAHI = path.resolve(process.cwd(), 'public/news/asahi.json');
 const OUTPUT_ALL = path.resolve(process.cwd(), 'public/news/all.json');
 const EXCLUDE_PATH = path.resolve(process.cwd(), 'config/news_exclude.json');
 const MAX_ITEMS = 50;
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
 const POSITIVE_KEYWORDS = [
-  '狩猟','猟','猟友会','ハンター','有害鳥獣','駆除','捕獲','出没','目撃','獣害','誤射',
+  '狩猟','猟','猟友会','ハンター','有害鳥獣','駆除','捕獲','獣害','誤射',
   '銃砲','散弾銃','空気銃','猟期','禁猟','禁猟区','鳥獣保護',
   '鹿','エゾシカ',
   '熊','クマ','ヒグマ','ツキノワグマ','狩猟免許','猟銃'
@@ -25,7 +26,7 @@ const POSITIVE_KEYWORDS = [
 
 const NEGATIVE_KEYWORDS = [
   '熊本','熊谷','熊野','くまモン','テディベア','ベアーズ','鹿児島',
-  'ヨドバシ','ヨドバシカメラ','鹿沼','鹿沼市'
+  'ヨドバシ','ヨドバシカメラ','鹿沼','鹿沼市','鹿化川'
 ];
 
 const STRONG_KEYWORDS = new Set([
@@ -154,6 +155,14 @@ async function fetchAndFilter(feed) {
     const hay = `${it.title} ${it.description || ''}`;
     const { matched, negatives, score } = matchKeywords(hay);
     if (matched.length < 1 || negatives.length > 0) continue;
+
+    // Only include items within the last 7 days (require valid publishedAt)
+    if (!it.publishedAt) continue;
+    const publishedTime = Date.parse(it.publishedAt);
+    if (isNaN(publishedTime)) continue;
+    const ageMs = Date.now() - publishedTime;
+    if (ageMs < 0 || ageMs > SEVEN_DAYS_MS) continue;
+
     const id = sha256(it.link || `${it.title}|${it.publishedAt}`);
     if (excludeIds.has(id)) continue;
     filtered.push({

@@ -25,7 +25,17 @@ const NewsPage: React.FC = () => {
       .then(r => r.json())
       .then((json: NewsResponse) => {
         if (canceled) return;
-        const items = (json.items || []).filter(it => !it.excluded);
+        const nowMs = Date.now();
+        const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+        const items = (json.items || [])
+          .filter(it => !it.excluded)
+          .filter(it => {
+            if (!it.publishedAt) return false;
+            const t = Date.parse(it.publishedAt);
+            if (isNaN(t)) return false;
+            const age = nowMs - t;
+            return age >= 0 && age <= sevenDaysMs;
+          });
         setData({ ...json, items });
       })
       .catch(e => {

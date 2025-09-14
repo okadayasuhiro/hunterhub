@@ -1,19 +1,7 @@
 {
   "source": "hokkaido-np",
-  "generatedAt": "2025-09-14T13:12:57.027Z",
+  "generatedAt": "2025-09-14T13:26:28.876Z",
   "items": [
-    {
-      "id": "90a84d3c79c23c2396609db81c4d66a6464fcb55dd4fbff702cbc4c3fa1891a7",
-      "source": "hokkaido-np",
-      "title": "3日連続のクマ食害　札幌・清田の農園",
-      "link": "https://www.hokkaido-np.co.jp/article/1211571/",
-      "publishedAt": "2025-09-14T09:05:42.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
     {
       "id": "7e224c38854dadccc831d57f9e47f04fade62cca3728ce51f95a3f67b7b9c249",
       "source": "hokkaido-np",
@@ -21,12 +9,10 @@
       "link": "https://www.hokkaido-np.co.jp/article/1211466/",
       "publishedAt": "2025-09-13T13:13:23.000Z",
       "matchedKeywords": [
-        "出没",
-        "目撃",
         "クマ",
         "ヒグマ"
       ],
-      "score": 8,
+      "score": 4,
       "excluded": false
     },
     {
@@ -36,12 +22,10 @@
       "link": "https://www.hokkaido-np.co.jp/article/1211232/",
       "publishedAt": "2025-09-12T13:46:14.000Z",
       "matchedKeywords": [
-        "出没",
-        "目撃",
         "クマ",
         "ヒグマ"
       ],
-      "score": 8,
+      "score": 4,
       "excluded": false
     }
   ]

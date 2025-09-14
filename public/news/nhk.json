@@ -1,6 +1,6 @@
 {
   "source": "nhk",
-  "generatedAt": "2025-09-14T13:12:57.027Z",
+  "generatedAt": "2025-09-14T13:26:28.876Z",
   "items": [
     {
       "id": "a65164a394778b5fcc38c3aa39fbb2a42ff6937ae49fa01e5fe2bb898c15d8a8",
@@ -33,20 +33,7 @@
       "link": "http://www3.nhk.or.jp/news/html/20250913/k10014921751000.html",
       "publishedAt": "2025-09-12T23:13:11.000Z",
       "matchedKeywords": [
-        "目撃",
         "クマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
-    {
-      "id": "257de535356f66052b9b524bfa8f6c80308338ca45b0ee32862e8d6fe871f954",
-      "source": "nhk",
-      "title": "三重 四日市 ９地区に避難指示 鹿化川など氾濫のおそれ",
-      "link": "http://www3.nhk.or.jp/news/html/20250912/k10014921631000.html",
-      "publishedAt": "2025-09-12T14:28:13.000Z",
-      "matchedKeywords": [
-        "鹿"
       ],
       "score": 2,
       "excluded": false
@@ -59,18 +46,6 @@
       "publishedAt": "2025-09-12T08:08:54.000Z",
       "matchedKeywords": [
         "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "e94b1f31b6a1405fe8466e8886d97716fac71dbdfb367d59b4b187f3f0cbb88f",
-      "source": "nhk",
-      "title": "沖縄 宮古島地方 正午ごろ竜巻を目撃 けが人情報なし",
-      "link": "http://www3.nhk.or.jp/news/html/20250912/k10014920921000.html",
-      "publishedAt": "2025-09-12T06:16:41.000Z",
-      "matchedKeywords": [
-        "目撃"
       ],
       "score": 2,
       "excluded": false
