@@ -831,10 +831,10 @@ const HomePage: React.FC = () => {
             <div className="py-4 px-4">
                 <div className="max-w-6xl mx-auto" ref={belowFoldRef}>
                     <Link to="/news" className="relative block bg-white rounded-xl shadow-lg border-0 p-5 hover:shadow-xl transition overflow-hidden">
-                        <div className="relative z-10 flex items-center justify-between">
-                            <div>
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between">
                                 <h2 className="text-lg font-semibold text-gray-800">狩猟ニュース</h2>
-                                <p className="text-sm text-gray-600 mt-1">直近7日の最新ニュースをまとめてチェック</p>
+                                <span className="text-sm text-gray-600 ml-3 truncate max-w-[60%]">直近7日の最新ニュースをまとめてチェック</span>
                             </div>
                         </div>
                         {homeNewsTop2.length > 0 && (
