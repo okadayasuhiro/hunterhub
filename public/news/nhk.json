@@ -1,6 +1,6 @@
 {
   "source": "nhk",
-  "generatedAt": "2025-09-14T12:27:23.698Z",
+  "generatedAt": "2025-09-14T12:30:28.599Z",
   "items": [
     {
       "id": "016e1d28cbad630d0be6c13edcb11fc2e8d72245b87d9c1f8067fa1956ecc5fd",
@@ -10,18 +10,6 @@
       "publishedAt": "2025-09-14T05:57:22.000Z",
       "matchedKeywords": [
         "鹿"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "a65164a394778b5fcc38c3aa39fbb2a42ff6937ae49fa01e5fe2bb898c15d8a8",
-      "source": "nhk",
-      "title": "北海道 羅臼岳 ヒグマの事故から1か月 再発防止へ取り組み",
-      "link": "http://www3.nhk.or.jp/news/html/20250914/k10014922551000.html",
-      "publishedAt": "2025-09-14T05:25:25.000Z",
-      "matchedKeywords": [
-        "ヒグマ"
       ],
       "score": 2,
       "excluded": false
@@ -95,18 +83,6 @@
       "publishedAt": "2025-09-10T20:16:25.000Z",
       "matchedKeywords": [
         "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "986116210992780ac8e2e55a6f6605df054bd9ef4bc81e6843698ccf399882b1",
-      "source": "nhk",
-      "title": "ヨドバシカメラに下請け法違反で再発防止求める勧告 公取委",
-      "link": "http://www3.nhk.or.jp/news/html/20250908/k10014916771000.html",
-      "publishedAt": "2025-09-08T09:10:38.000Z",
-      "matchedKeywords": [
-        "シカ"
       ],
       "score": 2,
       "excluded": false

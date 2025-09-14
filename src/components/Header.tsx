@@ -330,6 +330,18 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                                 <CircleArrowRight className="w-5 h-5 text-white/80 group-hover:text-white transition-colors duration-200" />
                             </div>
                         </button>
+                        {/* 狩猟ニュースリンク */}
+                        <button
+                            onClick={() => handleGameLinkClick('/news')}
+                            className="w-full text-left px-6 py-3 text-white hover:bg-white/20 transition-colors duration-200 group"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="font-medium text-white group-hover:text-blue-100 transition-colors duration-200">
+                                    狩猟ニュース
+                                </div>
+                                <CircleArrowRight className="w-5 h-5 text-white/80 group-hover:text-white transition-colors duration-200" />
+                            </div>
+                        </button>
                     </div>
 
                     {/* トレーニングセクション */}
