@@ -463,6 +463,19 @@ const HomePage: React.FC = () => {
     // Phase 2: お知らせデータをメモ化（再レンダリング防止）
     const memoizedNotices = useMemo(() => notices, []);
 
+    // ニュースカード用: 最新2件のニュース見出しを表示
+    const [homeNewsTop2, setHomeNewsTop2] = useState<{ id: string; title: string; }[]>([]);
+    useEffect(() => {
+        const url = `/news/all.json?v=${Date.now()}`;
+        fetch(url, { cache: 'no-cache' })
+            .then(r => r.json())
+            .then((json: any) => {
+                const items: any[] = Array.isArray(json?.items) ? json.items : [];
+                const top2 = items.slice(0, 2).map((it: any) => ({ id: it.id, title: it.title }));
+                setHomeNewsTop2(top2);
+            }).catch(() => {});
+    }, []);
+
     // Phase 2: ゲームカード設定をメモ化
     const gameCardConfigs = useMemo(() => [
         {
@@ -824,6 +837,13 @@ const HomePage: React.FC = () => {
                                 <p className="text-sm text-gray-600 mt-1">直近7日の最新ニュースをまとめてチェック</p>
                             </div>
                         </div>
+                        {homeNewsTop2.length > 0 && (
+                            <ul className="mt-3 space-y-1">
+                                {homeNewsTop2.map(n => (
+                                    <li key={n.id} className="text-sm text-blue-700 truncate">{n.title}</li>
+                                ))}
+                            </ul>
+                        )}
                     </Link>
                 </div>
             </div>
