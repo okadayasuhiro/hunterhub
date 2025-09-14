@@ -834,7 +834,7 @@ const HomePage: React.FC = () => {
                         <div className="relative z-10">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-lg font-semibold text-gray-800">狩猟ニュース</h2>
-                                <span className="text-sm text-gray-600 ml-3 truncate max-w-[60%]">直近7日の最新ニュースをまとめてチェック</span>
+                                <span className="text-sm text-gray-600 ml-3 truncate max-w-[60%]">直近7日の最新ニュース</span>
                             </div>
                         </div>
                         {homeNewsTop2.length > 0 && (
