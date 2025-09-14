@@ -9,12 +9,8 @@ const NotFoundPage: React.FC = () => {
     };
 
     return (
-        <div className="relative flex-1 overflow-hidden">
-            {/* 背景グラデーション（他ページに合わせた雰囲気） */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-100/10 via-blue-300/40 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-transparent"></div>
-
-            <div className="relative z-10 flex items-center justify-center min-h-[60vh] text-center px-4 py-10">
+        <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: '#ecf6ff' }}>
+            <div className="text-center px-4 py-10">
                 <div className="mb-6">
                     <img src="/images/404deer.webp" alt="Not found deer" className="mx-auto w-48 h-48 object-contain" />
                 </div>
