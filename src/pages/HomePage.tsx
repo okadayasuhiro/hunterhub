@@ -351,21 +351,21 @@ const HomePage: React.FC = () => {
     const ENABLE_TARGET_PANEL = true;
     const ENABLE_SEQUENCE_PANEL = true;
     
-    // サンプルお知らせデータ
-    const notices: Notice[] = [
-        {
-            id: '1',
-            date: '09.13',
-            title: 'トリガートレーニング（鬼モード）をしました',
-            type: 'event'
-        },
-        {
-            id: '2',
-            date: '09.05',
-            title: 'いくつかの不具合を修正しました',
-            type: 'event'
-        }
-    ];
+    const [newsNotices, setNewsNotices] = useState<Notice[]>([]);
+    useEffect(() => {
+        const url = `/news/all.json?v=${Date.now()}`;
+        fetch(url, { cache: 'no-cache' })
+            .then(r => r.json())
+            .then((json: any) => {
+                const items: any[] = Array.isArray(json?.items) ? json.items : [];
+                const top2 = items.slice(0, 2).map((it: any) => ({
+                    id: it.id,
+                    date: it.publishedAt ? new Date(it.publishedAt).toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }).replace('/', '.') : '',
+                    title: it.title
+                })) as Notice[];
+                setNewsNotices(top2);
+            }).catch(() => {});
+    }, []);
     const [lastResults, setLastResults] = useState<{
         reflex?: LastResult;
         target?: LastResult;
@@ -461,7 +461,7 @@ const HomePage: React.FC = () => {
     }, [shouldLoad]);
 
     // Phase 2: お知らせデータをメモ化（再レンダリング防止）
-    const memoizedNotices = useMemo(() => notices, []);
+    const memoizedNotices = useMemo(() => newsNotices, [newsNotices]);
 
     // Phase 2: ゲームカード設定をメモ化
     const gameCardConfigs = useMemo(() => [
@@ -812,7 +812,12 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* お知らせセクション */}
-            <NoticeSection notices={memoizedNotices} />
+            <div>
+                <NoticeSection notices={memoizedNotices} />
+                <div className="max-w-6xl mx-auto px-4 py-1 text-right">
+                    <Link to="/news" className="text-sm text-blue-600 hover:underline">もっとみる →</Link>
+                </div>
+            </div>
 
             {/* わたしのトレーニング履歴 リンクブロック */}
             <div className="py-4 px-4">

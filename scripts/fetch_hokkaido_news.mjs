@@ -7,13 +7,15 @@ const FEEDS = [
   { id: 'sankei', url: 'https://assets.wor.jp/rss/rdf/sankei/affairs.rdf' },
   { id: 'nhk', url: 'https://www.nhk.or.jp/rss/news/cat1.xml' },
   { id: 'asahi', url: 'https://www.asahi.com/rss/asahi/national.rdf' },
-  { id: 'akt-yahoo', url: 'https://news.yahoo.co.jp/rss/media/akt/all.xml' }
+  { id: 'akt-yahoo', url: 'https://news.yahoo.co.jp/rss/media/akt/all.xml' },
+  { id: 'iwatenpv-yahoo', url: 'https://news.yahoo.co.jp/rss/media/iwatenpv/all.xml' }
 ];
 const OUTPUT_HOKKAIDO = path.resolve(process.cwd(), 'public/news/hokkaido.json');
 const OUTPUT_SANKEI = path.resolve(process.cwd(), 'public/news/sankei.json');
 const OUTPUT_NHK = path.resolve(process.cwd(), 'public/news/nhk.json');
 const OUTPUT_ASAHI = path.resolve(process.cwd(), 'public/news/asahi.json');
 const OUTPUT_AKT = path.resolve(process.cwd(), 'public/news/akt-yahoo.json');
+const OUTPUT_IWATENPV = path.resolve(process.cwd(), 'public/news/iwatenpv-yahoo.json');
 const OUTPUT_ALL = path.resolve(process.cwd(), 'public/news/all.json');
 const EXCLUDE_PATH = path.resolve(process.cwd(), 'config/news_exclude.json');
 const MAX_ITEMS = 50;
@@ -208,9 +210,17 @@ async function main() {
   const outN = { source: 'nhk', generatedAt: now, items: byId['nhk'] || [] };
   const outA = { source: 'asahi', generatedAt: now, items: byId['asahi'] || [] };
   const outK = { source: 'akt-yahoo', generatedAt: now, items: byId['akt-yahoo'] || [] };
+  const outI = { source: 'iwatenpv-yahoo', generatedAt: now, items: byId['iwatenpv-yahoo'] || [] };
 
   // all combined (再ソート)
-  const combined = [...(byId['hokkaido-np'] || []), ...(byId['sankei'] || []), ...(byId['nhk'] || []), ...(byId['asahi'] || []), ...(byId['akt-yahoo'] || [])].sort((a, b) => {
+  const combined = [
+    ...(byId['hokkaido-np'] || []),
+    ...(byId['sankei'] || []),
+    ...(byId['nhk'] || []),
+    ...(byId['asahi'] || []),
+    ...(byId['akt-yahoo'] || []),
+    ...(byId['iwatenpv-yahoo'] || [])
+  ].sort((a, b) => {
     const ta = a.publishedAt || '';
     const tb = b.publishedAt || '';
     if (ta === tb) return (b.score || 0) - (a.score || 0);
@@ -223,12 +233,14 @@ async function main() {
   ensureDirFor(OUTPUT_NHK);
   ensureDirFor(OUTPUT_ASAHI);
   ensureDirFor(OUTPUT_AKT);
+  ensureDirFor(OUTPUT_IWATENPV);
   ensureDirFor(OUTPUT_ALL);
   fs.writeFileSync(OUTPUT_HOKKAIDO, JSON.stringify(outH, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_SANKEI, JSON.stringify(outS, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_NHK, JSON.stringify(outN, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_ASAHI, JSON.stringify(outA, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_AKT, JSON.stringify(outK, null, 2), 'utf-8');
+  fs.writeFileSync(OUTPUT_IWATENPV, JSON.stringify(outI, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_ALL, JSON.stringify(outAll, null, 2), 'utf-8');
   console.log(`Wrote Hokkaido=${outH.items.length}, Sankei=${outS.items.length}, NHK=${outN.items.length}, Asahi=${outA.items.length}, All=${outAll.items.length}`);
 }

@@ -48,7 +48,10 @@ const NewsPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">狩猟ニュース</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">狩猟ニュース</h1>
+        <a href="/" className="text-sm px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">トップへ戻る</a>
+      </div>
       {error && (
         <div className="text-sm text-red-600 mb-4">{error}</div>
       )}
@@ -76,6 +79,7 @@ const NewsPage: React.FC = () => {
                   {item.source === 'nhk' && <span> ・ 出典: NHKニュース</span>}
                   {item.source === 'asahi' && <span> ・ 出典: 朝日新聞</span>}
                   {item.source === 'akt-yahoo' && <span> ・ 出典: 秋田テレビ（Yahoo!）</span>}
+                  {item.source === 'iwatenpv-yahoo' && <span> ・ 出典: 岩手日報（Yahoo!）</span>}
                 </div>
               </li>
             ))}

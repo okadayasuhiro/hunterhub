@@ -33,6 +33,7 @@ jobs:
           git add public/news/nhk.json
           git add public/news/asahi.json
           git add public/news/akt-yahoo.json
+          git add public/news/iwatenpv-yahoo.json
           git add public/news/all.json
           if git diff --cached --quiet; then
             echo "No changes"
