@@ -31,6 +31,7 @@ jobs:
           git add public/news/hokkaido.json
           git add public/news/sankei.json
           git add public/news/nhk.json
+          git add public/news/asahi.json
           git add public/news/all.json
           if git diff --cached --quiet; then
             echo "No changes"

@@ -1,20 +1,7 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-14T12:30:28.599Z",
+  "generatedAt": "2025-09-14T13:12:57.027Z",
   "items": [
-    {
-      "id": "529b27e493b5fbe0ce6d01af4cb6f5c208fbc4ef61eeb7c2f6c2effa52bd4adb",
-      "source": "hokkaido-np",
-      "title": "夕張でヒグマ目撃　住初の住宅近く",
-      "link": "https://www.hokkaido-np.co.jp/article/1211591/",
-      "publishedAt": "2025-09-14T09:53:12.000Z",
-      "matchedKeywords": [
-        "目撃",
-        "ヒグマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
     {
       "id": "90a84d3c79c23c2396609db81c4d66a6464fcb55dd4fbff702cbc4c3fa1891a7",
       "source": "hokkaido-np",
@@ -28,13 +15,13 @@
       "excluded": false
     },
     {
-      "id": "016e1d28cbad630d0be6c13edcb11fc2e8d72245b87d9c1f8067fa1956ecc5fd",
+      "id": "a65164a394778b5fcc38c3aa39fbb2a42ff6937ae49fa01e5fe2bb898c15d8a8",
       "source": "nhk",
-      "title": "事故の車に後続車衝突 男児重体 逃走のトルコ国籍の容疑者逮捕",
-      "link": "http://www3.nhk.or.jp/news/html/20250914/k10014922311000.html",
-      "publishedAt": "2025-09-14T05:57:22.000Z",
+      "title": "北海道 羅臼岳 ヒグマの事故から1か月 再発防止へ取り組み",
+      "link": "http://www3.nhk.or.jp/news/html/20250914/k10014922551000.html",
+      "publishedAt": "2025-09-14T05:25:25.000Z",
       "matchedKeywords": [
-        "鹿"
+        "ヒグマ"
       ],
       "score": 2,
       "excluded": false
@@ -65,6 +52,18 @@
         "ヒグマ"
       ],
       "score": 8,
+      "excluded": false
+    },
+    {
+      "id": "b8ffcb6d74c980e1cdaa4afb4619bf7afc059e3a6b52a553def69e0c34e8e6bc",
+      "source": "asahi",
+      "title": "福島県の介護施設にクマ侵入　職員に向かうように、入居者らは無事",
+      "link": "https://www.asahi.com/articles/AST9F3CQXT9FUNHB002M.html?ref=rss",
+      "publishedAt": "2025-09-13T11:00:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
       "excluded": false
     },
     {
