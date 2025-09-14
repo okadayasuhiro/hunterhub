@@ -1,6 +1,6 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-14T13:26:28.876Z",
+  "generatedAt": "2025-09-14T13:43:46.607Z",
   "items": [
     {
       "id": "a65164a394778b5fcc38c3aa39fbb2a42ff6937ae49fa01e5fe2bb898c15d8a8",
@@ -101,6 +101,30 @@
       "excluded": false
     },
     {
+      "id": "ddae4847af3ae31c0b135f7351e18a0ab1752ec52afe80b014ecd43042ee0afa",
+      "source": "akt-yahoo",
+      "title": "「ハラスメントの認識なかった」　除雪巡る高圧的態度がハラスメントと認定された市議が弁明　秋田・鹿角市(秋田テレビ)",
+      "link": "https://news.yahoo.co.jp/articles/96c2e80f7ad5533ddd73f00c540be5e0a44c1af1?source=rss",
+      "publishedAt": "2025-09-11T09:01:01.000Z",
+      "matchedKeywords": [
+        "鹿"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "5a2cf7841dedc9f70a9aa6b3930c6392324860f89c576a82e187a7a3a2ce0d64",
+      "source": "akt-yahoo",
+      "title": "クマに襲われたか　ブドウ畑を見回り中の77歳男性、顔の骨を折るなどの大けが　秋田・大館市(秋田テレビ)",
+      "link": "https://news.yahoo.co.jp/articles/360803b817f67c71724b7db69abcbc1321509528?source=rss",
+      "publishedAt": "2025-09-11T04:56:02.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
       "id": "5a76408883e73896bdb495e0636cd8ca4da2f9fffc5de8bba3ec680ea3ae3a4c",
       "source": "nhk",
       "title": "秋田 大館 77歳男性が動物に襲われ大けが クマに襲われたか",
@@ -108,6 +132,42 @@
       "publishedAt": "2025-09-10T20:16:25.000Z",
       "matchedKeywords": [
         "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "19979aa911b32f3c0df8d1dfcd6f62e29cc9fb31320ad107b02d2737141b89b7",
+      "source": "akt-yahoo",
+      "title": "120万円相当のクーポン券を横領　観光助成金詐欺で公判中の会社役員の女（78）再逮捕　秋田(秋田テレビ)",
+      "link": "https://news.yahoo.co.jp/articles/5c9eeaadc7525b9f32eef0837699beb7a51215d9?source=rss",
+      "publishedAt": "2025-09-10T09:45:01.000Z",
+      "matchedKeywords": [
+        "鹿"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "6fa2eab350b7fd3351dabb813e1bef39126490cd00f2ef70fda87a673c376bcf",
+      "source": "akt-yahoo",
+      "title": "知人男性に暴行し金や車を奪った男鹿市の事件　被告の男に懲役6年の実刑判決　秋田(秋田テレビ)",
+      "link": "https://news.yahoo.co.jp/articles/63feb93ff755a7c47811b9fc2c1860f2a8b170ab?source=rss",
+      "publishedAt": "2025-09-10T04:28:01.000Z",
+      "matchedKeywords": [
+        "鹿"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "142184d593ceab6609f079f7aab29b7663cc67c3dff59b211563452e87faa3d3",
+      "source": "akt-yahoo",
+      "title": "消防と住民が連携　“地域救命サポーター”が救急車到着まで応急対応　命と健康守る鍵に　秋田・鹿角市(秋田テレビ)",
+      "link": "https://news.yahoo.co.jp/articles/d130ae3a91732e25aebb219da6096daa5f0c26e9?source=rss",
+      "publishedAt": "2025-09-09T10:20:02.000Z",
+      "matchedKeywords": [
+        "鹿"
       ],
       "score": 2,
       "excluded": false

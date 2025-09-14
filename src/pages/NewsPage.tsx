@@ -74,6 +74,7 @@ const NewsPage: React.FC = () => {
                   {item.source === 'sankei' && <span> ・ 出典: 産経新聞</span>}
                   {item.source === 'nhk' && <span> ・ 出典: NHKニュース</span>}
                   {item.source === 'asahi' && <span> ・ 出典: 朝日新聞</span>}
+                  {item.source === 'akt-yahoo' && <span> ・ 出典: 秋田テレビ（Yahoo!）</span>}
                 </div>
               </li>
             ))}
