@@ -386,6 +386,16 @@ const HomePage: React.FC = () => {
         sequence?: RankingEntry | null;
         triggerTiming?: RankingEntry | null;
     }>({});
+    // 遅延読み込み用の監視ターゲット
+    const belowFoldRef = React.useRef<HTMLDivElement | null>(null);
+    const [shouldLoad, setShouldLoad] = useState(false);
+    const HOME_CACHE_KEY = 'home_page_cache_v1';
+    type HomeCache = {
+        lastResults: typeof lastResults;
+        playCounts: typeof playCounts;
+        topPlayers: typeof topPlayers;
+        updatedAt: number;
+    };
 
     // Phase 2: 基本キャッシュ - サービスインスタンスをメモ化
     const gameHistoryService = useMemo(() => GameHistoryService.getInstance(), []);
@@ -395,31 +405,60 @@ const HomePage: React.FC = () => {
     const homePageService = useMemo(() => HomePageService.getInstance(), []);
 
     // Phase 3最適化: React Query導入（既存のuseEffectと並行動作）
-    const { data: optimizedData, isLoading: isOptimizedLoading, error: optimizedError } = useQuery<HomePageData>({
-        queryKey: ['homePageData'],
+    const { data: optimizedData, error: optimizedError } = useQuery<HomePageData>({
+        queryKey: ['home:v1'],
         queryFn: () => homePageService.getHomePageDataOptimized(),
-        staleTime: 5 * 60 * 1000, // 5分間キャッシュ
-        gcTime: 10 * 60 * 1000, // 10分間保持
-        retry: 2,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 15 * 60 * 1000,
+        retry: 1,
         refetchOnWindowFocus: false,
-        enabled: false // 二重取得を回避（手書き取得を優先）
+        enabled: shouldLoad
     });
 
     // 本番最適化: DEV環境のみログ出力
     useEffect(() => {
-        if (optimizedData && import.meta.env.DEV) {
-            console.log('🚀 Phase 3最適化: React Query統合データ取得成功', {
-                loadTime: optimizedData.loadTime,
-                lastResults: Object.keys(optimizedData.lastResults).length,
-                playCounts: optimizedData.playCounts,
-                topPlayers: Object.keys(optimizedData.topPlayers).length
+        if (optimizedData) {
+            setLastResults(optimizedData.lastResults as any);
+            setPlayCounts(optimizedData.playCounts as any);
+            setTopPlayers(optimizedData.topPlayers as any);
+            const cache: HomeCache = {
+                lastResults: optimizedData.lastResults as any,
+                playCounts: optimizedData.playCounts as any,
+                topPlayers: optimizedData.topPlayers as any,
+                updatedAt: Date.now()
+            };
+            try { sessionStorage.setItem(HOME_CACHE_KEY, JSON.stringify(cache)); } catch {}
+        }
+    }, [optimizedData]);
+
+    // 初期描画: セッションキャッシュを即適用（SWR）
+    useEffect(() => {
+        try {
+            const raw = sessionStorage.getItem(HOME_CACHE_KEY);
+            if (raw) {
+                const cache: HomeCache = JSON.parse(raw);
+                setLastResults(cache.lastResults);
+                setPlayCounts(cache.playCounts);
+                setTopPlayers(cache.topPlayers);
+            }
+        } catch {}
+    }, []);
+
+    // IntersectionObserver でファーストビュー外になったらロード開始
+    useEffect(() => {
+        if (shouldLoad) return;
+        const el = belowFoldRef.current;
+        if (!el) return;
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach((e) => {
+                if (e.isIntersecting) {
+                    setShouldLoad(true);
+                }
             });
-        }
-        // エラーログは本番でも重要（ただし簡潔に）
-        if (optimizedError && import.meta.env.DEV) {
-            console.error('❌ Phase 3最適化: React Query統合データ取得エラー', optimizedError);
-        }
-    }, [optimizedData, optimizedError]);
+        }, { threshold: 0.1 });
+        obs.observe(el);
+        return () => obs.disconnect();
+    }, [shouldLoad]);
 
     // Phase 2: お知らせデータをメモ化（再レンダリング防止）
     const memoizedNotices = useMemo(() => notices, []);
@@ -489,6 +528,7 @@ const HomePage: React.FC = () => {
 
     // ゲーム履歴から各ゲームの最新記録を取得
     useEffect(() => {
+        if (!shouldLoad || optimizedData) return;
         const loadLastResults = async () => {
             const startTime = performance.now();
             try {
@@ -657,12 +697,13 @@ const HomePage: React.FC = () => {
         };
 
         loadLastResults();
-    }, [gameHistoryService, hybridRankingService]);
+    }, [gameHistoryService, hybridRankingService, shouldLoad, optimizedData]);
 
     const location = useLocation();
 
     // トップランカーを取得（初回 + ページナビゲーション時）
     useEffect(() => {
+        if (!shouldLoad || optimizedData) return;
         const loadTopPlayers = async () => {
             const startTime = performance.now();
             try {
@@ -683,7 +724,7 @@ const HomePage: React.FC = () => {
 
         loadTopPlayers();
 
-    }, [location.pathname, hybridRankingService]); // ページ遷移時に再実行
+    }, [location.pathname, hybridRankingService, shouldLoad, optimizedData]);
 
     // 構造化データ（ホームページ用）
     const structuredData = {
@@ -775,7 +816,7 @@ const HomePage: React.FC = () => {
 
             {/* わたしのトレーニング履歴 リンクブロック */}
             <div className="py-4 px-4">
-                <div className="max-w-6xl mx-auto">
+                <div className="max-w-6xl mx-auto" ref={belowFoldRef}>
                     <Link to="/my/history" className="relative block bg-white rounded-xl shadow-lg border-0 p-5 hover:shadow-xl transition overflow-hidden">
                         <div className="relative z-10 flex items-center justify-between">
                             <div>

@@ -113,6 +113,35 @@ aws amplify list-jobs --app-id d1ewt5l0oirslc --branch-name main --max-items 5
   - 事象: GitHubが50MB超で警告。例: `deploy/*.zip`。
   - 対処: ZIPをリポジトリ管理しない（`.gitignore`）。必要ならGit LFS検討。
 
+- 3.10 ビルド失敗（TS2322/TS18048: `CloudRankingService` 型エラー）
+  - 症状: Amplify BUILD で `TS2322/TS18048`。例:
+    - `username: string | null | undefined は CloudRankingEntry.username (string | undefined) に割当不可`
+    - `userProfile is possibly 'undefined'`
+  - 原因: `finalUsername` を `string | undefined` で扱っていない／`null` を流している／プロフィールの未取得考慮漏れ。
+  - 対処: 以下のように修正してから再プッシュ。
+    - `let finalUsername: string | undefined = undefined;`
+    - 代入時は `xxx || undefined` を使い、`null` は使用しない
+    - `userProfile && userProfile.username` のガードを追加
+    - ハンター名かどうかの採否判定は `^ハンター\d+$` のみを採用
+    - `userProfilesByUserId` クエリを利用し、`xId/xUsername/xDisplayName` を取得してX連携の3点セットで判定
+
+- 3.11 連携解除したのにランキングにX名が残る
+  - 症状: 本番でX連携を解除しても、ランキングに旧X表示名が残る
+  - 原因:
+    - DynamoDBの `UserProfile` に `xDisplayName/xUsername/xId/xProfileImageUrl` が残留
+    - フロントが `xDisplayName` のみ存在してもX名として採用していた
+  - 対処（コード方針）:
+    - 解除APIでクラウド側を完全クリア
+      - `xDisplayName/xUsername/xId/xProfileImageUrl` を `null` 更新
+      - 併せて `username` をハンター名へ上書き（解除直後の表示ブレ防止）
+    - 表示ロジックを厳密化
+      - X連携は「`xId && xUsername && xDisplayName` が全て揃う」場合のみX名を採用
+      - `username` は `^ハンター\d+$` のみ採用。それ以外はハッシュから生成したハンター名へフォールバック
+  - 対処（手動ワンショット）:
+    - 単発で消したい場合はGraphQLで対象 `id` のX項目を `null` 更新
+      - 例（API Key 必要）:
+        - Mutation: `updateUserProfile(input: { id: "<userId>", xDisplayName: null, xUsername: null, xId: null, xProfileImageUrl: null }) { id }`
+
 ---
 
 ### 4. よく使う確認コマンド
@@ -128,6 +157,16 @@ aws amplify list-jobs --app-id d1ewt5l0oirslc --branch-name main --max-items 5
 
 # 個別ジョブ詳細
 aws amplify get-job --app-id d1ewt5l0oirslc --branch-name main --job-id <ID>
+
+# （参考）GraphQL: 特定ユーザーのUserProfile取得
+curl -s -H "x-api-key: <API_KEY>" -H "Content-Type: application/json" \
+  -d '{"query":"query GetUser($id: ID!){getUserProfile(id:$id){id username xDisplayName xUsername xId xProfileImageUrl updatedAt}}","variables":{"id":"<USER_ID>"}}' \
+  https://krit327tvfek7bmj77g4dyzj2a.appsync-api.ap-northeast-1.amazonaws.com/graphql
+
+# （参考）GraphQL: X項目の手動クリア
+curl -s -H "x-api-key: <API_KEY>" -H "Content-Type: application/json" \
+  -d '{"query":"mutation UpdateUser($input: UpdateUserProfileInput!){updateUserProfile(input:$input){id}}","variables":{"input":{"id":"<USER_ID>","xDisplayName":null,"xUsername":null,"xId":null,"xProfileImageUrl":null}}}' \
+  https://krit327tvfek7bmj77g4dyzj2a.appsync-api.ap-northeast-1.amazonaws.com/graphql
 ```
 
 ---

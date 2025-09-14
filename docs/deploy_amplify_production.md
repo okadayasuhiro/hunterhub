@@ -93,13 +93,14 @@ git push origin main
 
 ---
 
-### 6. トラブルシューティング集
+### 6. トラブルシューティング集（簡易版／詳細は `deploy_runbook.md` を参照）
 - 「手動ZIPアップロードで更新したい」
   - 連携リポジトリ方式のため不可。`main` へプッシュでデプロイする。
 - 「iPhoneでランキングが表示されない」
   - ローカルHTTPを参照していると認証/セキュアコンテキスト要件で失敗することがある。実機検証は本番URLかHTTPSトンネル（ngrok/Cloudflare Tunnel）を使用。
 - 「GraphQLに繋がらない」
   - `src/main.tsx` の `Amplify.configure` が最新のエンドポイント/API Keyを指しているか確認。
+  - 解除後にX名が残る／ランキング表示名の不整合→ `deploy_runbook.md` の 3.10/3.11 を参照（型修正とX解除の完全クリア、表示判定の厳密化）。
 - 「週間ラベルを出したくない」
   - `HomePage.tsx` は年のみ表示に修正済み（`weekTitle = "${week.year}年"`）。
 
@@ -109,6 +110,7 @@ git push origin main
 - [ ] ローカルで `npm ci && npm run build` が成功
 - [ ] 重要画面の文言/画像/リンク確認
 - [ ] ランキング・プレイ回数・前回記録が表示
+- [ ] X解除時に本番で旧X名が残らない（対象ユーザーで確認可）
 - [ ] 秘密情報がリポジトリに含まれていない
 - [ ] 変更を `main` にプッシュ
 
@@ -145,6 +147,12 @@ aws amplify get-job    --app-id d1ewt5l0oirslc --branch-name main --job-id <ID>
 - ブランチ: `main`（AutoBuild 有効）
 - 本番URL: `https://d1ewt5l0oirslc.amplifyapp.com`
 - ビルド出力: `dist/`
+
+---
+
+補足: ドキュメント統合方針
+- 迷ったら「詳細手順・失敗例と対処」は `deploy_runbook.md`、
+- 「初めての人/毎回確認するチェックリスト中心」は本ドキュメント。
 
 ---
 
