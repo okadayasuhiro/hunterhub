@@ -79,7 +79,7 @@ const NewsPage: React.FC = () => {
       />
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">狩猟ニュース</h1>
-        <a href="/" className="text-sm px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">トップへ戻る</a>
+        <a href="/" className="inline-block w-full max-w-40 px-8 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300">ホームに戻る</a>
       </div>
       {error && (
         <div className="text-sm text-red-600 mb-4">{error}</div>
