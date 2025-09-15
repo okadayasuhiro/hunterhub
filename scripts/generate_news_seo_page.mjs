@@ -28,6 +28,7 @@ function sourceDisplayName(sourceId) {
     case 'asahi': return '朝日新聞';
     case 'akt-yahoo': return '秋田テレビ（Yahoo!）';
     case 'iwatenpv-yahoo': return '岩手日報（Yahoo!）';
+    case 'wordleaf-yahoo': return 'THE PAGE（Yahoo!）';
     default: return 'ニュース';
   }
 }
@@ -46,7 +47,10 @@ function buildHtml({ items, generatedAt }) {
       headline: it.title,
       url: it.link,
       datePublished: it.publishedAt ? formatDate(it.publishedAt) : undefined,
-      author: { '@type': 'Organization', name: sourceDisplayName(it.source) }
+      author: { '@type': 'Organization', name: sourceDisplayName(it.source) },
+      sourceOrganization: { '@type': 'Organization', name: sourceDisplayName(it.source) },
+      articleBody: it.description ? String(it.description).slice(0, 200) : undefined,
+      image: it.imageUrl ? [{ '@type': 'ImageObject', url: it.imageUrl }] : undefined
     }
   }));
 
@@ -71,7 +75,8 @@ function buildHtml({ items, generatedAt }) {
   const listHtml = items.slice(0, MAX_ITEMS).map(it => {
     const dateStr = it.publishedAt ? new Date(it.publishedAt).toLocaleString('ja-JP') : '';
     const src = sourceDisplayName(it.source);
-    return `<li class="news-item"><a href="${it.link}" rel="nofollow noopener noreferrer" target="_blank">${it.title}</a><div class="meta">${dateStr} ・ 出典: ${src}</div></li>`;
+    const thumb = it.imageUrl ? `<img src="${it.imageUrl}" alt="" style="width:40px;height:22px;object-fit:cover;border-radius:4px;margin-left:8px;"/>` : '';
+    return `<li class="news-item"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;"><a href="${it.link}" rel="nofollow noopener noreferrer" target="_blank" style="flex:1">${it.title}</a>${thumb}</div><div class="meta">${dateStr} ・ 出典: ${src}</div></li>`;
   }).join('\n');
 
   return `<!doctype html>

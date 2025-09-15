@@ -1,0 +1,51 @@
+{
+  "source": "wordleaf-yahoo",
+  "generatedAt": "2025-09-14T23:58:55.416Z",
+  "items": [
+    {
+      "id": "000de80257563c63b088ef6884e93dd32cc3ce3618a24073a691765c4ff96e53",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「クマ被害の深刻化で共生は現実的か」「人命優先の声が多い」 - クマと人間の共生を巡る議論が活発化(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/37ef5179ec11c38925601d9765b727dbcfbd8c59?source=rss",
+      "description": "クマと人間の共生について、Yahoo!ニュースのコメント欄で話題になっています。\nコメントでは、近年クマによる被害が増加し、居住地への出没や人命被害が深刻化している現状を受けて、共生を求める意見に対し",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T08:11:16.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "dd79cb640effdd800f5605f35436e871181e82e16aaebc7e0ed5d83c8178b0e3",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「人里に出没する熊への駆除や対策を求める声」「人命優先の対応が必要との意見」 - 熊の人里出没とその対策を巡る議論(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/bc42a047be281c74d2397823863db1dfda603e45?source=rss",
+      "description": "熊などの野生動物が人里に出没する問題について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーの意見では、熊が人間への警戒心を失い積極的に人里へ出てくるようになった背景には、個体数の増",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T07:10:41.000Z",
+      "matchedKeywords": [
+        "駆除",
+        "熊"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "d0bc6811b7295f526c9658d5bbcfaa146dd67bce60cdc35462b06a1d06eb4e30",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「熊の人間への警戒心の低下に危機感」「狩猟や対策の強化を求める声」 - 熊の出没増加と人間社会への影響に注目集まる(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/bf32ff2636e6a0bb588e06819c62d239e3dbf74e?source=rss",
+      "description": "熊の人間に対する警戒心の低下と、それに伴う出没増加について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーコメントでは、近年熊をはじめとする野生動物が人間をあまり恐れなくなり、人里や",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T01:07:50.000Z",
+      "matchedKeywords": [
+        "狩猟",
+        "猟",
+        "熊"
+      ],
+      "score": 6,
+      "excluded": false
+    }
+  ]
+}

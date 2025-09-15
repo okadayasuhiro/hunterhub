@@ -8,7 +8,8 @@ const FEEDS = [
   { id: 'nhk', url: 'https://www.nhk.or.jp/rss/news/cat1.xml' },
   { id: 'asahi', url: 'https://www.asahi.com/rss/asahi/national.rdf' },
   { id: 'akt-yahoo', url: 'https://news.yahoo.co.jp/rss/media/akt/all.xml' },
-  { id: 'iwatenpv-yahoo', url: 'https://news.yahoo.co.jp/rss/media/iwatenpv/all.xml' }
+  { id: 'iwatenpv-yahoo', url: 'https://news.yahoo.co.jp/rss/media/iwatenpv/all.xml' },
+  { id: 'wordleaf-yahoo', url: 'https://news.yahoo.co.jp/rss/media/wordleaf/all.xml' }
 ];
 const OUTPUT_HOKKAIDO = path.resolve(process.cwd(), 'public/news/hokkaido.json');
 const OUTPUT_SANKEI = path.resolve(process.cwd(), 'public/news/sankei.json');
@@ -16,6 +17,7 @@ const OUTPUT_NHK = path.resolve(process.cwd(), 'public/news/nhk.json');
 const OUTPUT_ASAHI = path.resolve(process.cwd(), 'public/news/asahi.json');
 const OUTPUT_AKT = path.resolve(process.cwd(), 'public/news/akt-yahoo.json');
 const OUTPUT_IWATENPV = path.resolve(process.cwd(), 'public/news/iwatenpv-yahoo.json');
+const OUTPUT_WORDLEAF = path.resolve(process.cwd(), 'public/news/wordleaf-yahoo.json');
 const OUTPUT_ALL = path.resolve(process.cwd(), 'public/news/all.json');
 const EXCLUDE_PATH = path.resolve(process.cwd(), 'config/news_exclude.json');
 const MAX_ITEMS = 50;
@@ -53,6 +55,20 @@ function extractFirstUrl(text) {
   if (!text) return '';
   const m = text.match(/https?:\/\/[^\s<>"]+/);
   return m ? m[0] : '';
+}
+
+function extractImageUrl(xml) {
+  if (!xml) return '';
+  // enclosure url
+  let m = xml.match(/<enclosure[^>]*url="(https?:[^"'>]+)"/i);
+  if (m) return m[1];
+  // media:content url or rdf:resource
+  m = xml.match(/<media:(?:content|thumbnail)[^>]*(?:url|rdf:resource)="(https?:[^"'>]+)"/i);
+  if (m) return m[1];
+  // img in description or content
+  m = xml.match(/<img[^>]*src=["'](https?:[^"'>]+)["']/i);
+  if (m) return m[1];
+  return '';
 }
 
 function sha256(input) {
@@ -121,6 +137,8 @@ function parseItems(xml) {
       link = extractFirstUrl(block);
     }
 
+    const imageUrl = extractImageUrl(block);
+
     let published = extractTag(block, 'pubDate');
     if (!published) {
       const dc = extractTag(block, 'dc:date');
@@ -137,7 +155,7 @@ function parseItems(xml) {
       console.log(`link#${i}:`, link);
     }
     if (!title || !link) continue;
-    items.push({ title, description, link, publishedAt: publishedAtIso });
+    items.push({ title, description, link, imageUrl, publishedAt: publishedAtIso });
   }
   return items;
 }
@@ -174,6 +192,8 @@ async function fetchAndFilter(feed) {
       source: feed.id,
       title: it.title,
       link: it.link,
+      description: it.description || '',
+      imageUrl: it.imageUrl || '',
       publishedAt: it.publishedAt,
       matchedKeywords: matched,
       score,
@@ -211,6 +231,7 @@ async function main() {
   const outA = { source: 'asahi', generatedAt: now, items: byId['asahi'] || [] };
   const outK = { source: 'akt-yahoo', generatedAt: now, items: byId['akt-yahoo'] || [] };
   const outI = { source: 'iwatenpv-yahoo', generatedAt: now, items: byId['iwatenpv-yahoo'] || [] };
+  const outW = { source: 'wordleaf-yahoo', generatedAt: now, items: byId['wordleaf-yahoo'] || [] };
 
   // all combined (再ソート)
   const combined = [
@@ -219,7 +240,8 @@ async function main() {
     ...(byId['nhk'] || []),
     ...(byId['asahi'] || []),
     ...(byId['akt-yahoo'] || []),
-    ...(byId['iwatenpv-yahoo'] || [])
+    ...(byId['iwatenpv-yahoo'] || []),
+    ...(byId['wordleaf-yahoo'] || [])
   ].sort((a, b) => {
     const ta = a.publishedAt || '';
     const tb = b.publishedAt || '';
@@ -234,6 +256,7 @@ async function main() {
   ensureDirFor(OUTPUT_ASAHI);
   ensureDirFor(OUTPUT_AKT);
   ensureDirFor(OUTPUT_IWATENPV);
+  ensureDirFor(OUTPUT_WORDLEAF);
   ensureDirFor(OUTPUT_ALL);
   fs.writeFileSync(OUTPUT_HOKKAIDO, JSON.stringify(outH, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_SANKEI, JSON.stringify(outS, null, 2), 'utf-8');
@@ -241,6 +264,7 @@ async function main() {
   fs.writeFileSync(OUTPUT_ASAHI, JSON.stringify(outA, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_AKT, JSON.stringify(outK, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_IWATENPV, JSON.stringify(outI, null, 2), 'utf-8');
+  fs.writeFileSync(OUTPUT_WORDLEAF, JSON.stringify(outW, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_ALL, JSON.stringify(outAll, null, 2), 'utf-8');
   console.log(`Wrote Hokkaido=${outH.items.length}, Sankei=${outS.items.length}, NHK=${outN.items.length}, Asahi=${outA.items.length}, All=${outAll.items.length}`);
 }

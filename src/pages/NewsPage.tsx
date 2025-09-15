@@ -8,6 +8,8 @@ type NewsItem = {
   link: string;
   publishedAt?: string;
   excluded?: boolean;
+  description?: string;
+  imageUrl?: string;
 };
 
 type NewsResponse = {
@@ -67,7 +69,21 @@ const NewsPage: React.FC = () => {
               "@type": "NewsArticle",
               headline: it.title,
               url: it.link,
-              datePublished: it.publishedAt || undefined
+              datePublished: it.publishedAt || undefined,
+              sourceOrganization: { "@type": "Organization", name: (() => {
+                switch (it.source) {
+                  case 'hokkaido-np': return '北海道新聞';
+                  case 'sankei': return '産経新聞';
+                  case 'nhk': return 'NHKニュース';
+                  case 'asahi': return '朝日新聞';
+                  case 'akt-yahoo': return '秋田テレビ（Yahoo!）';
+                  case 'iwatenpv-yahoo': return '岩手日報（Yahoo!）';
+                  case 'wordleaf-yahoo': return 'THE PAGE（Yahoo!）';
+                  default: return 'ニュース';
+                }
+              })() },
+              articleBody: it.description ? String(it.description).slice(0, 200) : undefined,
+              image: it.imageUrl ? [{ "@type": "ImageObject", url: it.imageUrl }] : undefined
             }
           }))
         } : {
@@ -93,14 +109,19 @@ const NewsPage: React.FC = () => {
           <ul className="space-y-2">
             {data.items.slice(0, 50).map(item => (
               <li key={item.id} className="border-b border-gray-200 pb-2">
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="nofollow noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  {item.title}
-                </a>
+                <div className="flex items-start justify-between gap-2">
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                    className="text-blue-600 hover:underline flex-1"
+                  >
+                    {item.title}
+                  </a>
+                  {item.imageUrl && (
+                    <img src={item.imageUrl} alt="" className="w-10 h-6 object-cover rounded" loading="lazy" />
+                  )}
+                </div>
                 <div className="text-xs text-gray-500">
                   {item.publishedAt ? new Date(item.publishedAt).toLocaleString() : ''}
                   {item.source === 'hokkaido-np' && <span> ・ 出典: 北海道新聞</span>}
@@ -109,6 +130,7 @@ const NewsPage: React.FC = () => {
                   {item.source === 'asahi' && <span> ・ 出典: 朝日新聞</span>}
                   {item.source === 'akt-yahoo' && <span> ・ 出典: 秋田テレビ（Yahoo!）</span>}
                   {item.source === 'iwatenpv-yahoo' && <span> ・ 出典: 岩手日報（Yahoo!）</span>}
+                  {item.source === 'wordleaf-yahoo' && <span> ・ 出典: THE PAGE（Yahoo!）</span>}
                 </div>
               </li>
             ))}

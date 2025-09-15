@@ -1,12 +1,14 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-14T22:54:11.666Z",
+  "generatedAt": "2025-09-14T23:58:55.416Z",
   "items": [
     {
       "id": "a65164a394778b5fcc38c3aa39fbb2a42ff6937ae49fa01e5fe2bb898c15d8a8",
       "source": "nhk",
       "title": "北海道 羅臼岳 ヒグマの事故から1か月 再発防止へ取り組み",
       "link": "http://www3.nhk.or.jp/news/html/20250914/k10014922551000.html",
+      "description": "北海道知床半島にある羅臼岳で登山中の男性がヒグマに襲われた事故から、9月14日で1か月です。知床では、ヒグマと人の「距離感」が問われる中、カメラを設置して、観光客の問題のある行動を監視するなど、再発防止に向けた取り組みが始まっています。",
+      "imageUrl": "",
       "publishedAt": "2025-09-14T05:25:25.000Z",
       "matchedKeywords": [
         "ヒグマ"
@@ -19,6 +21,8 @@
       "source": "sankei",
       "title": "クマの市街地出没、SNSに目立つメガソーラー原因説「すみか奪ってる」「クマ被害増加」",
       "link": "https://www.sankei.com/article/20250914-TMKKC5GVMJNSBKCK727V3OIRRY/",
+      "description": "",
+      "imageUrl": "",
       "publishedAt": "2025-09-14T04:00:00.000Z",
       "matchedKeywords": [
         "クマ"
@@ -31,6 +35,8 @@
       "source": "hokkaido-np",
       "title": "＜札幌圏ヒグマ出没情報＞恵庭、石狩で目撃",
       "link": "https://www.hokkaido-np.co.jp/article/1211466/",
+      "description": "●クマを目撃\r\n恵庭市盤尻付近（12日午後2時50分ごろ）=千歳署...",
+      "imageUrl": "",
       "publishedAt": "2025-09-13T13:13:23.000Z",
       "matchedKeywords": [
         "クマ",
@@ -44,6 +50,8 @@
       "source": "asahi",
       "title": "福島県の介護施設にクマ侵入　職員に向かうように、入居者らは無事",
       "link": "https://www.asahi.com/articles/AST9F3CQXT9FUNHB002M.html?ref=rss",
+      "description": "",
+      "imageUrl": "",
       "publishedAt": "2025-09-13T11:00:00.000Z",
       "matchedKeywords": [
         "クマ"
@@ -56,6 +64,8 @@
       "source": "nhk",
       "title": "福島 介護施設にクマ1頭 窓ガラス割って侵入 けが人なし",
       "link": "http://www3.nhk.or.jp/news/html/20250913/k10014922051000.html",
+      "description": "13日朝、福島県南会津町の介護施設にクマ1頭が窓ガラスを割って侵入しました。利用者と職員にけがはありませんでしたが、クマは逃げていて警察が注意を呼びかけています。",
+      "imageUrl": "",
       "publishedAt": "2025-09-13T08:47:13.000Z",
       "matchedKeywords": [
         "クマ"
@@ -68,6 +78,8 @@
       "source": "nhk",
       "title": "宮城 富谷市の住宅街で60代男性がクマに襲われ 頭などにけが",
       "link": "http://www3.nhk.or.jp/news/html/20250913/k10014921751000.html",
+      "description": "12日夜、宮城県富谷市の住宅街で60代の男性がクマに襲われ、頭などにけがをしました。目撃者の話などからクマはそのまま逃げていったとみられるということで、警察は住民に注意を呼びかけています。",
+      "imageUrl": "",
       "publishedAt": "2025-09-12T23:13:11.000Z",
       "matchedKeywords": [
         "クマ"
@@ -80,6 +92,8 @@
       "source": "hokkaido-np",
       "title": "＜札幌圏ヒグマ出没情報＞石狩・浜益区で目撃",
       "link": "https://www.hokkaido-np.co.jp/article/1211232/",
+      "description": "●クマを目撃\r\n石狩市浜益区群別付近（12日午後1時45分ごろ）=...",
+      "imageUrl": "",
       "publishedAt": "2025-09-12T13:46:14.000Z",
       "matchedKeywords": [
         "クマ",
@@ -89,10 +103,26 @@
       "excluded": false
     },
     {
+      "id": "000de80257563c63b088ef6884e93dd32cc3ce3618a24073a691765c4ff96e53",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「クマ被害の深刻化で共生は現実的か」「人命優先の声が多い」 - クマと人間の共生を巡る議論が活発化(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/37ef5179ec11c38925601d9765b727dbcfbd8c59?source=rss",
+      "description": "クマと人間の共生について、Yahoo!ニュースのコメント欄で話題になっています。\nコメントでは、近年クマによる被害が増加し、居住地への出没や人命被害が深刻化している現状を受けて、共生を求める意見に対し",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T08:11:16.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
       "id": "acf0ceb3bf287caa63916d81c965725b608919e29ce3e0e70ef9a352177995fd",
       "source": "nhk",
       "title": "ヒグマ食害相次ぐ北海道 厚沢部町 トウモロコシ食い荒らされる",
       "link": "http://www3.nhk.or.jp/news/html/20250912/k10014921201000.html",
+      "description": "ヒグマによる食害が相次ぐ北海道南部の厚沢部町で12日朝、畑で栽培されていたトウモロコシおよそ40本が食い荒らされているのが見つかりました。NHKが所有者の許可を得て設置したカメラには11日夜、ヒグマが実の部分を引きちぎる様子が捉えられていて、警察などがパトロールを強化しています。",
+      "imageUrl": "",
       "publishedAt": "2025-09-12T08:08:54.000Z",
       "matchedKeywords": [
         "ヒグマ"
@@ -101,10 +131,27 @@
       "excluded": false
     },
     {
+      "id": "dd79cb640effdd800f5605f35436e871181e82e16aaebc7e0ed5d83c8178b0e3",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「人里に出没する熊への駆除や対策を求める声」「人命優先の対応が必要との意見」 - 熊の人里出没とその対策を巡る議論(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/bc42a047be281c74d2397823863db1dfda603e45?source=rss",
+      "description": "熊などの野生動物が人里に出没する問題について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーの意見では、熊が人間への警戒心を失い積極的に人里へ出てくるようになった背景には、個体数の増",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T07:10:41.000Z",
+      "matchedKeywords": [
+        "駆除",
+        "熊"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
       "id": "a59eba7241454b85a84ae25cb56a66f16b223387282a604be5ac5345f3042882",
       "source": "iwatenpv-yahoo",
       "title": "迫るクマにどう対処？岩手県警が被害防止研修会　手持ち花火やスプレー体験(岩手日報)",
       "link": "https://news.yahoo.co.jp/articles/715e98eed6de8ebb98b6b03bc1bfbbab39147801?source=rss",
+      "description": "岩手県警（増田武志本部長）は１１日、滝沢市砂込の県警機動隊施設でクマ被害防止の研修会を開いた。人的被害が相次ぐ中、現場対応に当たる警察官ら約３０人が対処法を学んだ。\n\n　雫石町職員で農林水産省農作物",
+      "imageUrl": "",
       "publishedAt": "2025-09-12T01:18:00.000Z",
       "matchedKeywords": [
         "クマ"
@@ -113,10 +160,28 @@
       "excluded": false
     },
     {
+      "id": "d0bc6811b7295f526c9658d5bbcfaa146dd67bce60cdc35462b06a1d06eb4e30",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「熊の人間への警戒心の低下に危機感」「狩猟や対策の強化を求める声」 - 熊の出没増加と人間社会への影響に注目集まる(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/bf32ff2636e6a0bb588e06819c62d239e3dbf74e?source=rss",
+      "description": "熊の人間に対する警戒心の低下と、それに伴う出没増加について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーコメントでは、近年熊をはじめとする野生動物が人間をあまり恐れなくなり、人里や",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T01:07:50.000Z",
+      "matchedKeywords": [
+        "狩猟",
+        "猟",
+        "熊"
+      ],
+      "score": 6,
+      "excluded": false
+    },
+    {
       "id": "5a2cf7841dedc9f70a9aa6b3930c6392324860f89c576a82e187a7a3a2ce0d64",
       "source": "akt-yahoo",
       "title": "クマに襲われたか　ブドウ畑を見回り中の77歳男性、顔の骨を折るなどの大けが　秋田・大館市(秋田テレビ)",
       "link": "https://news.yahoo.co.jp/articles/360803b817f67c71724b7db69abcbc1321509528?source=rss",
+      "description": "10日夜、秋田県大館市で70代の男性が所有する畑を見回り中にクマと見られる動物に襲われ、顔の骨を折るなどの大けがをしました。\n\n10日午後10時45分ごろ、大館市雪沢のブドウ畑で77歳の男性が見回りを",
+      "imageUrl": "",
       "publishedAt": "2025-09-11T04:56:02.000Z",
       "matchedKeywords": [
         "クマ"
@@ -129,6 +194,8 @@
       "source": "nhk",
       "title": "秋田 大館 77歳男性が動物に襲われ大けが クマに襲われたか",
       "link": "http://www3.nhk.or.jp/news/html/20250911/k10014919261000.html",
+      "description": "10日夜遅く、秋田県大館市で畑を見に行った77歳の男性が動物に襲われ、顔の骨を折る大けがをしたほか、頭などをひっかかれました。警察はけがの状況から男性がクマに襲われたとみて周辺の住民に注意を呼びかけています。",
+      "imageUrl": "",
       "publishedAt": "2025-09-10T20:16:25.000Z",
       "matchedKeywords": [
         "クマ"

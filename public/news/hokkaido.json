@@ -1,12 +1,14 @@
 {
   "source": "hokkaido-np",
-  "generatedAt": "2025-09-14T22:54:11.666Z",
+  "generatedAt": "2025-09-14T23:58:55.416Z",
   "items": [
     {
       "id": "7e224c38854dadccc831d57f9e47f04fade62cca3728ce51f95a3f67b7b9c249",
       "source": "hokkaido-np",
       "title": "＜札幌圏ヒグマ出没情報＞恵庭、石狩で目撃",
       "link": "https://www.hokkaido-np.co.jp/article/1211466/",
+      "description": "●クマを目撃\r\n恵庭市盤尻付近（12日午後2時50分ごろ）=千歳署...",
+      "imageUrl": "",
       "publishedAt": "2025-09-13T13:13:23.000Z",
       "matchedKeywords": [
         "クマ",
@@ -20,6 +22,8 @@
       "source": "hokkaido-np",
       "title": "＜札幌圏ヒグマ出没情報＞石狩・浜益区で目撃",
       "link": "https://www.hokkaido-np.co.jp/article/1211232/",
+      "description": "●クマを目撃\r\n石狩市浜益区群別付近（12日午後1時45分ごろ）=...",
+      "imageUrl": "",
       "publishedAt": "2025-09-12T13:46:14.000Z",
       "matchedKeywords": [
         "クマ",
