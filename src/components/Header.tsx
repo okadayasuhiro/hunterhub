@@ -59,6 +59,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
         { name: '反射神経', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
         { name: 'ターゲット追跡', path: '/target/instructions', gameType: 'target', showStats: true },
         { name: 'カウントアップ', path: '/sequence/instructions', gameType: 'sequence', showStats: true },
+        { name: 'トリガートレーニング', path: '/trigger-timing/instructions', gameType: 'trigger-timing', showStats: true },
         { name: '狩猟鳥獣（獣類）クイズ', path: '/animal-quiz/instructions', gameType: 'quiz', showStats: false },
         // 審査用の一時導線（小さく表示）
         { name: '狩猟鳥獣診断（β）', path: '/diagnosis', gameType: 'diagnosis', showStats: false },
