@@ -1,6 +1,6 @@
 {
   "source": "asahi",
-  "generatedAt": "2025-09-15T05:35:09.761Z",
+  "generatedAt": "2025-09-15T21:24:14.723Z",
   "items": [
     {
       "id": "5130545ded4a23f82ed329ce642748e1dac38e644a94d552d4cafb4ca83b37bf",
@@ -10,20 +10,6 @@
       "description": "",
       "imageUrl": "",
       "publishedAt": "2025-09-15T01:00:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "b8ffcb6d74c980e1cdaa4afb4619bf7afc059e3a6b52a553def69e0c34e8e6bc",
-      "source": "asahi",
-      "title": "福島県の介護施設にクマ侵入　職員に向かうように、入居者らは無事",
-      "link": "https://www.asahi.com/articles/AST9F3CQXT9FUNHB002M.html?ref=rss",
-      "description": "",
-      "imageUrl": "",
-      "publishedAt": "2025-09-13T11:00:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],

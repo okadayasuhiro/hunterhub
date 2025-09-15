@@ -1,15 +1,15 @@
 {
   "source": "hokkaido-np",
-  "generatedAt": "2025-09-15T05:35:09.761Z",
+  "generatedAt": "2025-09-15T21:24:14.723Z",
   "items": [
     {
-      "id": "073dd80cca941e075ad094e4e38d01891888fb77147402782d3fdf7cfdd4c01c",
+      "id": "8374989af077e460d22e0d41ec5998163df4a6e48a1cee2354bb5afe3713a88a",
       "source": "hokkaido-np",
-      "title": "クマと軽乗用車衝突　清水の国道　けが人なし",
-      "link": "https://www.hokkaido-np.co.jp/article/1211720/",
-      "description": "【清水】15日午前0時10分ごろ、十勝管内清水町清水基線の国道...",
+      "title": "北斗の住宅地でクマ目撃",
+      "link": "https://www.hokkaido-np.co.jp/article/1211810/",
+      "description": "【北斗】15日午後5時20分ごろ、市本郷2の住宅地の市道をクマ...",
       "imageUrl": "",
-      "publishedAt": "2025-09-15T04:15:55.000Z",
+      "publishedAt": "2025-09-15T12:00:44.000Z",
       "matchedKeywords": [
         "クマ"
       ],
@@ -23,7 +23,21 @@
       "link": "https://www.hokkaido-np.co.jp/article/1211718/",
       "description": "【三笠】14日午後8時10分ごろ、三笠市西桂沢の道道で、走行中...",
       "imageUrl": "",
-      "publishedAt": "2025-09-15T04:14:35.000Z",
+      "publishedAt": "2025-09-15T08:44:35.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "073dd80cca941e075ad094e4e38d01891888fb77147402782d3fdf7cfdd4c01c",
+      "source": "hokkaido-np",
+      "title": "クマと軽乗用車衝突　清水の国道　けが人なし",
+      "link": "https://www.hokkaido-np.co.jp/article/1211720/",
+      "description": "【清水】15日午前0時10分ごろ、十勝管内清水町清水基線の国道...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T04:15:55.000Z",
       "matchedKeywords": [
         "クマ"
       ],
@@ -42,50 +56,6 @@
         "ヒグマ"
       ],
       "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "62e47cbd48eab4001569f30d54207608edbc24a57a542607e0a7a934865257cb",
-      "source": "hokkaido-np",
-      "title": "＜函館道南＞ヒグマ事故と報道のあり方　足立結",
-      "link": "https://www.hokkaido-np.co.jp/article/1211734/",
-      "description": "カタッ。毎朝、父は新聞がポストに入った音とともに起きる。まどろ...",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T02:12:52.000Z",
-      "matchedKeywords": [
-        "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "7e224c38854dadccc831d57f9e47f04fade62cca3728ce51f95a3f67b7b9c249",
-      "source": "hokkaido-np",
-      "title": "＜札幌圏ヒグマ出没情報＞恵庭、石狩で目撃",
-      "link": "https://www.hokkaido-np.co.jp/article/1211466/",
-      "description": "●クマを目撃\r\n恵庭市盤尻付近（12日午後2時50分ごろ）=千歳署...",
-      "imageUrl": "",
-      "publishedAt": "2025-09-13T13:13:23.000Z",
-      "matchedKeywords": [
-        "クマ",
-        "ヒグマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
-    {
-      "id": "6ab6032f47dc0de08eed5f5683a6d6551ed69311d97281d78af83ed095054425",
-      "source": "hokkaido-np",
-      "title": "＜札幌圏ヒグマ出没情報＞石狩・浜益区で目撃",
-      "link": "https://www.hokkaido-np.co.jp/article/1211232/",
-      "description": "●クマを目撃\r\n石狩市浜益区群別付近（12日午後1時45分ごろ）=...",
-      "imageUrl": "",
-      "publishedAt": "2025-09-12T13:46:14.000Z",
-      "matchedKeywords": [
-        "クマ",
-        "ヒグマ"
-      ],
-      "score": 4,
       "excluded": false
     }
   ]
