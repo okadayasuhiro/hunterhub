@@ -1,7 +1,105 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-14T23:58:55.416Z",
+  "generatedAt": "2025-09-15T03:55:37.630Z",
   "items": [
+    {
+      "id": "62e47cbd48eab4001569f30d54207608edbc24a57a542607e0a7a934865257cb",
+      "source": "hokkaido-np",
+      "title": "＜函館道南＞ヒグマ事故と報道のあり方　足立結",
+      "link": "https://www.hokkaido-np.co.jp/article/1211734/",
+      "description": "カタッ。毎朝、父は新聞がポストに入った音とともに起きる。まどろ...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T02:12:52.000Z",
+      "matchedKeywords": [
+        "ヒグマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "64a9efe729d141a983d8b2609f1cf56299027afcfadb72d5a113f7e42e9cc318",
+      "source": "hokkaido-np",
+      "title": "夕張の住宅街　ヒグマ２頭目撃",
+      "link": "https://www.hokkaido-np.co.jp/article/1211726/",
+      "description": "【夕張】15日午前5時半ごろ、夕張市南清水沢4で、草むらにヒグ...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T01:40:33.000Z",
+      "matchedKeywords": [
+        "ヒグマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "5130545ded4a23f82ed329ce642748e1dac38e644a94d552d4cafb4ca83b37bf",
+      "source": "asahi",
+      "title": "クマが脅かす子どもの安全、登下校や校舎で出没　専門家の具体策は？",
+      "link": "https://www.asahi.com/articles/AST992DBXT99OXIE008M.html?ref=rss",
+      "description": "",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T01:00:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "073dd80cca941e075ad094e4e38d01891888fb77147402782d3fdf7cfdd4c01c",
+      "source": "hokkaido-np",
+      "title": "クマと軽乗用車衝突　けが人なし　清水の国道",
+      "link": "https://www.hokkaido-np.co.jp/article/1211720/",
+      "description": "【清水】15日午前0時10分ごろ、十勝管内清水町清水基線の国道...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T00:32:32.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "791df0a934b8b1678c863f76294967bd3fbb5ac3ad6587b145a627455fbd2a5e",
+      "source": "hokkaido-np",
+      "title": "クマと乗用車が衝突　三笠の道道　けが人なし",
+      "link": "https://www.hokkaido-np.co.jp/article/1211718/",
+      "description": "【三笠】14日午後8時10分ごろ、三笠市西桂沢の道道で、走行中...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T00:28:53.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "c8eea0c914b84517893f3a300843ee082476fe0d3bc2b61112f0ec240bfd3fe6",
+      "source": "stv-yahoo",
+      "title": "小樽市内の住宅街 バイクで走行中 中央分離帯の草地に座りこむクマ１頭を目撃 警察が警戒にあたる(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/2be2d66e4219ce55c0a807794e1e81065769ecdd?source=rss",
+      "description": "クマが目撃されたのは小樽市松ヶ枝1丁目の市道です。\n\n9月14日午後10時半ごろ、帰宅中の30代男性がバイクを走行中に、中央分離帯の草地に座り込むクマ1頭を目撃しました。\n\n付近は住宅街で幼稚園や保育",
+      "imageUrl": "",
+      "publishedAt": "2025-09-14T21:30:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "797f3e8d27b74aadb17762f2d2b06b4d4398bd93a0cd71eef484dc4f3dad6f1e",
+      "source": "stv-yahoo",
+      "title": "トウモロコシ50本クマ被害　札幌市清田区の農園で連日…　電気柵の下をくぐって畑に侵入か(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/7a8b3fdc73366c33560c00588f682f215c15ce15?source=rss",
+      "description": "札幌市清田区の農園でクマにトウモロコシ50本が食い荒らされる被害がありました。\n\nこの畑では3日続けての被害です。\n\n被害があったのは、札幌市清田区有明にある農園です。\n\n(2025年9月14日)午前",
+      "imageUrl": "",
+      "publishedAt": "2025-09-14T10:16:01.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "a65164a394778b5fcc38c3aa39fbb2a42ff6937ae49fa01e5fe2bb898c15d8a8",
       "source": "nhk",
@@ -74,6 +172,20 @@
       "excluded": false
     },
     {
+      "id": "2680434bca454ed792760d73520efedae40fa5dc4416fdd6f85844f050fc4f30",
+      "source": "stv-yahoo",
+      "title": "問合せは前年の約２倍「クマスプレー」撃退に有効なのは“カプサイシン”　効果が低い商品も…(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/18086cb899e7d184f6fdd6a2aae0d2f867de3c95?source=rss",
+      "description": "８月に北海道・知床半島の羅臼岳で２６歳の男性がクマに襲われ死亡した事故について、９月１１日その検証結果が明らかになりました。\n\nその中で、被害者はクマ撃退スプレーを持っていなかった可能性が高いことがわ",
+      "imageUrl": "",
+      "publishedAt": "2025-09-13T04:35:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
       "id": "f4c0c921c630287c4e178a15e25dbb5c06ba238b4a789d4d8708673463bb834a",
       "source": "nhk",
       "title": "宮城 富谷市の住宅街で60代男性がクマに襲われ 頭などにけが",
@@ -103,6 +215,53 @@
       "excluded": false
     },
     {
+      "id": "2adc19b7e862880ab5a0df5aa7e50c326bd3ff553abee2f54bd79d7c4b4850c3",
+      "source": "stv-yahoo",
+      "title": "野生のクマ“待ち伏せ行為”人慣れ進み人身事故の危険性高まる　監視カメラ設置中にも一頭のクマ　知床(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/bb38bc8947058bde2e5d57b6a73b6df408b6c797?source=rss",
+      "description": "野生のクマを一目見ようという観光客などによる“待ち伏せ行為”が繰り返し確認されている問題で、知床国立公園のイワウベツ川沿いに、９月１２日に環境省が監視カメラを設置しました。\n\n監視カメラが設置されたの",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T10:30:43.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "010b72659e5e850e51166aab5131ef8c2a7dba0848d88a1d2fea322dcc4ebf67",
+      "source": "stv-yahoo",
+      "title": "ポップコーン用トウモロコシ畑でクマの食害　付近に箱わな設置「捕獲できれば安心」連日カメラに姿映る(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/db2d7fd5c7bedb5f024c4f4783e798cb87427c83?source=rss",
+      "description": "北海道厚沢部町のトウモロコシ畑で、クマによる食害が３日連続で確認されていることをうけ、町は９月１２日に箱わなを設置しました。\n\n畑に現れた１頭のクマ。\n\nトウモロコシをくわえると、そのまま根元から引き",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T10:05:00.000Z",
+      "matchedKeywords": [
+        "捕獲",
+        "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "42f1efafb4548a556739491786eb56f15fd67abe488489c681ca67f9d1b6a4e9",
+      "source": "stv-yahoo",
+      "title": "市街地でのクマ駆除“緊急銃猟”で損害が出たら…「委託した市町村長に責任」　警察庁が通達(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/f9783e5787cf4c943fd1a7ec3d09d3f2e7c678f0?source=rss",
+      "description": "自治体の判断でハンターが市街地でもクマを駆除できる「緊急銃猟」について、損害が出た場合でも発砲したハンターに猟銃の所持許可に関する行政処分をするのは適当ではないとする通達を警察庁が出したことが分かりま",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T08:19:00.000Z",
+      "matchedKeywords": [
+        "猟",
+        "ハンター",
+        "駆除",
+        "クマ",
+        "猟銃"
+      ],
+      "score": 9,
+      "excluded": false
+    },
+    {
       "id": "000de80257563c63b088ef6884e93dd32cc3ce3618a24073a691765c4ff96e53",
       "source": "wordleaf-yahoo",
       "title": "【ヤフコメで話題】「クマ被害の深刻化で共生は現実的か」「人命優先の声が多い」 - クマと人間の共生を巡る議論が活発化(Yahoo!ニュース オリジナル THE PAGE)",
@@ -126,6 +285,20 @@
       "publishedAt": "2025-09-12T08:08:54.000Z",
       "matchedKeywords": [
         "ヒグマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "29115f2aad42aea454da5c0a4cc934ba1770e8e149f6c0d28fc99f276fd6a476",
+      "source": "stv-yahoo",
+      "title": "同じ畑に３日連続クマ「全部なくなるまで来るのか」ポップコーン用トウモロコシが被害　厚沢部町(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/60bc672de1e42a845bb7df3f949437478d2b11a1?source=rss",
+      "description": "北海道厚沢部町で、クマがトウモロコシ畑を荒らす姿をＳＴＶのカメラが捉えました。\n\nこの畑でクマによる食害が確認されるのはこれで３日連続です。\n\n畑に現れた１頭のクマ。\n\nトウモロコシをくわえると、その",
+      "imageUrl": "",
+      "publishedAt": "2025-09-12T07:19:01.000Z",
+      "matchedKeywords": [
+        "クマ"
       ],
       "score": 2,
       "excluded": false
