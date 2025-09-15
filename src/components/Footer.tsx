@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
                         <button
                             onClick={() => {
                                 const url = encodeURIComponent(window.location.href);
-                                const text = encodeURIComponent('ハントレで反射神経と集中力を鍛えよう！🎯 あなたのハンタースキルはどのレベル？');
+                                const text = encodeURIComponent('ハントレで反射神経と集中力を鍛えよう！🎯 あなたのハンタースキルはどのレベル？ #ハントレ #狩猟');
                                 window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
                             }}
                             className="bg-black hover:bg-gray-800 text-white p-3 rounded-lg transition-colors duration-200 flex items-center justify-center w-12 h-12"

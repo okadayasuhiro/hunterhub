@@ -81,7 +81,7 @@ const AnimalQuizResultPage: React.FC = () => {
               <div className="mt-3 flex justify-center gap-2">
                 <button
                   onClick={() => {
-                    const shareText = `ハントレで狩猟動物クイズをプレイしました！\n結果: ${result.correctCount} / ${result.totalQuestions} 問正解\n正解率: ${correctPercentage.toFixed(1)}%`;
+                    const shareText = `ハントレで狩猟動物クイズをプレイしました！\n結果: ${result.correctCount} / ${result.totalQuestions} 問正解\n正解率: ${correctPercentage.toFixed(1)}%\n#ハントレ #狩猟`;
                     const shareUrl = window.location.origin;
                     
                     if (navigator.share) {

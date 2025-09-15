@@ -175,7 +175,7 @@ export default function DiagnosisResultPage() {
     // シェア機能
     const shareResult = (platform: 'x' | 'facebook' | 'threads' | 'line') => {
         const currentUrl = window.location.href;
-        const shareText = `私の狩猟鳥獣タイプは「${animal.name}」でした！${compatibility !== null ? `\n適合度: ${compatibility}%` : ''}\n${mbtiDescriptions[animal.id]?.subtitle || animal.catchphrase}\n\nあなたも診断してみませんか？`;
+        const shareText = `私の狩猟鳥獣タイプは「${animal.name}」でした！${compatibility !== null ? `\n適合度: ${compatibility}%` : ''}\n${mbtiDescriptions[animal.id]?.subtitle || animal.catchphrase}\n\nあなたも診断してみませんか？\n#ハントレ #狩猟`;
 
         if (platform === 'x') {
             const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`;

@@ -653,7 +653,7 @@ const TriggerTimingPage: React.FC<Props> = ({ mode }) => {
                 <div className="mt-3 flex justify-center gap-2">
                   <button
                     onClick={() => {
-                      const shareText = `ハントレでトリガートレーニングをプレイしました！\n合計得点: ${total.toFixed(3)}点`;
+                      const shareText = `ハントレでトリガートレーニングをプレイしました！\n合計得点: ${total.toFixed(3)}点\n#ハントレ #狩猟`;
                       const shareUrl = window.location.origin;
                       const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
                       window.open(twitterUrl, '_blank');

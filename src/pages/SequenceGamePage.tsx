@@ -643,7 +643,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            const shareText = `ハントレでカウントアップ・トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n完了時間: ${finalTime?.toFixed(2)}秒`;
+                                                            const shareText = `ハントレでカウントアップ・トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n完了時間: ${finalTime?.toFixed(2)}秒\n#ハントレ #狩猟`;
                                                             const shareUrl = window.location.origin;
                                                             const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
                                                             window.open(twitterUrl, '_blank');
@@ -667,7 +667,7 @@ const SequenceGamePage: React.FC<SequenceGamePageProps> = ({ mode }) => {
                                                 <div className="mt-3 flex justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            const shareText = `ハントレで数字順序トレーニングをプレイしました！\n全レベル完全制覇！\n完了時間: ${finalTime?.toFixed(2)}秒`;
+                                                            const shareText = `ハントレで数字順序トレーニングをプレイしました！\n全レベル完全制覇！\n完了時間: ${finalTime?.toFixed(2)}秒\n#ハントレ #狩猟`;
                                                             const shareUrl = window.location.origin;
                                                             const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
                                                             window.open(twitterUrl, '_blank');

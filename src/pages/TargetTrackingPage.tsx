@@ -515,7 +515,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="mt-3 flex justify-center gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒\n#ハントレ #狩猟`;
                                                     const shareUrl = window.location.origin;
                                                     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
                                                     window.open(twitterUrl, '_blank');
@@ -539,7 +539,7 @@ const TargetTrackingPage: React.FC<TargetTrackingPageProps> = ({ mode }) => {
                                         <div className="mt-3 flex justify-center gap-2">
                                             <button
                                                 onClick={() => {
-                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒`;
+                                                    const shareText = `ハントレでターゲット追跡トレーニングをプレイしました！\n総合時間: ${actualTotalTime ? actualTotalTime.toFixed(3) : currentStats.totalTime.toFixed(4)}秒\n#ハントレ #狩猟`;
                                                     const shareUrl = window.location.origin;
                                                     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
                                                     window.open(twitterUrl, '_blank');

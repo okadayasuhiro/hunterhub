@@ -56,10 +56,10 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
 
     // トレーニングリスト定義（統計情報付き）
     const gameLinksWithStats = [
+        { name: 'トリガー', path: '/trigger-timing/instructions', gameType: 'trigger-timing', showStats: true },
         { name: '反射神経', path: '/reflex/instructions', gameType: 'reflex', showStats: true },
         { name: 'ターゲット追跡', path: '/target/instructions', gameType: 'target', showStats: true },
         { name: 'カウントアップ', path: '/sequence/instructions', gameType: 'sequence', showStats: true },
-        { name: 'トリガートレーニング', path: '/trigger-timing/instructions', gameType: 'trigger-timing', showStats: true },
         { name: '狩猟鳥獣（獣類）クイズ', path: '/animal-quiz/instructions', gameType: 'quiz', showStats: false },
         // 審査用の一時導線（小さく表示）
         { name: '狩猟鳥獣診断（β）', path: '/diagnosis', gameType: 'diagnosis', showStats: false },
@@ -263,7 +263,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
     // SNSシェア処理
     const handleShareClick = (action: string) => {
         const url = window.location.origin;
-        const text = 'ハントレ - あなたの狩猟感覚をオンラインでトレーニング！ハンターの皆さまを支援する、トレーニングサイト';
+        const text = 'ハントレ - あなたの狩猟感覚をオンラインでトレーニング！ハンターの皆さまを支援する、トレーニングサイト #ハントレ #狩猟';
         
         switch (action) {
             case 'shareX':
@@ -326,7 +326,7 @@ const Header: React.FC<HeaderProps> = ({ onHomeClick, showBackButton, onBackClic
                         >
                             <div className="flex items-center justify-between">
                                 <div className="font-medium text-white group-hover:text-blue-100 transition-colors duration-200">
-                                    わたしのトレーニング履歴 β版
+                                    わたしのトレーニング履歴
                                 </div>
                                 <CircleArrowRight className="w-5 h-5 text-white/80 group-hover:text-white transition-colors duration-200" />
                             </div>

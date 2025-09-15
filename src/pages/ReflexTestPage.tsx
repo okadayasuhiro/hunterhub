@@ -711,7 +711,7 @@ const ReflexTestPage: React.FC<ReflexTestPageProps> = ({ mode }) => {
                                                  <div className="mt-3 flex justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            const shareText = `ハントレで反射神経トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n平均反応時間: ${(averageTime / 1000).toFixed(5)}秒`;
+                                                            const shareText = `ハントレで反射神経トレーニングをプレイしました！\n結果: ${currentRank ? `${currentRank}位` : 'ランキング圏外'}\n平均反応時間: ${(averageTime / 1000).toFixed(5)}秒\n#ハントレ #狩猟`;
                                                             const shareUrl = window.location.origin;
                                                             const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
                                                             window.open(twitterUrl, '_blank');
