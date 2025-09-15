@@ -29,6 +29,7 @@ function sourceDisplayName(sourceId) {
     case 'akt-yahoo': return '秋田テレビ（Yahoo!）';
     case 'iwatenpv-yahoo': return '岩手日報（Yahoo!）';
     case 'wordleaf-yahoo': return 'THE PAGE（Yahoo!）';
+    case 'stv-yahoo': return 'STVニュース北海道（Yahoo!）';
     default: return 'ニュース';
   }
 }
