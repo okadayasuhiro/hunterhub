@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '10 21 * * *' # JST 06:10 (UTC-9h)
     - cron: '10 9 * * *'  # JST 18:10 (UTC-9h)
+    - cron: '0 1 * * *'   # JST 10:00 (UTC+9)
+    - cron: '0 5 * * *'   # JST 14:00 (UTC+9)
   workflow_dispatch: {}
 
 permissions:
@@ -40,11 +42,7 @@ jobs:
           git add public/news/wordleaf-yahoo.json
           git add public/news/stv-yahoo.json
           git add public/news/all.json
-          if git diff --cached --quiet; then
-            echo "No changes"
-          else
-            git commit -m "chore(news): update hokkaido.json"
-            git push
-          fi
+          git commit -m "chore(news): scheduled refresh (update generatedAt and items if any)" || echo "No content changes"
+          git push || true
 
 
