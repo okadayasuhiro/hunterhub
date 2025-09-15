@@ -79,6 +79,7 @@ const NewsPage: React.FC = () => {
                   case 'akt-yahoo': return '秋田テレビ（Yahoo!）';
                   case 'iwatenpv-yahoo': return '岩手日報（Yahoo!）';
                   case 'wordleaf-yahoo': return 'THE PAGE（Yahoo!）';
+                  case 'stv-yahoo': return 'STVニュース北海道（Yahoo!）';
                   default: return 'ニュース';
                 }
               })() },
@@ -97,6 +98,10 @@ const NewsPage: React.FC = () => {
         <h1 className="text-2xl font-bold">狩猟関連ニュース</h1>
         <a href="/" className="inline-block w-full max-w-40 px-8 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300">ホームに戻る</a>
       </div>
+      <p className="text-sm text-gray-600 mb-4">
+        このページでは、直近7日間の「狩猟・ヒグマ・有害鳥獣対策」などに関するニュースを1日2回自動収集して掲載しています。
+        見出しをクリックすると各媒体の記事に移動します。
+      </p>
       {error && (
         <div className="text-sm text-red-600 mb-4">{error}</div>
       )}
@@ -124,13 +129,27 @@ const NewsPage: React.FC = () => {
                 </div>
                 <div className="text-xs text-gray-500">
                   {item.publishedAt ? new Date(item.publishedAt).toLocaleString() : ''}
-                  {item.source === 'hokkaido-np' && <span> ・ 出典: 北海道新聞</span>}
-                  {item.source === 'sankei' && <span> ・ 出典: 産経新聞</span>}
-                  {item.source === 'nhk' && <span> ・ 出典: NHKニュース</span>}
-                  {item.source === 'asahi' && <span> ・ 出典: 朝日新聞</span>}
-                  {item.source === 'akt-yahoo' && <span> ・ 出典: 秋田テレビ（Yahoo!）</span>}
-                  {item.source === 'iwatenpv-yahoo' && <span> ・ 出典: 岩手日報（Yahoo!）</span>}
-                  {item.source === 'wordleaf-yahoo' && <span> ・ 出典: THE PAGE（Yahoo!）</span>}
+                  {(() => {
+                    const id = (item.source || '').trim();
+                    const link = item.link || '';
+                    const title = item.title || '';
+                    const map: Record<string, string> = {
+                      'hokkaido-np': '北海道新聞',
+                      'sankei': '産経新聞',
+                      'nhk': 'NHKニュース',
+                      'asahi': '朝日新聞',
+                      'akt-yahoo': '秋田テレビ（Yahoo!）',
+                      'iwatenpv-yahoo': '岩手日報（Yahoo!）',
+                      'wordleaf-yahoo': 'THE PAGE（Yahoo!）',
+                      'stv-yahoo': 'STVニュース北海道（Yahoo!）'
+                    };
+                    let display = map[id];
+                    // フォールバック: 予期せぬIDでもYahoo!のSTV記事はタイトル・リンクで判定
+                    if (!display && /news\.yahoo\.co\.jp/.test(link) && /STVニュース北海道/.test(title)) {
+                      display = 'STVニュース北海道（Yahoo!）';
+                    }
+                    return display ? <span> ・ 出典: {display}</span> : null;
+                  })()}
                 </div>
               </li>
             ))}
