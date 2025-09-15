@@ -3,7 +3,7 @@ import path from 'path';
 
 const ROOT = process.cwd();
 const ALL_JSON = path.resolve(ROOT, 'public/news/all.json');
-const OUT_HTML = path.resolve(ROOT, 'public/news/index.html');
+const OUT_HTML = path.resolve(ROOT, 'public/news/seo.html');
 const MAX_ITEMS = 20;
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 

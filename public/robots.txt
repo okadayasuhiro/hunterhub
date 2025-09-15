@@ -1,4 +1,13 @@
+# robots.txt for hantore
 User-agent: *
 Allow: /
 
-Sitemap: https://hantore.net/sitemap.xml
+# Crawl-delay (optional, many crawlers ignore)
+# Crawl-delay: 2
+
+# Note: SEO static news page for crawlers
+# The canonical for news is https://hantore.net/news
+# Static SEO version is at /news/seo.html
+
+# If you publish a sitemap.xml at the site root, uncomment the following:
+# Sitemap: https://hantore.net/sitemap.xml
