@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { GameHistoryService } from '../services/gameHistoryService';
-import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory } from '../types/game';
+import type { ReflexGameHistory, TargetTrackingHistory, SequenceGameHistory, TriggerTimingHistory } from '../types/game';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -16,7 +16,7 @@ import {
   Legend
 } from 'recharts';
 
-type GameTab = 'reflex' | 'target' | 'sequence';
+type GameTab = 'reflex' | 'target' | 'sequence' | 'trigger-timing';
 
 const DAYS_30_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -62,6 +62,16 @@ const MyHistoryPage: React.FC = () => {
     refetchOnWindowFocus: false
   });
 
+  const { data: triggerData, isLoading: loadingTrigger } = useQuery({
+    queryKey: ['myHistory', 'trigger-timing'],
+    queryFn: async () => {
+      const items = await gameHistoryService.getGameHistory<TriggerTimingHistory>('trigger-timing', 200);
+      return items;
+    },
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false
+  });
+
   const cutoff = useMemo(() => Date.now() - DAYS_30_MS, []);
 
   // 共通フォーマッタと日付整形
@@ -70,14 +80,16 @@ const MyHistoryPage: React.FC = () => {
   const metricOf = (tab: GameTab, item: any): number => {
     if (tab === 'reflex') return (item.averageTime ?? 0) / 1000; // 秒
     if (tab === 'target') return item.totalTime ?? 0;            // 秒
-    return item.completionTime ?? 0;                             // 秒
+    if (tab === 'sequence') return item.completionTime ?? 0;     // 秒
+    return item.totalScore ?? 0;                                 // pt
   };
 
   // 集計: 日毎に average/min/max/allRecords[] を計算
   const { chartData, scatterData, detailedByDate } = useMemo(() => {
     const src = activeTab === 'reflex' ? (reflexData || [])
       : activeTab === 'target' ? (targetData || [])
-      : (sequenceData || []);
+      : activeTab === 'sequence' ? (sequenceData || [])
+      : (triggerData || []);
 
     const filtered = src.filter((h: any) => new Date(h.date).getTime() >= cutoff);
 
@@ -113,26 +125,34 @@ const MyHistoryPage: React.FC = () => {
     const scatter = aggregated.flatMap(d => d.allRecords.map(v => ({ date: d.date, value: v })));
 
     return { chartData: aggregated, scatterData: scatter, detailedByDate: detailed };
-  }, [activeTab, reflexData, targetData, sequenceData, cutoff]);
+  }, [activeTab, reflexData, targetData, sequenceData, triggerData, cutoff]);
 
   const isLoading = (activeTab === 'reflex' && loadingReflex)
     || (activeTab === 'target' && loadingTarget)
-    || (activeTab === 'sequence' && loadingSequence);
+    || (activeTab === 'sequence' && loadingSequence)
+    || (activeTab === 'trigger-timing' && loadingTrigger);
 
   const yAxisLabel = activeTab === 'reflex'
     ? '平均反応時間(秒)'
     : activeTab === 'target'
       ? '合計時間(秒)'
-      : '完了時間(秒)';
+      : activeTab === 'sequence'
+        ? '完了時間(秒)'
+        : '合計得点(pt)';
 
   // 詳細エリア用の選択日データ（デフォルトは今日、クリックで更新）
   const selectedDetails = useMemo(() => {
     const d = selectedDate;
     const list = d ? (detailedByDate[d] || []) : [];
-    // 成績良い順（小さいほど良い）→ 値昇順、同点は時刻昇順
-    const sorted = [...list].sort((a, b) => a.value !== b.value ? a.value - b.value : a.time.localeCompare(b.time));
+    // 成績良い順: reflex/target/sequence は小さいほど良い、trigger-timing は大きいほど良い
+    const sorted = [...list].sort((a, b) => {
+      if (activeTab === 'trigger-timing') {
+        return a.value !== b.value ? b.value - a.value : a.time.localeCompare(b.time);
+      }
+      return a.value !== b.value ? a.value - b.value : a.time.localeCompare(b.time);
+    });
     return sorted.map((r, idx) => ({ ...r, rank: idx + 1 }));
-  }, [detailedByDate, selectedDate]);
+  }, [detailedByDate, selectedDate, activeTab]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
@@ -146,7 +166,8 @@ const MyHistoryPage: React.FC = () => {
           {([
             { key: 'reflex', label: '反射神経' },
             { key: 'target', label: 'ターゲット追跡' },
-            { key: 'sequence', label: 'カウントアップ' }
+            { key: 'sequence', label: 'カウントアップ' },
+            { key: 'trigger-timing', label: 'トリガー' }
           ] as { key: GameTab; label: string }[]).map(tab => (
             <button
               key={tab.key}
