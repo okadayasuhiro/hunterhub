@@ -455,9 +455,16 @@ const HomePage: React.FC = () => {
                     setShouldLoad(true);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0, rootMargin: '200px 0px' });
         obs.observe(el);
         return () => obs.disconnect();
+    }, [shouldLoad]);
+
+    // フォールバック: 端末や状況によりIOが発火しない場合に備え、一定時間後にロード
+    useEffect(() => {
+        if (shouldLoad) return;
+        const timer = setTimeout(() => setShouldLoad(true), 3000);
+        return () => clearTimeout(timer);
     }, [shouldLoad]);
 
     // Phase 2: お知らせデータをメモ化（再レンダリング防止）
@@ -711,6 +718,42 @@ const HomePage: React.FC = () => {
 
         loadLastResults();
     }, [gameHistoryService, hybridRankingService, shouldLoad, optimizedData]);
+
+    // 即時ロード: トリガートレーニングの前回記録と総プレイ回数は遅延に依存せず最速で取得
+    useEffect(() => {
+        const loadTriggerTimingFast = async () => {
+            try {
+                const [totalPlayCountTT, ttHistory] = await Promise.all([
+                    hybridRankingService.getTotalPlayCountOptimized('trigger-timing').catch(() => 0),
+                    gameHistoryService.getGameHistory<TriggerTimingHistory>('trigger-timing')
+                ]);
+
+                setPlayCounts(prev => ({
+                    ...prev,
+                    triggerTiming: typeof totalPlayCountTT === 'number' && totalPlayCountTT >= 0 ? totalPlayCountTT : 0
+                }));
+
+                const ttLatest = Array.isArray(ttHistory) && ttHistory.length > 0 ? ttHistory[0] : null;
+                if (ttLatest) {
+                    setLastResults(prev => ({
+                        ...prev,
+                        triggerTiming: {
+                            primaryStat: '合計得点',
+                            primaryValue: `${ttLatest.totalScore.toFixed(3)}pt`,
+                            secondaryStat: '平均得点',
+                            secondaryValue: `${ttLatest.averageScore.toFixed(3)}pt`,
+                            date: new Date(ttLatest.date).toLocaleDateString('ja-JP')
+                        }
+                    }));
+                }
+            } catch (error) {
+                console.error('❌ HomePage: Fast load for trigger-timing failed:', error);
+            }
+        };
+
+        loadTriggerTimingFast();
+        // 依存はサービスインスタンスのみ（ユーザー操作に依存しない）
+    }, [gameHistoryService, hybridRankingService]);
 
     const location = useLocation();
 
