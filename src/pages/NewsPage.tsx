@@ -94,14 +94,18 @@ const NewsPage: React.FC = () => {
           url: typeof window !== 'undefined' ? window.location.origin + '/news' : 'https://hantore.net/news'
         }}
       />
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">狩猟関連ニュース</h1>
-        <a href="/" className="inline-block w-full max-w-40 px-8 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300">ホームに戻る</a>
+      <div className="bg-white rounded-xl shadow-sm border mb-4">
+        <div className="flex items-center justify-between p-4 md:p-5">
+          <h1 className="text-2xl font-bold">狩猟関連ニュース</h1>
+          <a href="/" className="inline-block w-full max-w-40 px-8 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300">ホームに戻る</a>
+        </div>
+        <div className="px-4 pb-4 md:px-5 md:pb-5">
+          <p className="text-sm text-gray-600">
+            直近7日間の「狩猟・ヒグマ・有害鳥獣対策」などに関するニュースを、1日2回自動収集して掲載しています。
+            見出しをクリックすると各媒体の記事に移動します。
+          </p>
+        </div>
       </div>
-      <p className="text-sm text-gray-600 mb-4">
-        このページでは、直近7日間の「狩猟・ヒグマ・有害鳥獣対策」などに関するニュースを1日2回自動収集して掲載しています。
-        見出しをクリックすると各媒体の記事に移動します。
-      </p>
       {error && (
         <div className="text-sm text-red-600 mb-4">{error}</div>
       )}
