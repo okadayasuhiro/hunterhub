@@ -1,7 +1,21 @@
 {
   "source": "asahi",
-  "generatedAt": "2025-09-14T23:58:55.416Z",
+  "generatedAt": "2025-09-15T05:35:09.761Z",
   "items": [
+    {
+      "id": "5130545ded4a23f82ed329ce642748e1dac38e644a94d552d4cafb4ca83b37bf",
+      "source": "asahi",
+      "title": "クマが脅かす子どもの安全、登下校や校舎で出没　専門家の具体策は？",
+      "link": "https://www.asahi.com/articles/AST992DBXT99OXIE008M.html?ref=rss",
+      "description": "",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T01:00:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "b8ffcb6d74c980e1cdaa4afb4619bf7afc059e3a6b52a553def69e0c34e8e6bc",
       "source": "asahi",

@@ -9,7 +9,8 @@ const FEEDS = [
   { id: 'asahi', url: 'https://www.asahi.com/rss/asahi/national.rdf' },
   { id: 'akt-yahoo', url: 'https://news.yahoo.co.jp/rss/media/akt/all.xml' },
   { id: 'iwatenpv-yahoo', url: 'https://news.yahoo.co.jp/rss/media/iwatenpv/all.xml' },
-  { id: 'wordleaf-yahoo', url: 'https://news.yahoo.co.jp/rss/media/wordleaf/all.xml' }
+  { id: 'wordleaf-yahoo', url: 'https://news.yahoo.co.jp/rss/media/wordleaf/all.xml' },
+  { id: 'stv-yahoo', url: 'https://news.yahoo.co.jp/rss/media/stv/all.xml' }
 ];
 const OUTPUT_HOKKAIDO = path.resolve(process.cwd(), 'public/news/hokkaido.json');
 const OUTPUT_SANKEI = path.resolve(process.cwd(), 'public/news/sankei.json');
@@ -18,6 +19,7 @@ const OUTPUT_ASAHI = path.resolve(process.cwd(), 'public/news/asahi.json');
 const OUTPUT_AKT = path.resolve(process.cwd(), 'public/news/akt-yahoo.json');
 const OUTPUT_IWATENPV = path.resolve(process.cwd(), 'public/news/iwatenpv-yahoo.json');
 const OUTPUT_WORDLEAF = path.resolve(process.cwd(), 'public/news/wordleaf-yahoo.json');
+const OUTPUT_STV = path.resolve(process.cwd(), 'public/news/stv-yahoo.json');
 const OUTPUT_ALL = path.resolve(process.cwd(), 'public/news/all.json');
 const EXCLUDE_PATH = path.resolve(process.cwd(), 'config/news_exclude.json');
 const MAX_ITEMS = 50;
@@ -27,7 +29,7 @@ const POSITIVE_KEYWORDS = [
   '狩猟','猟','猟友会','ハンター','有害鳥獣','駆除','捕獲','獣害','誤射',
   '銃砲','散弾銃','空気銃','猟期','禁猟','禁猟区','鳥獣保護',
   '鹿','エゾシカ',
-  '熊','クマ','ヒグマ','ツキノワグマ','狩猟免許','猟銃','ジビエ','猟師'
+  '熊','クマ','ヒグマ','ツキノワグマ','狩猟免許','猟銃','ジビエ','猟師','イノシシ','ヌートリア','タイワンリス','カモ','鴨'
 ];
 
 const NEGATIVE_KEYWORDS = [
@@ -232,6 +234,7 @@ async function main() {
   const outK = { source: 'akt-yahoo', generatedAt: now, items: byId['akt-yahoo'] || [] };
   const outI = { source: 'iwatenpv-yahoo', generatedAt: now, items: byId['iwatenpv-yahoo'] || [] };
   const outW = { source: 'wordleaf-yahoo', generatedAt: now, items: byId['wordleaf-yahoo'] || [] };
+  const outSTV = { source: 'stv-yahoo', generatedAt: now, items: byId['stv-yahoo'] || [] };
 
   // all combined (再ソート)
   const combined = [
@@ -241,7 +244,8 @@ async function main() {
     ...(byId['asahi'] || []),
     ...(byId['akt-yahoo'] || []),
     ...(byId['iwatenpv-yahoo'] || []),
-    ...(byId['wordleaf-yahoo'] || [])
+    ...(byId['wordleaf-yahoo'] || []),
+    ...(byId['stv-yahoo'] || [])
   ].sort((a, b) => {
     const ta = a.publishedAt || '';
     const tb = b.publishedAt || '';
@@ -257,6 +261,7 @@ async function main() {
   ensureDirFor(OUTPUT_AKT);
   ensureDirFor(OUTPUT_IWATENPV);
   ensureDirFor(OUTPUT_WORDLEAF);
+  ensureDirFor(OUTPUT_STV);
   ensureDirFor(OUTPUT_ALL);
   fs.writeFileSync(OUTPUT_HOKKAIDO, JSON.stringify(outH, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_SANKEI, JSON.stringify(outS, null, 2), 'utf-8');
@@ -265,6 +270,7 @@ async function main() {
   fs.writeFileSync(OUTPUT_AKT, JSON.stringify(outK, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_IWATENPV, JSON.stringify(outI, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_WORDLEAF, JSON.stringify(outW, null, 2), 'utf-8');
+  fs.writeFileSync(OUTPUT_STV, JSON.stringify(outSTV, null, 2), 'utf-8');
   fs.writeFileSync(OUTPUT_ALL, JSON.stringify(outAll, null, 2), 'utf-8');
   console.log(`Wrote Hokkaido=${outH.items.length}, Sankei=${outS.items.length}, NHK=${outN.items.length}, Asahi=${outA.items.length}, All=${outAll.items.length}`);
 }

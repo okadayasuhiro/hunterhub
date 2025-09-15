@@ -1,7 +1,63 @@
 {
   "source": "hokkaido-np",
-  "generatedAt": "2025-09-14T23:58:55.416Z",
+  "generatedAt": "2025-09-15T05:35:09.761Z",
   "items": [
+    {
+      "id": "073dd80cca941e075ad094e4e38d01891888fb77147402782d3fdf7cfdd4c01c",
+      "source": "hokkaido-np",
+      "title": "クマと軽乗用車衝突　清水の国道　けが人なし",
+      "link": "https://www.hokkaido-np.co.jp/article/1211720/",
+      "description": "【清水】15日午前0時10分ごろ、十勝管内清水町清水基線の国道...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T04:15:55.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "791df0a934b8b1678c863f76294967bd3fbb5ac3ad6587b145a627455fbd2a5e",
+      "source": "hokkaido-np",
+      "title": "クマと乗用車が衝突　三笠の道道　けが人なし",
+      "link": "https://www.hokkaido-np.co.jp/article/1211718/",
+      "description": "【三笠】14日午後8時10分ごろ、三笠市西桂沢の道道で、走行中...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T04:14:35.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "64a9efe729d141a983d8b2609f1cf56299027afcfadb72d5a113f7e42e9cc318",
+      "source": "hokkaido-np",
+      "title": "夕張の住宅街　ヒグマ２頭目撃",
+      "link": "https://www.hokkaido-np.co.jp/article/1211726/",
+      "description": "【夕張】15日午前5時半ごろ、夕張市南清水沢4で、草むらにヒグ...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T04:13:25.000Z",
+      "matchedKeywords": [
+        "ヒグマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "62e47cbd48eab4001569f30d54207608edbc24a57a542607e0a7a934865257cb",
+      "source": "hokkaido-np",
+      "title": "＜函館道南＞ヒグマ事故と報道のあり方　足立結",
+      "link": "https://www.hokkaido-np.co.jp/article/1211734/",
+      "description": "カタッ。毎朝、父は新聞がポストに入った音とともに起きる。まどろ...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-15T02:12:52.000Z",
+      "matchedKeywords": [
+        "ヒグマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "7e224c38854dadccc831d57f9e47f04fade62cca3728ce51f95a3f67b7b9c249",
       "source": "hokkaido-np",

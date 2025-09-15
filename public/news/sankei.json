@@ -1,20 +1,5 @@
 {
   "source": "sankei",
-  "generatedAt": "2025-09-14T23:58:55.416Z",
-  "items": [
-    {
-      "id": "964e48d3b8ec2c1ca92f24169aa3e86e6013b2df6fd7bcc27751275948a2cbab",
-      "source": "sankei",
-      "title": "クマの市街地出没、SNSに目立つメガソーラー原因説「すみか奪ってる」「クマ被害増加」",
-      "link": "https://www.sankei.com/article/20250914-TMKKC5GVMJNSBKCK727V3OIRRY/",
-      "description": "",
-      "imageUrl": "",
-      "publishedAt": "2025-09-14T04:00:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    }
-  ]
+  "generatedAt": "2025-09-15T05:35:09.761Z",
+  "items": []
 }
