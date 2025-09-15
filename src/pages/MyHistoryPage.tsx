@@ -158,15 +158,15 @@ const MyHistoryPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="mb-6">
-          <h1 className="text-xl md:text-3xl font-bold text-gray-800">わたしのトレーニング履歴 β版</h1>
+          <h1 className="text-xl md:text-3xl font-bold text-gray-800">わたしのトレーニング履歴</h1>
         </div>
 
         {/* タブ */}
         <div className="inline-flex rounded-lg overflow-hidden border bg-white">
           {([
             { key: 'reflex', label: '反射神経' },
-            { key: 'target', label: 'ターゲット追跡' },
-            { key: 'sequence', label: 'カウントアップ' },
+            { key: 'target', label: '追跡' },
+            { key: 'sequence', label: 'カウント' },
             { key: 'trigger-timing', label: 'トリガー' }
           ] as { key: GameTab; label: string }[]).map(tab => (
             <button
