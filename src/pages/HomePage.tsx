@@ -472,6 +472,7 @@ const HomePage: React.FC = () => {
 
     // ニュースカード用: 最新2件のニュース見出しを表示
     const [homeNewsTop2, setHomeNewsTop2] = useState<{ id: string; title: string; }[]>([]);
+    const [homeNewsUpdatedAt, setHomeNewsUpdatedAt] = useState<string>('');
     useEffect(() => {
         const url = `/news/all.json?v=${Date.now()}`;
         fetch(url, { cache: 'no-cache' })
@@ -480,6 +481,7 @@ const HomePage: React.FC = () => {
                 const items: any[] = Array.isArray(json?.items) ? json.items : [];
                 const top2 = items.slice(0, 2).map((it: any) => ({ id: it.id, title: it.title }));
                 setHomeNewsTop2(top2);
+                if (json?.generatedAt) setHomeNewsUpdatedAt(String(json.generatedAt));
             }).catch(() => {});
     }, []);
 
@@ -877,7 +879,9 @@ const HomePage: React.FC = () => {
                         <div className="relative z-10">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-lg font-semibold text-gray-800">狩猟関連ニュース</h2>
-                                <span className="text-sm text-gray-600 ml-3 truncate max-w-[60%]">直近7日の最新ニュース</span>
+                                <span className="text-sm text-gray-600 ml-3 truncate max-w-[60%]">
+                                    最終更新日：{homeNewsUpdatedAt ? new Date(homeNewsUpdatedAt).toLocaleDateString('ja-JP') : ''}
+                                </span>
                             </div>
                         </div>
                         {homeNewsTop2.length > 0 && (
