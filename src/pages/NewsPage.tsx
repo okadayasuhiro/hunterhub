@@ -114,10 +114,11 @@ const NewsPage: React.FC = () => {
       )}
       {data && (
         <>
-          <div className="text-xs text-gray-500 mb-3">最終更新: {data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—'}</div>
-          <ul className="space-y-2">
-            {data.items.slice(0, 50).map(item => (
-              <li key={item.id} className="border-b border-gray-200 pb-2">
+          <div className="bg-white rounded-xl shadow-sm border mb-4">
+            <div className="text-xs text-gray-500 px-4 pt-4 md:px-5">最終更新: {data.generatedAt ? new Date(data.generatedAt).toLocaleString() : '—'}</div>
+            <ul className="divide-y">
+              {data.items.slice(0, 50).map(item => (
+              <li key={item.id} className="px-4 py-3">
                 <div className="flex items-start justify-between gap-2">
                   <a
                     href={item.link}
@@ -156,8 +157,9 @@ const NewsPage: React.FC = () => {
                   })()}
                 </div>
               </li>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          </div>
           <div className="mt-6 text-center">
             <a href="/" className="inline-block w-full max-w-40 px-8 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300">ホームに戻る</a>
           </div>
