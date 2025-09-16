@@ -1,17 +1,47 @@
 {
   "source": "hokkaido-np",
-  "generatedAt": "2025-09-17T09:29:45.322Z",
+  "generatedAt": "2025-09-16T21:14:22.684Z",
   "items": [
     {
-      "id": "c19aecaf731e0649aa2aa4c4d40ff87216b9ecadfbb2c6a9377b4b738e5697ee",
+      "id": "90b0a911dc6259a3a2bf4242bd68b167dc7184ad08fc89bf1d8687c5e1e97b11",
       "source": "hokkaido-np",
-      "title": "木古内の市街地でクマ1頭目撃　JR駅から300メートル",
-      "link": "https://www.hokkaido-np.co.jp/article/1212515/",
-      "description": "【木古内】17日午前2時35分ごろ、渡島管内木古内町本町の道道...",
+      "title": "81歳女性　掃除機でクマ撃退　三笠の公営住宅に侵入　緊迫の数十秒間語る",
+      "link": "https://www.hokkaido-np.co.jp/article/1212331/",
+      "description": "ヒグマは窓ガラスを割り、飛び込むように住宅に侵入してき...",
       "imageUrl": "",
-      "publishedAt": "2025-09-17T06:36:24.000Z",
+      "publishedAt": "2025-09-16T16:06:22.000Z",
       "matchedKeywords": [
+        "クマ",
+        "ヒグマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "213c7bce3cdaf4254515f864559087e2ab22eccc3858e486449c462c8e5a7c0c",
+      "source": "hokkaido-np",
+      "title": "「緊急銃猟」の手順確認　更別村職員らクマ対策訓練",
+      "link": "https://www.hokkaido-np.co.jp/article/1212302/",
+      "description": "【更別】村や帯広署などは11日、市街地に出没したクマへの発砲が...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T12:58:13.000Z",
+      "matchedKeywords": [
+        "猟",
         "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "56b614fa348f7978794d4d9feef8cada6f97141548ec077586c35ee0257250ac",
+      "source": "hokkaido-np",
+      "title": "帯広・旧藤丸のエゾシカ像3頭“お引っ越し”　店舗解体で「パーク」へ",
+      "link": "https://www.hokkaido-np.co.jp/article/1212301/",
+      "description": "帯広市内の旧百貨店藤丸前の平原通に立つ3頭のエゾシカ像が、今月...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T12:57:23.000Z",
+      "matchedKeywords": [
+        "エゾシカ"
       ],
       "score": 2,
       "excluded": false

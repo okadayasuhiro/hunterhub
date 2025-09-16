@@ -1,5 +1,21 @@
 {
   "source": "wordleaf-yahoo",
-  "generatedAt": "2025-09-17T09:29:45.322Z",
-  "items": []
+  "generatedAt": "2025-09-16T21:14:22.684Z",
+  "items": [
+    {
+      "id": "4e46a53f4b50c82537ebddba5b0605d5b9786dacc0c87b80dde80cdac2d6532f",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「メガソーラー設置による自然破壊への懸念」「野生動物の人里出没が増加」 - メガソーラー開発と生態系への影響に注目集まる(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/a0d3e0a585495c5504c75d39edb3fc7f67a395da?source=rss",
+      "description": "メガソーラー設置による自然破壊と野生動物の生息環境への影響について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーの意見では、山林を切り開いてメガソーラーを設置することで、クマや鹿、",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T01:31:01.000Z",
+      "matchedKeywords": [
+        "鹿",
+        "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    }
+  ]
 }
