@@ -1,15 +1,15 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-16T14:00:38.479Z",
+  "generatedAt": "2025-09-16T21:24:13.625Z",
   "items": [
     {
-      "id": "c26b678ed7deb7aa7344fd6f9d4d969aaa11db7721705fddcc56496bab546191",
+      "id": "90b0a911dc6259a3a2bf4242bd68b167dc7184ad08fc89bf1d8687c5e1e97b11",
       "source": "hokkaido-np",
-      "title": "クマ対策　パネル展で学ぶ　渡島合同庁舎で19日まで",
-      "link": "https://www.hokkaido-np.co.jp/article/1212305/",
-      "description": "10月末までの北海道の「秋のヒグマ注意特別期間」に合わせて16...",
+      "title": "81歳女性　掃除機でクマ撃退　三笠の公営住宅に侵入　緊迫の数十秒間語る",
+      "link": "https://www.hokkaido-np.co.jp/article/1212331/",
+      "description": "ヒグマは窓ガラスを割り、飛び込むように住宅に侵入してき...",
       "imageUrl": "",
-      "publishedAt": "2025-09-16T13:04:24.000Z",
+      "publishedAt": "2025-09-16T16:06:22.000Z",
       "matchedKeywords": [
         "クマ",
         "ヒグマ"
@@ -47,20 +47,6 @@
       "excluded": false
     },
     {
-      "id": "f03faa5e7810b0eb752250dddbdd0115117aa022e495ec8de91f92c7b21dca37",
-      "source": "hokkaido-np",
-      "title": "小樽の住宅街でクマ目撃複数　近隣の小中、保護者に送迎要請",
-      "link": "https://www.hokkaido-np.co.jp/article/1212266/",
-      "description": "小樽市松ケ枝の住宅街でクマの目撃情報が複数あり、市や小樽署など...",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T12:56:12.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
       "id": "c98c9a67978a988512edcf9bdfb77a7d2efdff6715998fcf37fe20c7f5173c59",
       "source": "stv-yahoo",
       "title": "【恐怖】クマが家の中に！　洗濯中の女性の背後に…　緊迫の瞬間を語る　北海道三笠市(STVニュース北海道)",
@@ -84,34 +70,6 @@
       "publishedAt": "2025-09-16T11:46:16.000Z",
       "matchedKeywords": [
         "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "2f9ae36fe27e8b2271f0aaa0c636305d4585a7434171951335de253f6bf780b3",
-      "source": "sankei",
-      "title": "山林でクマに襲われ81歳女性けが、命に別条なし　パトロール警戒続く　山形・酒田",
-      "link": "https://www.sankei.com/article/20250916-ECREDUKZ5JIK5EFTZ5QTMAADYA/",
-      "description": "",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T11:46:16.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "748748ffa85dc14109135214eb6c3e5550ce683e248ad2b489589080bcc70e41",
-      "source": "hokkaido-np",
-      "title": "八雲「相沼奴」の伝統　門脇家4代目デビュー　熊石中3年・駿翔さん「傘取」堂々",
-      "link": "https://www.hokkaido-np.co.jp/article/1212231/",
-      "description": "【八雲】相沼奴（あいぬまやっこ）保存会は14日、町の無形民俗文...",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T11:10:28.000Z",
-      "matchedKeywords": [
-        "熊"
       ],
       "score": 2,
       "excluded": false
@@ -270,20 +228,6 @@
       "description": "北海道上ノ国町で、道道を歩くおよそ１メートルほどのクマ１頭が目撃されました。\n\n周辺ではここ数日、同じ個体の可能性のあるクマが複数回目撃されているということで、警察は警戒を強めています。\n\n道沿いの草",
       "imageUrl": "",
       "publishedAt": "2025-09-15T07:14:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "c8eea0c914b84517893f3a300843ee082476fe0d3bc2b61112f0ec240bfd3fe6",
-      "source": "stv-yahoo",
-      "title": "小樽市内の住宅街 バイクで走行中 中央分離帯の草地に座りこむクマ１頭を目撃 警察が警戒にあたる(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/2be2d66e4219ce55c0a807794e1e81065769ecdd?source=rss",
-      "description": "クマが目撃されたのは小樽市松ヶ枝1丁目の市道です。\n\n9月14日午後10時半ごろ、帰宅中の30代男性がバイクを走行中に、中央分離帯の草地に座り込むクマ1頭を目撃しました。\n\n付近は住宅街で幼稚園や保育",
-      "imageUrl": "",
-      "publishedAt": "2025-09-14T21:30:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],
