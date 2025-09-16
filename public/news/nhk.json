@@ -1,7 +1,21 @@
 {
   "source": "nhk",
-  "generatedAt": "2025-09-15T21:24:14.723Z",
+  "generatedAt": "2025-09-16T13:58:10.798Z",
   "items": [
+    {
+      "id": "d173cf22b81c45d0f232eba210c8247b5b46c46774382709ec636e3ae3ac00aa",
+      "source": "nhk",
+      "title": "北海道 三笠 ヒグマが住宅の窓ガラス割り侵入 住人にけがなし",
+      "link": "http://www3.nhk.or.jp/news/html/20250916/k10014924251000.html",
+      "description": "16日午前、北海道三笠市でヒグマが住宅の窓ガラスを割って部屋に入り込みました。ヒグマはすぐに外に出て行き、室内にいた80代の女性にけがはなかったということで、警察などがパトロールを強化しています。",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T09:28:36.000Z",
+      "matchedKeywords": [
+        "ヒグマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "a65164a394778b5fcc38c3aa39fbb2a42ff6937ae49fa01e5fe2bb898c15d8a8",
       "source": "nhk",

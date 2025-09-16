@@ -1,59 +1,75 @@
 {
   "source": "hokkaido-np",
-  "generatedAt": "2025-09-15T21:24:14.723Z",
+  "generatedAt": "2025-09-16T13:58:10.798Z",
   "items": [
     {
-      "id": "8374989af077e460d22e0d41ec5998163df4a6e48a1cee2354bb5afe3713a88a",
+      "id": "c26b678ed7deb7aa7344fd6f9d4d969aaa11db7721705fddcc56496bab546191",
       "source": "hokkaido-np",
-      "title": "北斗の住宅地でクマ目撃",
-      "link": "https://www.hokkaido-np.co.jp/article/1211810/",
-      "description": "【北斗】15日午後5時20分ごろ、市本郷2の住宅地の市道をクマ...",
+      "title": "クマ対策　パネル展で学ぶ　渡島合同庁舎で19日まで",
+      "link": "https://www.hokkaido-np.co.jp/article/1212305/",
+      "description": "10月末までの北海道の「秋のヒグマ注意特別期間」に合わせて16...",
       "imageUrl": "",
-      "publishedAt": "2025-09-15T12:00:44.000Z",
+      "publishedAt": "2025-09-16T13:04:24.000Z",
       "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "791df0a934b8b1678c863f76294967bd3fbb5ac3ad6587b145a627455fbd2a5e",
-      "source": "hokkaido-np",
-      "title": "クマと乗用車が衝突　三笠の道道　けが人なし",
-      "link": "https://www.hokkaido-np.co.jp/article/1211718/",
-      "description": "【三笠】14日午後8時10分ごろ、三笠市西桂沢の道道で、走行中...",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T08:44:35.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "073dd80cca941e075ad094e4e38d01891888fb77147402782d3fdf7cfdd4c01c",
-      "source": "hokkaido-np",
-      "title": "クマと軽乗用車衝突　清水の国道　けが人なし",
-      "link": "https://www.hokkaido-np.co.jp/article/1211720/",
-      "description": "【清水】15日午前0時10分ごろ、十勝管内清水町清水基線の国道...",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T04:15:55.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "64a9efe729d141a983d8b2609f1cf56299027afcfadb72d5a113f7e42e9cc318",
-      "source": "hokkaido-np",
-      "title": "夕張の住宅街　ヒグマ２頭目撃",
-      "link": "https://www.hokkaido-np.co.jp/article/1211726/",
-      "description": "【夕張】15日午前5時半ごろ、夕張市南清水沢4で、草むらにヒグ...",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T04:13:25.000Z",
-      "matchedKeywords": [
+        "クマ",
         "ヒグマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "213c7bce3cdaf4254515f864559087e2ab22eccc3858e486449c462c8e5a7c0c",
+      "source": "hokkaido-np",
+      "title": "「緊急銃猟」の手順確認　更別村職員らクマ対策訓練",
+      "link": "https://www.hokkaido-np.co.jp/article/1212302/",
+      "description": "【更別】村や帯広署などは11日、市街地に出没したクマへの発砲が...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T12:58:13.000Z",
+      "matchedKeywords": [
+        "猟",
+        "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "56b614fa348f7978794d4d9feef8cada6f97141548ec077586c35ee0257250ac",
+      "source": "hokkaido-np",
+      "title": "帯広・旧藤丸のエゾシカ像3頭“お引っ越し”　店舗解体で「パーク」へ",
+      "link": "https://www.hokkaido-np.co.jp/article/1212301/",
+      "description": "帯広市内の旧百貨店藤丸前の平原通に立つ3頭のエゾシカ像が、今月...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T12:57:23.000Z",
+      "matchedKeywords": [
+        "エゾシカ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "f03faa5e7810b0eb752250dddbdd0115117aa022e495ec8de91f92c7b21dca37",
+      "source": "hokkaido-np",
+      "title": "小樽の住宅街でクマ目撃複数　近隣の小中、保護者に送迎要請",
+      "link": "https://www.hokkaido-np.co.jp/article/1212266/",
+      "description": "小樽市松ケ枝の住宅街でクマの目撃情報が複数あり、市や小樽署など...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T12:56:12.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "748748ffa85dc14109135214eb6c3e5550ce683e248ad2b489589080bcc70e41",
+      "source": "hokkaido-np",
+      "title": "八雲「相沼奴」の伝統　門脇家4代目デビュー　熊石中3年・駿翔さん「傘取」堂々",
+      "link": "https://www.hokkaido-np.co.jp/article/1212231/",
+      "description": "【八雲】相沼奴（あいぬまやっこ）保存会は14日、町の無形民俗文...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T11:10:28.000Z",
+      "matchedKeywords": [
+        "熊"
       ],
       "score": 2,
       "excluded": false
