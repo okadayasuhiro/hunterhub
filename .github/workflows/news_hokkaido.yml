@@ -7,6 +7,14 @@ on:
     - cron: '0 1 * * *'   # JST 10:00 (UTC+9)
     - cron: '0 5 * * *'   # JST 14:00 (UTC+9)
   workflow_dispatch: {}
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/fetch_hokkaido_news.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/news_hokkaido.yml'
 
 permissions:
   contents: write
@@ -42,7 +50,7 @@ jobs:
           git add public/news/wordleaf-yahoo.json
           git add public/news/stv-yahoo.json
           git add public/news/all.json
-          git commit -m "chore(news): scheduled refresh (update generatedAt and items if any)" || echo "No content changes"
-          git push || true
+          git commit --allow-empty -m "chore(news): scheduled refresh (update generatedAt and items if any)"
+          git push
 
 
