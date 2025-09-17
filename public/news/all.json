@@ -1,35 +1,47 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-16T21:24:13.625Z",
+  "generatedAt": "2025-09-17T02:17:18.126Z",
   "items": [
     {
-      "id": "90b0a911dc6259a3a2bf4242bd68b167dc7184ad08fc89bf1d8687c5e1e97b11",
-      "source": "hokkaido-np",
-      "title": "81歳女性　掃除機でクマ撃退　三笠の公営住宅に侵入　緊迫の数十秒間語る",
-      "link": "https://www.hokkaido-np.co.jp/article/1212331/",
-      "description": "ヒグマは窓ガラスを割り、飛び込むように住宅に侵入してき...",
+      "id": "0094eb2dc7d988ce477d187d906faa9acd0a59349ed71fc1831ad61cb85ddc40",
+      "source": "stv-yahoo",
+      "title": "全福島町民に1万円の商品券配布 クマ被害をうけイベント中止で経済停滞 飲食・宿泊業にも支援金(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/ae74f8c0e3801f3f52900ca37fe5fb416cdbce0c?source=rss",
+      "description": "北海道・福島町議会は2025年9月16日、クマによる死亡事故に伴う地域経済対策として、事業費を計上した一般会計補正予算案を可決しました。\n\n町内の飲食店やスーパーなど130店で使える1万円の商品券を全",
       "imageUrl": "",
-      "publishedAt": "2025-09-16T16:06:22.000Z",
+      "publishedAt": "2025-09-16T23:42:00.000Z",
       "matchedKeywords": [
-        "クマ",
-        "ヒグマ"
+        "クマ"
       ],
-      "score": 4,
+      "score": 2,
       "excluded": false
     },
     {
-      "id": "213c7bce3cdaf4254515f864559087e2ab22eccc3858e486449c462c8e5a7c0c",
-      "source": "hokkaido-np",
-      "title": "「緊急銃猟」の手順確認　更別村職員らクマ対策訓練",
-      "link": "https://www.hokkaido-np.co.jp/article/1212302/",
-      "description": "【更別】村や帯広署などは11日、市街地に出没したクマへの発砲が...",
+      "id": "78072293b2df7272ed3965de87953ac516aba658e8ea27bc12f11273c9c3775a",
+      "source": "stv-yahoo",
+      "title": "未明のパトロールで警察官がクマ目撃  追跡するもクマは逃走 北海道木古内町中心部 警戒続く(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/ee4ecc614a22c286bf70dda533b9f057bc0b4c89?source=rss",
+      "description": "北海道・木古内警察署は2025年9月17日午前2時35分ごろ、パトカーでパトロール中の警察官がクマ1頭を目撃したと発表しました。\n\n警察によりますと、パトロール中のパトカーが木古内町本町の道道5号から",
       "imageUrl": "",
-      "publishedAt": "2025-09-16T12:58:13.000Z",
+      "publishedAt": "2025-09-16T22:40:00.000Z",
       "matchedKeywords": [
-        "猟",
         "クマ"
       ],
-      "score": 4,
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "76291f76053cdc872755181794039311e63300ecee0663718ace27b0f2ee2b2c",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「命に別状なし報道の曖昧さに疑問」「熊被害の深刻さを正確に伝えてほしい」 - 熊による人的被害と報道表現への意見が集まる(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/5f5e5bb159e185cdf401986aedbca8334b00e5cf?source=rss",
+      "description": "熊による人的被害に関する『命に別状なし』という報道表現について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーコメントでは、熊に襲われた際の『命に別状なし』という表現が、実際には重い",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T22:19:28.000Z",
+      "matchedKeywords": [
+        "熊"
+      ],
+      "score": 2,
       "excluded": false
     },
     {
@@ -159,21 +171,6 @@
       "excluded": false
     },
     {
-      "id": "4e46a53f4b50c82537ebddba5b0605d5b9786dacc0c87b80dde80cdac2d6532f",
-      "source": "wordleaf-yahoo",
-      "title": "【ヤフコメで話題】「メガソーラー設置による自然破壊への懸念」「野生動物の人里出没が増加」 - メガソーラー開発と生態系への影響に注目集まる(Yahoo!ニュース オリジナル THE PAGE)",
-      "link": "https://news.yahoo.co.jp/articles/a0d3e0a585495c5504c75d39edb3fc7f67a395da?source=rss",
-      "description": "メガソーラー設置による自然破壊と野生動物の生息環境への影響について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーの意見では、山林を切り開いてメガソーラーを設置することで、クマや鹿、",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T01:31:01.000Z",
-      "matchedKeywords": [
-        "鹿",
-        "クマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
-    {
       "id": "55fa3e1ca9714289cd6564c71f79a94a387db04ac823cf21370b831668f9b4a6",
       "source": "stv-yahoo",
       "title": "子連れの母グマが車を威嚇 前足で引っかかれボンネット損壊 運転手にけがなし 北海道置戸町(STVニュース北海道)",
@@ -195,39 +192,6 @@
       "description": "北海道上ノ国町できのう、およそ1メートルほどのクマ1頭が目撃されました。\n\n周辺では同じ個体の可能性のあるクマが複数回目撃されている他、道東の厚岸町でもきのう、同じ場所で2回、クマが目撃されています。",
       "imageUrl": "",
       "publishedAt": "2025-09-15T23:21:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "30ac5e583eadeeabbace01d5c4d99da802ff225fc09418cdff8b44f6c98091c9",
-      "source": "stv-yahoo",
-      "title": "シカ肉などのジビエを学ぶ　生息数増やすエゾシカ…狩猟後ほとんど破棄「職業・ハンター」にも注目(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/d0dce05443c0692e188b8a9d5cd456758c8b36ed?source=rss",
-      "description": "猟銃を使い北海道の自然とともに生きるハンターという職業が注目される中、札幌市では狩猟やシカ肉などのジビエに興味のある人を対象にしたフォーラムが開かれました。\n\n札幌市中央区で開かれた北海道ジビエ・狩猟",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T08:17:00.000Z",
-      "matchedKeywords": [
-        "狩猟",
-        "猟",
-        "ハンター",
-        "エゾシカ",
-        "猟銃",
-        "ジビエ"
-      ],
-      "score": 10,
-      "excluded": false
-    },
-    {
-      "id": "b8d5f298961ba54842aa0122a364d62e9eb209c6402aaa47947f9a7584aed940",
-      "source": "stv-yahoo",
-      "title": "道路を歩くクマ目撃　出没相次ぐ…同一個体か　目撃者「警戒心ないのかな」北海道上ノ国町(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/624679748c75973d6ef8dbd396b7f45beabc5f70?source=rss",
-      "description": "北海道上ノ国町で、道道を歩くおよそ１メートルほどのクマ１頭が目撃されました。\n\n周辺ではここ数日、同じ個体の可能性のあるクマが複数回目撃されているということで、警察は警戒を強めています。\n\n道沿いの草",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T07:14:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],
