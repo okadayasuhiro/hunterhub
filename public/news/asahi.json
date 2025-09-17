@@ -1,20 +1,5 @@
 {
   "source": "asahi",
-  "generatedAt": "2025-09-16T21:14:22.684Z",
-  "items": [
-    {
-      "id": "76604b04378b497592c98087c1530096dff1aebaa99f1252b4d47ed96a10de69",
-      "source": "asahi",
-      "title": "ヒグマが窓を割って侵入　住民の近くを通り過ぎ玄関へ　北海道三笠市",
-      "link": "https://www.asahi.com/articles/AST9J2VW3T9JIIPE00JM.html?ref=rss",
-      "description": "",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T09:10:00.000Z",
-      "matchedKeywords": [
-        "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    }
-  ]
+  "generatedAt": "2025-09-17T12:46:36.063Z",
+  "items": []
 }

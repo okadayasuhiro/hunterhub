@@ -1,7 +1,35 @@
 {
   "source": "stv-yahoo",
-  "generatedAt": "2025-09-16T21:14:22.684Z",
+  "generatedAt": "2025-09-17T12:46:36.063Z",
   "items": [
+    {
+      "id": "0094eb2dc7d988ce477d187d906faa9acd0a59349ed71fc1831ad61cb85ddc40",
+      "source": "stv-yahoo",
+      "title": "全福島町民に1万円の商品券配布　クマ被害をうけイベント中止で経済停滞　飲食・宿泊業にも支援金(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/ae74f8c0e3801f3f52900ca37fe5fb416cdbce0c?source=rss",
+      "description": "北海道・福島町議会は2025年9月16日、クマによる死亡事故に伴う地域経済対策として、事業費を計上した一般会計補正予算案を可決しました。\n\n町内の飲食店やスーパーなど130店で使える1万円の商品券を全",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T23:42:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "78072293b2df7272ed3965de87953ac516aba658e8ea27bc12f11273c9c3775a",
+      "source": "stv-yahoo",
+      "title": "未明のパトロールで警察官がクマ目撃  追跡するもクマは逃走 北海道木古内町中心部 警戒続く(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/ee4ecc614a22c286bf70dda533b9f057bc0b4c89?source=rss",
+      "description": "北海道・木古内警察署は2025年9月17日午前2時35分ごろ、パトカーでパトロール中の警察官がクマ1頭を目撃したと発表しました。\n\n警察によりますと、パトロール中のパトカーが木古内町本町の道道5号から",
+      "imageUrl": "",
+      "publishedAt": "2025-09-16T22:40:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "c98c9a67978a988512edcf9bdfb77a7d2efdff6715998fcf37fe20c7f5173c59",
       "source": "stv-yahoo",
@@ -52,67 +80,6 @@
       "description": "北海道・三笠市幾春別川向町で2025年9月16日午前10時40分ごろ、住宅にクマが侵入しました。\n\nクマはすでに立ち去っていて、けが人はいないということです。\n\n午前10時40分ごろ、三笠市から「クマ",
       "imageUrl": "",
       "publishedAt": "2025-09-16T04:49:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "55fa3e1ca9714289cd6564c71f79a94a387db04ac823cf21370b831668f9b4a6",
-      "source": "stv-yahoo",
-      "title": "子連れの母グマが車を威嚇 前足で引っかかれボンネット損壊 運転手にけがなし 北海道置戸町(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/cb60dda0501b39f611178ac71c3610658a8a59a2?source=rss",
-      "description": "2025年9月15日夜、北海道置戸町の道道で、走行中の乗用車が子連れの母グマに襲われる事故がありました。乗用車はボンネットが破損しましたが、運転手にけがはありませんでした。\n\n乗用車がクマに襲われたの",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T23:23:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "9c5643677f098fee694f5748e8e2ff4304dec344554034b8e864ac597151cebd",
-      "source": "stv-yahoo",
-      "title": "走行中の車を威嚇する母グマの姿がドライブレコーダーに 目撃情報多数で警察が警戒強める(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/0f45c440a12231fcc88e65269fe0efb633708259?source=rss",
-      "description": "北海道上ノ国町できのう、およそ1メートルほどのクマ1頭が目撃されました。\n\n周辺では同じ個体の可能性のあるクマが複数回目撃されている他、道東の厚岸町でもきのう、同じ場所で2回、クマが目撃されています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T23:21:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "30ac5e583eadeeabbace01d5c4d99da802ff225fc09418cdff8b44f6c98091c9",
-      "source": "stv-yahoo",
-      "title": "シカ肉などのジビエを学ぶ　生息数増やすエゾシカ…狩猟後ほとんど破棄「職業・ハンター」にも注目(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/d0dce05443c0692e188b8a9d5cd456758c8b36ed?source=rss",
-      "description": "猟銃を使い北海道の自然とともに生きるハンターという職業が注目される中、札幌市では狩猟やシカ肉などのジビエに興味のある人を対象にしたフォーラムが開かれました。\n\n札幌市中央区で開かれた北海道ジビエ・狩猟",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T08:17:00.000Z",
-      "matchedKeywords": [
-        "狩猟",
-        "猟",
-        "ハンター",
-        "エゾシカ",
-        "猟銃",
-        "ジビエ"
-      ],
-      "score": 10,
-      "excluded": false
-    },
-    {
-      "id": "b8d5f298961ba54842aa0122a364d62e9eb209c6402aaa47947f9a7584aed940",
-      "source": "stv-yahoo",
-      "title": "道路を歩くクマ目撃　出没相次ぐ…同一個体か　目撃者「警戒心ないのかな」北海道上ノ国町(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/624679748c75973d6ef8dbd396b7f45beabc5f70?source=rss",
-      "description": "北海道上ノ国町で、道道を歩くおよそ１メートルほどのクマ１頭が目撃されました。\n\n周辺ではここ数日、同じ個体の可能性のあるクマが複数回目撃されているということで、警察は警戒を強めています。\n\n道沿いの草",
-      "imageUrl": "",
-      "publishedAt": "2025-09-15T07:14:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],
