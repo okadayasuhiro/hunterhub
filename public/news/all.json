@@ -1,11 +1,25 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-17T05:23:12.515Z",
+  "generatedAt": "2025-09-17T09:29:45.322Z",
   "items": [
+    {
+      "id": "c19aecaf731e0649aa2aa4c4d40ff87216b9ecadfbb2c6a9377b4b738e5697ee",
+      "source": "hokkaido-np",
+      "title": "木古内の市街地でクマ1頭目撃　JR駅から300メートル",
+      "link": "https://www.hokkaido-np.co.jp/article/1212515/",
+      "description": "【木古内】17日午前2時35分ごろ、渡島管内木古内町本町の道道...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-17T06:36:24.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "6854c0fe59832d68d49962e12e1684b6e7c4c80b9f6593fd1ca3f6ba2e7f809b",
       "source": "akt-yahoo",
-      "title": "作業服大手「ワークマン」が手がける「Workman Colors」が秋田県内初出店　由利本荘市(秋田テレビ)",
+      "title": "作業服大手ワークマンが手がける「Workman Colors」が県内初出店　秋田・由利本荘市(秋田テレビ)",
       "link": "https://news.yahoo.co.jp/articles/c2f4de8beee834a943fd1c7b4d4a5da4ead12999?source=rss",
       "description": "作業服大手「ワークマン」が手がける新しいコンセプトの店舗が、秋田県由利本荘市に県内で初めてオープンしました。作業服が代名詞ですが取り扱いはなく、機能的でおしゃれな商品が並びます。\n\n由利本荘市のイオン",
       "imageUrl": "",
@@ -19,7 +33,7 @@
     {
       "id": "0094eb2dc7d988ce477d187d906faa9acd0a59349ed71fc1831ad61cb85ddc40",
       "source": "stv-yahoo",
-      "title": "全福島町民に1万円の商品券配布 クマ被害をうけイベント中止で経済停滞 飲食・宿泊業にも支援金(STVニュース北海道)",
+      "title": "全福島町民に1万円の商品券配布　クマ被害をうけイベント中止で経済停滞　飲食・宿泊業にも支援金(STVニュース北海道)",
       "link": "https://news.yahoo.co.jp/articles/ae74f8c0e3801f3f52900ca37fe5fb416cdbce0c?source=rss",
       "description": "北海道・福島町議会は2025年9月16日、クマによる死亡事故に伴う地域経済対策として、事業費を計上した一般会計補正予算案を可決しました。\n\n町内の飲食店やスーパーなど130店で使える1万円の商品券を全",
       "imageUrl": "",

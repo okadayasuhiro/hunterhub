@@ -1,5 +1,20 @@
 {
   "source": "hokkaido-np",
-  "generatedAt": "2025-09-17T05:23:12.515Z",
-  "items": []
+  "generatedAt": "2025-09-17T09:29:45.322Z",
+  "items": [
+    {
+      "id": "c19aecaf731e0649aa2aa4c4d40ff87216b9ecadfbb2c6a9377b4b738e5697ee",
+      "source": "hokkaido-np",
+      "title": "木古内の市街地でクマ1頭目撃　JR駅から300メートル",
+      "link": "https://www.hokkaido-np.co.jp/article/1212515/",
+      "description": "【木古内】17日午前2時35分ごろ、渡島管内木古内町本町の道道...",
+      "imageUrl": "",
+      "publishedAt": "2025-09-17T06:36:24.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    }
+  ]
 }
