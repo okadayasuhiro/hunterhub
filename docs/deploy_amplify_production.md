@@ -104,6 +104,27 @@ git push origin main
 - 「週間ラベルを出したくない」
   - `HomePage.tsx` は年のみ表示に修正済み（`weekTitle = "${week.year}年"`）。
 
+- 「git コマンドが固まる／Vimが開いて先に進めない」
+  - 原因: rebaseがエディタ待ち（Vim）や `.git/index.lock` が残留
+  - 対処（最短手順）:
+    ```bash
+    cd "/Users/okadayasutoyo/Documents/obsidian/01_Stock/01_Projects/01_hunterHub/Stock/implementation/frontend"
+    git rebase --abort 2>/dev/null || true
+    git merge  --abort 2>/dev/null || true
+    [ -f .git/index.lock ] && rm .git/index.lock || true
+    export GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true GIT_PAGER=cat
+    git status
+    ```
+  - そのまま継続/確定する場合:
+    ```bash
+    GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true git rebase --continue --no-edit
+    ```
+  - 将来のハング回避（VSCodeを待ちエディタに）:
+    ```bash
+    git config --global core.editor "code --wait"
+    git config --global sequence.editor "code --wait"
+    ```
+
 ---
 
 ### 7. リリース前チェックリスト（最小）

@@ -144,6 +144,53 @@ aws amplify list-jobs --app-id d1ewt5l0oirslc --branch-name main --max-items 5
 
 ---
 
+#### 3.12 Git が固まる（Vim待ち／rebaseロック）
+
+- 症状:
+  - `git status` や `git rebase --continue` が反応しない／Vimのメッセージが出る
+  - 「Type :qa! and press <Enter> ...」と表示される
+- 原因:
+  - 以前の `rebase` が「エディタ待ち（デフォルトVim）」のまま残存
+  - `.git/index.lock` が残っておりロック中
+- 迅速な復旧手順（コピペでOK）:
+  ```bash
+  cd "/Users/okadayasutoyo/Documents/obsidian/01_Stock/01_Projects/01_hunterHub/Stock/implementation/frontend"
+  # 1) 進行中のrebase/mergeを中止（存在しなければ何も起きない）
+  git rebase --abort 2>/dev/null || true
+  git merge  --abort 2>/dev/null || true
+  # 2) ロック解除
+  [ -f .git/index.lock ] && rm .git/index.lock || true
+  # 3) エディタ/ページャを無効化（このシェル内のみ）
+  export GIT_EDITOR=true
+  export GIT_SEQUENCE_EDITOR=true
+  export GIT_PAGER=cat
+  # 4) 状態確認
+  git status
+  ```
+- rebase をエディタ無しで継続/確定する:
+  ```bash
+  GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true git rebase --continue --no-edit
+  ```
+- 以降の作業（Pull＆Push）:
+  ```bash
+  git pull --rebase --autostash
+  git push
+  ```
+- 将来ハングを避ける設定（推奨）:
+  - VSCodeをエディタにして待ちを可視化
+    ```bash
+    git config --global core.editor "code --wait"
+    git config --global sequence.editor "code --wait"
+    ```
+  - 自動化スクリプトやCIでは完全無効化
+    ```bash
+    export GIT_EDITOR=true
+    export GIT_SEQUENCE_EDITOR=true
+    export GIT_PAGER=cat
+    ```
+
+---
+
 ### 4. よく使う確認コマンド
 ```bash
 # アプリ情報
