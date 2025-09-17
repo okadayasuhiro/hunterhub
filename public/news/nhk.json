@@ -1,6 +1,6 @@
 {
   "source": "nhk",
-  "generatedAt": "2025-09-17T13:08:16.499Z",
+  "generatedAt": "2025-09-17T21:23:12.199Z",
   "items": [
     {
       "id": "d173cf22b81c45d0f232eba210c8247b5b46c46774382709ec636e3ae3ac00aa",
@@ -68,20 +68,6 @@
       "publishedAt": "2025-09-12T08:08:54.000Z",
       "matchedKeywords": [
         "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "5a76408883e73896bdb495e0636cd8ca4da2f9fffc5de8bba3ec680ea3ae3a4c",
-      "source": "nhk",
-      "title": "秋田 大館 77歳男性が動物に襲われ大けが クマに襲われたか",
-      "link": "http://www3.nhk.or.jp/news/html/20250911/k10014919261000.html",
-      "description": "10日夜遅く、秋田県大館市で畑を見に行った77歳の男性が動物に襲われ、顔の骨を折る大けがをしたほか、頭などをひっかかれました。警察はけがの状況から男性がクマに襲われたとみて周辺の住民に注意を呼びかけています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-10T20:16:25.000Z",
-      "matchedKeywords": [
-        "クマ"
       ],
       "score": 2,
       "excluded": false

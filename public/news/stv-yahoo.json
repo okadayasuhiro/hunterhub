@@ -1,6 +1,6 @@
 {
   "source": "stv-yahoo",
-  "generatedAt": "2025-09-17T13:08:16.499Z",
+  "generatedAt": "2025-09-17T21:23:12.199Z",
   "items": [
     {
       "id": "0094eb2dc7d988ce477d187d906faa9acd0a59349ed71fc1831ad61cb85ddc40",
@@ -66,20 +66,6 @@
       "description": "北海道三笠市で９月１６日午前、クマが住宅の窓ガラスを割り、室内に侵入しました。\n\nクマはすでに立ち去っていて、警察が付近を警戒しています。\n\n三笠市幾春別川向町の公営住宅で午前１０時４０分ごろ、家の中",
       "imageUrl": "",
       "publishedAt": "2025-09-16T07:13:01.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "4c1aba50070815587b526a95dc3c5b2e818897a90492f515faa21ee4b3113b50",
-      "source": "stv-yahoo",
-      "title": "【速報】クマが住宅に侵入「窓ガラスを割り…」住人のそばを通って玄関から外へ　北海道三笠市(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/a3eb8d530923515db7a3eeb93b30a49686d6c064?source=rss",
-      "description": "北海道・三笠市幾春別川向町で2025年9月16日午前10時40分ごろ、住宅にクマが侵入しました。\n\nクマはすでに立ち去っていて、けが人はいないということです。\n\n午前10時40分ごろ、三笠市から「クマ",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T04:49:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],
