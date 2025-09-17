@@ -1,0 +1,15 @@
+# Cursor pre-load rule: paths & docs anchors
+
+このファイルは、Cursor セッション開始時に必ず読み込む「参照パス定義」です。
+
+[dirs]
+- docs: /Users/okadayasutoyo/Documents/obsidian/01_Stock/01_Projects/01_hunterHub/Stock/implementation/frontend/docs
+
+[docs]
+- deploy_runbook: {{dirs.docs}}/deploy_runbook.md
+- deploy_amplify_production: {{dirs.docs}}/deploy_amplify_production.md
+
+[require]
+- デプロイ/ビルド/プッシュ/Amplify/Actions/ニュース収集関連の依頼時は、上記2ドキュメントを先に読んでから作業すること。
+- Git がハング（Vim待ち/ロック）した場合は deploy_runbook.md 3.12 の手順に従うこと。
+- 本番は Amplify Hosting 連携リポジトリ。`main` への push が唯一のデプロイトリガー。

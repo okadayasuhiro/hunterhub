@@ -1,0 +1,12 @@
+# Cursor master rules
+
+このプロジェクトでは、以下のルールを必ず事前読込してください。
+
+[preload]
+- {{dirs.docs}}/deploy_runbook.md
+- {{dirs.docs}}/deploy_amplify_production.md
+
+[checks]
+- デプロイ関連の変更・依頼があれば、直前に deploy_runbook.md の「3. トラブルシューティング」を確認すること
+- Gitのハング（Vim待ち/ロック）が疑われる場合は、3.12 のワンライナーをまず実行
+- ニュース収集の変更（`scripts/fetch_hokkaido_news.mjs`）時は GitHub Actions のスケジュール・権限・`npm ci --legacy-peer-deps` を確認
