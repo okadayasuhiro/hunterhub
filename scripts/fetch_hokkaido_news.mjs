@@ -3,7 +3,7 @@ import path from 'path';
 import crypto from 'crypto';
 
 const FEEDS = [
-  { id: 'hokkaido-np', url: 'https://www.hokkaido-np.co.jp/output/7/free/index.ad.xml' },
+  { id: 'hokkaido-np', url: 'https://news.yahoo.co.jp/rss/media/doshin/all.xml' },
   { id: 'sankei', url: 'https://assets.wor.jp/rss/rdf/sankei/affairs.rdf' },
   { id: 'nhk', url: 'https://www.nhk.or.jp/rss/news/cat1.xml' },
   { id: 'asahi', url: 'https://www.asahi.com/rss/asahi/national.rdf' },
