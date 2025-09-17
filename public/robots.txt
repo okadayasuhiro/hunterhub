@@ -11,3 +11,4 @@ Allow: /
 
 # If you publish a sitemap.xml at the site root, uncomment the following:
 # Sitemap: https://hantore.net/sitemap.xml
+
