@@ -1,5 +1,62 @@
 {
   "source": "wordleaf-yahoo",
-  "generatedAt": "2025-09-18T02:17:39.377Z",
-  "items": []
+  "generatedAt": "2025-09-18T05:22:16.659Z",
+  "items": [
+    {
+      "id": "8f82f9ec4fbe7e3ba6d2ae6bcfdf11d89cebaa5d5bae3806feebb77624eb62f5",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「歳費返納の公約は実現困難との指摘」「公約違反への批判や寄付案も」 - 議員の歳費返納問題に注目集まる(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/56ca4d4ce358d6650ab7517c2348d4ad51b08990?source=rss",
+      "description": "国会議員の歳費返納問題について、Yahoo!ニュースのコメント欄で話題になっています。\n参政党公認の初鹿野議員が選挙公約として掲げた『歳費返納』が、法制度上ほぼ不可能であることが明らかになり、ユーザー",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T05:19:18.000Z",
+      "matchedKeywords": [
+        "鹿"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "723b85bbda4455c683eba61673616fffed9c052c4299fa6710b71ca2b41365f5",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「歳費返納の公約は守るべき」「法的に返納できないなら他の方法を」 - 参政党・初鹿野議員の歳費返納問題に注目集まる(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/023c1014213ee0a5ce088a40f4a60f4fdb6ab60c?source=rss",
+      "description": "参政党所属の初鹿野議員による歳費返納の公約について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーコメントでは、初鹿野議員が歳費返納を公約に掲げて当選したにもかかわらず、法的に返納が",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T03:10:48.000Z",
+      "matchedKeywords": [
+        "鹿"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "8cfc13a475360ddec9fcd5b8b2554ac8cf8da54a0bd53951c461d55633f141c6",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「公約を守らない議員への不信感」「有権者の一票の重みを再認識」 - 議員の公約違反と有権者の責任を巡る議論(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/c5a0c145f4691931c489061a29aa8650616cd943?source=rss",
+      "description": "国会議員の公約違反や歳費返納問題について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーコメントでは、初鹿野氏（参政党所属の国会議員）が歳費返納を公約に掲げて当選したにもかかわらず、",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T01:02:09.000Z",
+      "matchedKeywords": [
+        "鹿"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "31493a9a2939d6159d11e6ddf63708c506a5a6f7b6eec09c841160721c4ef282",
+      "source": "wordleaf-yahoo",
+      "title": "【ヤフコメで話題】「参政党の公約撤回に失望の声」「党の信頼回復に注目」 - 参政党・初鹿野議員の歳費返納公約撤回が波紋(Yahoo!ニュース オリジナル THE PAGE)",
+      "link": "https://news.yahoo.co.jp/articles/5168fcbd2026f0820dbcbac0c0feecc738edeb76?source=rss",
+      "description": "参政党の初鹿野議員による歳費自主返納の公約撤回について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーコメントでは、初鹿野議員が当選時に掲げた歳費返納の公約を撤回したことに対し、信頼",
+      "imageUrl": "",
+      "publishedAt": "2025-09-17T23:43:44.000Z",
+      "matchedKeywords": [
+        "鹿"
+      ],
+      "score": 2,
+      "excluded": false
+    }
+  ]
 }
