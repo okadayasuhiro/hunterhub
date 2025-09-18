@@ -1,7 +1,21 @@
 {
   "source": "stv-yahoo",
-  "generatedAt": "2025-09-18T05:22:16.659Z",
+  "generatedAt": "2025-09-18T09:29:33.082Z",
   "items": [
+    {
+      "id": "a187ee333d39e844893352f767e7dc3a7e35a2ab01651bda7bdeee235da914a2",
+      "source": "stv-yahoo",
+      "title": "【解説】札幌でクマ出没　９月で２４件…過去３年で最多　どんぐり不作で市街地への侵入増加の可能性(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/7328abd212f1e1c8c6a4df742e9c872deb890252?source=rss",
+      "description": "札幌では９月のクマ出没件数が１８日の１件を含めて２４件発生しています。\n\nこれは過去３年の同時期と比較して一番多くなっており、それだけクマ出没が相次いでいます。\n\nこれについて専門家にお話を伺ったとこ",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T07:12:01.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "eb31a60cce98f9e959a0c7ec41f5c24c9a13299e3282f34b38bdf60af3396d6a",
       "source": "stv-yahoo",
@@ -81,20 +95,6 @@
       "description": "北海道・福島町議会は2025年9月16日、クマによる死亡事故に伴う地域経済対策として、事業費を計上した一般会計補正予算案を可決しました。\n\n町内の飲食店やスーパーなど130店で使える1万円の商品券を全",
       "imageUrl": "",
       "publishedAt": "2025-09-16T23:42:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "78072293b2df7272ed3965de87953ac516aba658e8ea27bc12f11273c9c3775a",
-      "source": "stv-yahoo",
-      "title": "未明のパトロールで警察官がクマ目撃  追跡するもクマは逃走 北海道木古内町中心部 警戒続く(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/ee4ecc614a22c286bf70dda533b9f057bc0b4c89?source=rss",
-      "description": "北海道・木古内警察署は2025年9月17日午前2時35分ごろ、パトカーでパトロール中の警察官がクマ1頭を目撃したと発表しました。\n\n警察によりますと、パトロール中のパトカーが木古内町本町の道道5号から",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T22:40:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],

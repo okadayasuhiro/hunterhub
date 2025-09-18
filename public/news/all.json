@@ -1,17 +1,17 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-18T05:22:16.659Z",
+  "generatedAt": "2025-09-18T09:29:33.082Z",
   "items": [
     {
-      "id": "8f82f9ec4fbe7e3ba6d2ae6bcfdf11d89cebaa5d5bae3806feebb77624eb62f5",
-      "source": "wordleaf-yahoo",
-      "title": "【ヤフコメで話題】「歳費返納の公約は実現困難との指摘」「公約違反への批判や寄付案も」 - 議員の歳費返納問題に注目集まる(Yahoo!ニュース オリジナル THE PAGE)",
-      "link": "https://news.yahoo.co.jp/articles/56ca4d4ce358d6650ab7517c2348d4ad51b08990?source=rss",
-      "description": "国会議員の歳費返納問題について、Yahoo!ニュースのコメント欄で話題になっています。\n参政党公認の初鹿野議員が選挙公約として掲げた『歳費返納』が、法制度上ほぼ不可能であることが明らかになり、ユーザー",
+      "id": "a187ee333d39e844893352f767e7dc3a7e35a2ab01651bda7bdeee235da914a2",
+      "source": "stv-yahoo",
+      "title": "【解説】札幌でクマ出没　９月で２４件…過去３年で最多　どんぐり不作で市街地への侵入増加の可能性(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/7328abd212f1e1c8c6a4df742e9c872deb890252?source=rss",
+      "description": "札幌では９月のクマ出没件数が１８日の１件を含めて２４件発生しています。\n\nこれは過去３年の同時期と比較して一番多くなっており、それだけクマ出没が相次いでいます。\n\nこれについて専門家にお話を伺ったとこ",
       "imageUrl": "",
-      "publishedAt": "2025-09-18T05:19:18.000Z",
+      "publishedAt": "2025-09-18T07:12:01.000Z",
       "matchedKeywords": [
-        "鹿"
+        "クマ"
       ],
       "score": 2,
       "excluded": false
@@ -52,20 +52,6 @@
       "description": "国会議員の公約違反や歳費返納問題について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーコメントでは、初鹿野氏（参政党所属の国会議員）が歳費返納を公約に掲げて当選したにもかかわらず、",
       "imageUrl": "",
       "publishedAt": "2025-09-18T01:02:09.000Z",
-      "matchedKeywords": [
-        "鹿"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "31493a9a2939d6159d11e6ddf63708c506a5a6f7b6eec09c841160721c4ef282",
-      "source": "wordleaf-yahoo",
-      "title": "【ヤフコメで話題】「参政党の公約撤回に失望の声」「党の信頼回復に注目」 - 参政党・初鹿野議員の歳費返納公約撤回が波紋(Yahoo!ニュース オリジナル THE PAGE)",
-      "link": "https://news.yahoo.co.jp/articles/5168fcbd2026f0820dbcbac0c0feecc738edeb76?source=rss",
-      "description": "参政党の初鹿野議員による歳費自主返納の公約撤回について、Yahoo!ニュースのコメント欄で話題になっています。\nユーザーコメントでは、初鹿野議員が当選時に掲げた歳費返納の公約を撤回したことに対し、信頼",
-      "imageUrl": "",
-      "publishedAt": "2025-09-17T23:43:44.000Z",
       "matchedKeywords": [
         "鹿"
       ],
@@ -137,20 +123,6 @@
       "description": "北海道・福島町議会は2025年9月16日、クマによる死亡事故に伴う地域経済対策として、事業費を計上した一般会計補正予算案を可決しました。\n\n町内の飲食店やスーパーなど130店で使える1万円の商品券を全",
       "imageUrl": "",
       "publishedAt": "2025-09-16T23:42:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "78072293b2df7272ed3965de87953ac516aba658e8ea27bc12f11273c9c3775a",
-      "source": "stv-yahoo",
-      "title": "未明のパトロールで警察官がクマ目撃  追跡するもクマは逃走 北海道木古内町中心部 警戒続く(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/ee4ecc614a22c286bf70dda533b9f057bc0b4c89?source=rss",
-      "description": "北海道・木古内警察署は2025年9月17日午前2時35分ごろ、パトカーでパトロール中の警察官がクマ1頭を目撃したと発表しました。\n\n警察によりますと、パトロール中のパトカーが木古内町本町の道道5号から",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T22:40:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],
