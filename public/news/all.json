@@ -1,15 +1,15 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-17T13:07:06.321Z",
+  "generatedAt": "2025-09-18T11:18:40.534Z",
   "items": [
     {
-      "id": "0094eb2dc7d988ce477d187d906faa9acd0a59349ed71fc1831ad61cb85ddc40",
-      "source": "stv-yahoo",
-      "title": "全福島町民に1万円の商品券配布　クマ被害をうけイベント中止で経済停滞　飲食・宿泊業にも支援金(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/ae74f8c0e3801f3f52900ca37fe5fb416cdbce0c?source=rss",
-      "description": "北海道・福島町議会は2025年9月16日、クマによる死亡事故に伴う地域経済対策として、事業費を計上した一般会計補正予算案を可決しました。\n\n町内の飲食店やスーパーなど130店で使える1万円の商品券を全",
+      "id": "af9a50f5960b335b06bf1456cf45959c64b7baf8db5a4bc9947800ce01e66a04",
+      "source": "akt-yahoo",
+      "title": "放置柿を活用して地域課題も解決　柿の活用に取り組む男性が中学生とタッグ組み柿の葉を収穫　秋田(秋田テレビ)",
+      "link": "https://news.yahoo.co.jp/articles/01ac74e04a1f61f3ff225978777267953f01bd83?source=rss",
+      "description": "秋田県内では市街地でクマが相次いで目撃されています。私たちの生活圏にクマが現れる要因の一つが放置された果樹です。柿の活用に取り組む男性が能代市の中学生とタッグを組み、柿の葉の収穫にあたりました。茶葉に",
       "imageUrl": "",
-      "publishedAt": "2025-09-16T23:42:00.000Z",
+      "publishedAt": "2025-09-18T10:14:01.000Z",
       "matchedKeywords": [
         "クマ"
       ],
@@ -17,13 +17,27 @@
       "excluded": false
     },
     {
-      "id": "78072293b2df7272ed3965de87953ac516aba658e8ea27bc12f11273c9c3775a",
-      "source": "stv-yahoo",
-      "title": "未明のパトロールで警察官がクマ目撃  追跡するもクマは逃走 北海道木古内町中心部 警戒続く(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/ee4ecc614a22c286bf70dda533b9f057bc0b4c89?source=rss",
-      "description": "北海道・木古内警察署は2025年9月17日午前2時35分ごろ、パトカーでパトロール中の警察官がクマ1頭を目撃したと発表しました。\n\n警察によりますと、パトロール中のパトカーが木古内町本町の道道5号から",
+      "id": "331d00622a9a024749ebc340604dc5a3fef2becfec07fd6f5c4768dcbfb4307f",
+      "source": "sankei",
+      "title": "ヒグマ目撃情報で札幌の夜景スポット「旭山記念公園」閉鎖　住宅地にも、小中学校臨時休校",
+      "link": "https://www.sankei.com/article/20250918-KPBXYLQWZVJ3PIZJGMJT36JPIU/",
+      "description": "",
       "imageUrl": "",
-      "publishedAt": "2025-09-16T22:40:00.000Z",
+      "publishedAt": "2025-09-18T09:25:46.000Z",
+      "matchedKeywords": [
+        "ヒグマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "a187ee333d39e844893352f767e7dc3a7e35a2ab01651bda7bdeee235da914a2",
+      "source": "stv-yahoo",
+      "title": "【解説】札幌でクマ出没　９月で２４件…過去３年で最多　どんぐり不作で市街地への侵入増加の可能性(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/7328abd212f1e1c8c6a4df742e9c872deb890252?source=rss",
+      "description": "札幌では９月のクマ出没件数が１８日の１件を含めて２４件発生しています。\n\nこれは過去３年の同時期と比較して一番多くなっており、それだけクマ出没が相次いでいます。\n\nこれについて専門家にお話を伺ったとこ",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T07:12:01.000Z",
       "matchedKeywords": [
         "クマ"
       ],
@@ -31,13 +45,70 @@
       "excluded": false
     },
     {
-      "id": "c98c9a67978a988512edcf9bdfb77a7d2efdff6715998fcf37fe20c7f5173c59",
+      "id": "eb31a60cce98f9e959a0c7ec41f5c24c9a13299e3282f34b38bdf60af3396d6a",
       "source": "stv-yahoo",
-      "title": "【恐怖】クマが家の中に！　洗濯中の女性の背後に…　緊迫の瞬間を語る　北海道三笠市(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/d3acddd0e17c282f0a53e8fb8a983e5ad2b4c4da?source=rss",
-      "description": "（住人）「いやびっくりしましたよ。ここまで来たからね」\n\n家の中に侵入してきたのは１頭のクマです。\n\n当時、女性は室内で洗濯をしていたといいます。\n\n（住人）「イヌにしては違うし、あ、クマだと思って。",
+      "title": "クマ痕跡なしも公園一時閉鎖　走行中の自転車の目の前横切る　10代男性が目撃　札幌市・旭山記念公園(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/d10706cfac2dff373d0c873054ee2f0b01dd42d7?source=rss",
+      "description": "札幌市の旭山記念公園で９月１７日夜、クマ１頭が目撃されました。\n\nこの影響で札幌市は公園を一時閉鎖しています。\n\nクマが目撃されたのは、札幌市中央区にある旭山記念公園です。\n\n警察によりますと、１７日",
       "imageUrl": "",
-      "publishedAt": "2025-09-16T12:27:00.000Z",
+      "publishedAt": "2025-09-18T02:23:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "3bc127c54fdab3922d6d949329d59ac4ff61fadd965d3d979872719ff4cc11fe",
+      "source": "stv-yahoo",
+      "title": "クマの痕跡相次ぐ北海道・月形町 １７日も町道や路肩に複数のクマのフンが点在 警戒強める(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/cc15c52f45776aea3f8aa9eb80972bf5ec50b785?source=rss",
+      "description": "2025年9月17日、北海道月形町でクマのフンの発見が相次ぎました。\n\nまず午後3時まえ、月形町赤川3番地付近の町道上で、付近を警戒中のハンターが複数のフンが点在しているのを発見。\n\nその1時間後にも",
+      "imageUrl": "",
+      "publishedAt": "2025-09-17T22:32:00.000Z",
+      "matchedKeywords": [
+        "ハンター",
+        "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "b79d58bdc9a943cf0028eeaba547a88013b3f0ed305252c9e78fc30c10b49094",
+      "source": "stv-yahoo",
+      "title": "「台所の窓からクマを目撃した」と警察に通報 クマは川に入りながらゆっくり上流へ 北海道増毛町(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/2a02dac7d0d3b7b7cc8bb7423432f6a49b8e8173?source=rss",
+      "description": "北海道・留萌警察署は2025年9月17日、増毛町阿分でクマの目撃情報があったと発表しました。\n\n17日午後4時前、「住宅の台所の窓から、橋の土手の、のり面にいるクマを目撃した」と警察に通報がありました",
+      "imageUrl": "",
+      "publishedAt": "2025-09-17T22:27:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "0f8634cdf04c07e09a08804485608c800b80595773c6039c515a2327644a593a",
+      "source": "stv-yahoo",
+      "title": "車に乗り込もうとしたら「ガリガリ」と音　確認すると山の方に体長1.5mのクマが…北海道上砂川町(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/9e4d17f93323ca1f2c38b81987ec055ebc8979d6?source=rss",
+      "description": "北海道・滝川警察署は2025年9月17日、上砂川町でクマの目撃があったと発表しました。\n\n現場は、上砂川町中町南5丁目の駐車場です。\n\n警察によりますと、17日午後4時ごろ、目撃者が車に乗り込もうとし",
+      "imageUrl": "",
+      "publishedAt": "2025-09-17T22:23:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "2ad49853c54e477144ea7d89f888d068434dbbd9115d54df0b39ddcf34bc23c9",
+      "source": "stv-yahoo",
+      "title": "旭山記念公園を自転車で走行中 体長約２メートルのクマが目の前を横切る 公園を一時閉鎖中(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/a0727dfa05b8a2498a9003304598006f442cc7b3?source=rss",
+      "description": "2025年9月17日、午後10時半ごろ、札幌市中央区にある旭山記念公園で、クマ1頭が目撃されました。\n\n旭山記念公園の第1駐車場と第2駐車場をつなぐ坂道を自転車で下っていた10代の男性が、西から東に横",
+      "imageUrl": "",
+      "publishedAt": "2025-09-17T22:16:01.000Z",
       "matchedKeywords": [
         "クマ"
       ],
@@ -59,20 +130,6 @@
       "excluded": false
     },
     {
-      "id": "f3311ba6f24f2e7be8f997d93d3b15cc326c159a71c8556ee7073d7c1b66169c",
-      "source": "stv-yahoo",
-      "title": "「びっくり、ここまで来た」住人がクマ侵入の状況話す　室内に幅約９センチの足跡も　北海道三笠市(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/546644cb84cbd8dfcef55aed5223ed0391ea4b51?source=rss",
-      "description": "北海道三笠市で９月１６日午前、クマが住宅の窓ガラスを割り、室内に侵入しました。\n\nクマはすでに立ち去っていて、住人の女性が当時の状況を明かしてくれました。\n\n（住人）「いやびっくりしましたよ。ここまで",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T08:16:01.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
       "id": "ca85780b9e0e02a111bb2f532ff4bff9098676fdb1eb255ffd26c3cee8f4a95a",
       "source": "akt-yahoo",
       "title": "クマの目撃・食害件数、前年同期の3倍に　鈴木知事「出没抑制に向けた調査・研究」進める考え示す　秋田(秋田テレビ)",
@@ -80,34 +137,6 @@
       "description": "秋田県内でのクマの目撃情報が後を断ちません。鈴木知事は、クマの出没の抑制に向けて調査・研究を進める考えを示しました。\n\n秋田県の情報マップシステム「クマダス」によりますと、2025年度に県内ではクマの",
       "imageUrl": "",
       "publishedAt": "2025-09-16T07:47:01.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "c9dfa0d382ac17bd3abef3379d6b2a0cf00e3444aa887716c5cd78f76b4d30b7",
-      "source": "stv-yahoo",
-      "title": "住人が洗濯中に突然…クマが窓ガラス割り住宅侵入　体長1.2メートル…足跡複数　北海道三笠市(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/9bea75fd9cba32abb45d1a8f931ccda72d696d19?source=rss",
-      "description": "北海道三笠市で９月１６日午前、クマが住宅の窓ガラスを割り、室内に侵入しました。\n\nクマはすでに立ち去っていて、警察が付近を警戒しています。\n\n三笠市幾春別川向町の公営住宅で午前１０時４０分ごろ、家の中",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T07:13:01.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "4c1aba50070815587b526a95dc3c5b2e818897a90492f515faa21ee4b3113b50",
-      "source": "stv-yahoo",
-      "title": "【速報】クマが住宅に侵入「窓ガラスを割り…」住人のそばを通って玄関から外へ　北海道三笠市(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/a3eb8d530923515db7a3eeb93b30a49686d6c064?source=rss",
-      "description": "北海道・三笠市幾春別川向町で2025年9月16日午前10時40分ごろ、住宅にクマが侵入しました。\n\nクマはすでに立ち去っていて、けが人はいないということです。\n\n午前10時40分ごろ、三笠市から「クマ",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T04:49:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],
@@ -197,49 +226,6 @@
         "ヒグマ"
       ],
       "score": 4,
-      "excluded": false
-    },
-    {
-      "id": "5a2cf7841dedc9f70a9aa6b3930c6392324860f89c576a82e187a7a3a2ce0d64",
-      "source": "akt-yahoo",
-      "title": "クマに襲われたか　ブドウ畑を見回り中の77歳男性、顔の骨を折るなどの大けが　秋田・大館市(秋田テレビ)",
-      "link": "https://news.yahoo.co.jp/articles/360803b817f67c71724b7db69abcbc1321509528?source=rss",
-      "description": "10日夜、秋田県大館市で70代の男性が所有する畑を見回り中にクマと見られる動物に襲われ、顔の骨を折るなどの大けがをしました。\n\n10日午後10時45分ごろ、大館市雪沢のブドウ畑で77歳の男性が見回りを",
-      "imageUrl": "",
-      "publishedAt": "2025-09-11T04:56:02.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "f397084685231314008d13737421c965f88098ec0909499981c6eebe84229ebb",
-      "source": "hokkaido-np",
-      "title": "クマ捜索　ドローンで広範囲に　留萌の興北建設、行政と協力　進む人材育成、費用は自社負担　課題は「財源」(北海道新聞)",
-      "link": "https://news.yahoo.co.jp/articles/ca2274e156844c0fdd9877e09a9558c610cc2e4d?source=rss",
-      "description": "【留萌】市内の興北建設が、自社の測量用ドローンを活用しヒグマ捜索への協力を進めている。同社は関連する連携協定を警察や自治体と結んでおり、6月と7月には市内の出没現場に出動して捜索に当たった。道内各地",
-      "imageUrl": "",
-      "publishedAt": "2025-09-11T03:18:02.000Z",
-      "matchedKeywords": [
-        "クマ",
-        "ヒグマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
-    {
-      "id": "5a76408883e73896bdb495e0636cd8ca4da2f9fffc5de8bba3ec680ea3ae3a4c",
-      "source": "nhk",
-      "title": "秋田 大館 77歳男性が動物に襲われ大けが クマに襲われたか",
-      "link": "http://www3.nhk.or.jp/news/html/20250911/k10014919261000.html",
-      "description": "10日夜遅く、秋田県大館市で畑を見に行った77歳の男性が動物に襲われ、顔の骨を折る大けがをしたほか、頭などをひっかかれました。警察はけがの状況から男性がクマに襲われたとみて周辺の住民に注意を呼びかけています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-10T20:16:25.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
       "excluded": false
     }
   ]

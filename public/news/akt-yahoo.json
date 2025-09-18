@@ -1,7 +1,21 @@
 {
   "source": "akt-yahoo",
-  "generatedAt": "2025-09-17T13:07:06.321Z",
+  "generatedAt": "2025-09-18T11:18:40.534Z",
   "items": [
+    {
+      "id": "af9a50f5960b335b06bf1456cf45959c64b7baf8db5a4bc9947800ce01e66a04",
+      "source": "akt-yahoo",
+      "title": "放置柿を活用して地域課題も解決　柿の活用に取り組む男性が中学生とタッグ組み柿の葉を収穫　秋田(秋田テレビ)",
+      "link": "https://news.yahoo.co.jp/articles/01ac74e04a1f61f3ff225978777267953f01bd83?source=rss",
+      "description": "秋田県内では市街地でクマが相次いで目撃されています。私たちの生活圏にクマが現れる要因の一つが放置された果樹です。柿の活用に取り組む男性が能代市の中学生とタッグを組み、柿の葉の収穫にあたりました。茶葉に",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T10:14:01.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "ca85780b9e0e02a111bb2f532ff4bff9098676fdb1eb255ffd26c3cee8f4a95a",
       "source": "akt-yahoo",
@@ -10,20 +24,6 @@
       "description": "秋田県内でのクマの目撃情報が後を断ちません。鈴木知事は、クマの出没の抑制に向けて調査・研究を進める考えを示しました。\n\n秋田県の情報マップシステム「クマダス」によりますと、2025年度に県内ではクマの",
       "imageUrl": "",
       "publishedAt": "2025-09-16T07:47:01.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "5a2cf7841dedc9f70a9aa6b3930c6392324860f89c576a82e187a7a3a2ce0d64",
-      "source": "akt-yahoo",
-      "title": "クマに襲われたか　ブドウ畑を見回り中の77歳男性、顔の骨を折るなどの大けが　秋田・大館市(秋田テレビ)",
-      "link": "https://news.yahoo.co.jp/articles/360803b817f67c71724b7db69abcbc1321509528?source=rss",
-      "description": "10日夜、秋田県大館市で70代の男性が所有する畑を見回り中にクマと見られる動物に襲われ、顔の骨を折るなどの大けがをしました。\n\n10日午後10時45分ごろ、大館市雪沢のブドウ畑で77歳の男性が見回りを",
-      "imageUrl": "",
-      "publishedAt": "2025-09-11T04:56:02.000Z",
       "matchedKeywords": [
         "クマ"
       ],
