@@ -1,7 +1,39 @@
 {
   "source": "stv-yahoo",
-  "generatedAt": "2025-09-18T11:20:44.909Z",
+  "generatedAt": "2025-09-18T21:25:00.968Z",
   "items": [
+    {
+      "id": "43b75d1dfed943b2bec2380baeb75567bc0a3a3138017ebe1fbe48536c89336b",
+      "source": "stv-yahoo",
+      "title": "箱わなのなかで鳴き声あげる　目撃相次ぐ砂川市でクマ捕獲　きょうにも駆除へ…出没クマと同一個体か(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/e7321aa17ea5e849acd540333a3daec746be4032?source=rss",
+      "description": "猟友会が箱わなを仕掛けていた砂川市の山中できのう、クマ1頭が捕獲されたことがわかりました。\n\n猟友会は、付近で目撃が相次いでいた個体とみて、きょうにも駆除する方針です。\n\n（クマ）「グオー」\n\n鳴き声",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T20:55:00.000Z",
+      "matchedKeywords": [
+        "猟",
+        "猟友会",
+        "駆除",
+        "捕獲",
+        "クマ"
+      ],
+      "score": 9,
+      "excluded": false
+    },
+    {
+      "id": "29a6969caa16062105178919cf84ead54935c5bcd7723bb7e0982e17413dcd8d",
+      "source": "stv-yahoo",
+      "title": "砂川市でクマの目撃相次ぐ　市街地の国道で車の至近距離に現れる衝撃…いずれも別個体か　北海道(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/3fab62dc6f8119f9f5cec7215adeab383dd9d683?source=rss",
+      "description": "北海道・砂川市で2025年9月18日、クマの目撃が相次ぎました。\n\nいずれも、人がけがをするなどの被害はありません。\n\n18日午前11時ごろ、砂川市空知太付近の市道を車で走行していた50代の男性が、約",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T13:46:01.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "a187ee333d39e844893352f767e7dc3a7e35a2ab01651bda7bdeee235da914a2",
       "source": "stv-yahoo",

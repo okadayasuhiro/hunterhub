@@ -1,7 +1,39 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-18T11:20:44.909Z",
+  "generatedAt": "2025-09-18T21:25:00.968Z",
   "items": [
+    {
+      "id": "43b75d1dfed943b2bec2380baeb75567bc0a3a3138017ebe1fbe48536c89336b",
+      "source": "stv-yahoo",
+      "title": "箱わなのなかで鳴き声あげる　目撃相次ぐ砂川市でクマ捕獲　きょうにも駆除へ…出没クマと同一個体か(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/e7321aa17ea5e849acd540333a3daec746be4032?source=rss",
+      "description": "猟友会が箱わなを仕掛けていた砂川市の山中できのう、クマ1頭が捕獲されたことがわかりました。\n\n猟友会は、付近で目撃が相次いでいた個体とみて、きょうにも駆除する方針です。\n\n（クマ）「グオー」\n\n鳴き声",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T20:55:00.000Z",
+      "matchedKeywords": [
+        "猟",
+        "猟友会",
+        "駆除",
+        "捕獲",
+        "クマ"
+      ],
+      "score": 9,
+      "excluded": false
+    },
+    {
+      "id": "29a6969caa16062105178919cf84ead54935c5bcd7723bb7e0982e17413dcd8d",
+      "source": "stv-yahoo",
+      "title": "砂川市でクマの目撃相次ぐ　市街地の国道で車の至近距離に現れる衝撃…いずれも別個体か　北海道(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/3fab62dc6f8119f9f5cec7215adeab383dd9d683?source=rss",
+      "description": "北海道・砂川市で2025年9月18日、クマの目撃が相次ぎました。\n\nいずれも、人がけがをするなどの被害はありません。\n\n18日午前11時ごろ、砂川市空知太付近の市道を車で走行していた50代の男性が、約",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T13:46:01.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "af9a50f5960b335b06bf1456cf45959c64b7baf8db5a4bc9947800ce01e66a04",
       "source": "akt-yahoo",
@@ -186,20 +218,6 @@
       "excluded": false
     },
     {
-      "id": "acf0ceb3bf287caa63916d81c965725b608919e29ce3e0e70ef9a352177995fd",
-      "source": "nhk",
-      "title": "ヒグマ食害相次ぐ北海道 厚沢部町 トウモロコシ食い荒らされる",
-      "link": "http://www3.nhk.or.jp/news/html/20250912/k10014921201000.html",
-      "description": "ヒグマによる食害が相次ぐ北海道南部の厚沢部町で12日朝、畑で栽培されていたトウモロコシおよそ40本が食い荒らされているのが見つかりました。NHKが所有者の許可を得て設置したカメラには11日夜、ヒグマが実の部分を引きちぎる様子が捉えられていて、警察などがパトロールを強化しています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-12T08:08:54.000Z",
-      "matchedKeywords": [
-        "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
       "id": "a59eba7241454b85a84ae25cb56a66f16b223387282a604be5ac5345f3042882",
       "source": "iwatenpv-yahoo",
       "title": "迫るクマにどう対処？岩手県警が被害防止研修会　手持ち花火やスプレー体験(岩手日報)",
@@ -211,21 +229,6 @@
         "クマ"
       ],
       "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "5f87b05ce060ab0ee0736917a454e72c5c7cbba94830a8a342fcbdf3aa462953",
-      "source": "hokkaido-np",
-      "title": "登山道「走行」、潜むクマのリスク　遭遇の恐れ、人を追う習性　北海道・羅臼岳の襲撃事故で浮き彫り(北海道新聞)",
-      "link": "https://news.yahoo.co.jp/articles/298e9015a96e69289f35946657548a04c972348d?source=rss",
-      "description": "知床連山の最高峰・羅臼岳（1660メートル）で8月14日、下山中の男性がヒグマに襲われ死亡した事故は、登山道を走ることが、ヒグマと不意に接触するリスクとなることを浮かび上がらせた。オホーツク管内では",
-      "imageUrl": "",
-      "publishedAt": "2025-09-11T21:01:16.000Z",
-      "matchedKeywords": [
-        "クマ",
-        "ヒグマ"
-      ],
-      "score": 4,
       "excluded": false
     }
   ]

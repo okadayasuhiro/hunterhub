@@ -1,6 +1,6 @@
 {
   "source": "nhk",
-  "generatedAt": "2025-09-18T11:20:44.909Z",
+  "generatedAt": "2025-09-18T21:25:00.968Z",
   "items": [
     {
       "id": "d173cf22b81c45d0f232eba210c8247b5b46c46774382709ec636e3ae3ac00aa",
@@ -54,20 +54,6 @@
       "publishedAt": "2025-09-12T23:13:11.000Z",
       "matchedKeywords": [
         "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "acf0ceb3bf287caa63916d81c965725b608919e29ce3e0e70ef9a352177995fd",
-      "source": "nhk",
-      "title": "ヒグマ食害相次ぐ北海道 厚沢部町 トウモロコシ食い荒らされる",
-      "link": "http://www3.nhk.or.jp/news/html/20250912/k10014921201000.html",
-      "description": "ヒグマによる食害が相次ぐ北海道南部の厚沢部町で12日朝、畑で栽培されていたトウモロコシおよそ40本が食い荒らされているのが見つかりました。NHKが所有者の許可を得て設置したカメラには11日夜、ヒグマが実の部分を引きちぎる様子が捉えられていて、警察などがパトロールを強化しています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-12T08:08:54.000Z",
-      "matchedKeywords": [
-        "ヒグマ"
       ],
       "score": 2,
       "excluded": false
