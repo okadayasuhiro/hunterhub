@@ -1,49 +1,7 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-17T21:23:12.199Z",
+  "generatedAt": "2025-09-18T02:17:39.377Z",
   "items": [
-    {
-      "id": "0094eb2dc7d988ce477d187d906faa9acd0a59349ed71fc1831ad61cb85ddc40",
-      "source": "stv-yahoo",
-      "title": "全福島町民に1万円の商品券配布　クマ被害をうけイベント中止で経済停滞　飲食・宿泊業にも支援金(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/ae74f8c0e3801f3f52900ca37fe5fb416cdbce0c?source=rss",
-      "description": "北海道・福島町議会は2025年9月16日、クマによる死亡事故に伴う地域経済対策として、事業費を計上した一般会計補正予算案を可決しました。\n\n町内の飲食店やスーパーなど130店で使える1万円の商品券を全",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T23:42:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "78072293b2df7272ed3965de87953ac516aba658e8ea27bc12f11273c9c3775a",
-      "source": "stv-yahoo",
-      "title": "未明のパトロールで警察官がクマ目撃  追跡するもクマは逃走 北海道木古内町中心部 警戒続く(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/ee4ecc614a22c286bf70dda533b9f057bc0b4c89?source=rss",
-      "description": "北海道・木古内警察署は2025年9月17日午前2時35分ごろ、パトカーでパトロール中の警察官がクマ1頭を目撃したと発表しました。\n\n警察によりますと、パトロール中のパトカーが木古内町本町の道道5号から",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T22:40:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "c98c9a67978a988512edcf9bdfb77a7d2efdff6715998fcf37fe20c7f5173c59",
-      "source": "stv-yahoo",
-      "title": "【恐怖】クマが家の中に！　洗濯中の女性の背後に…　緊迫の瞬間を語る　北海道三笠市(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/d3acddd0e17c282f0a53e8fb8a983e5ad2b4c4da?source=rss",
-      "description": "（住人）「いやびっくりしましたよ。ここまで来たからね」\n\n家の中に侵入してきたのは１頭のクマです。\n\n当時、女性は室内で洗濯をしていたといいます。\n\n（住人）「イヌにしては違うし、あ、クマだと思って。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T12:27:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
     {
       "id": "d173cf22b81c45d0f232eba210c8247b5b46c46774382709ec636e3ae3ac00aa",
       "source": "nhk",
@@ -54,48 +12,6 @@
       "publishedAt": "2025-09-16T09:28:36.000Z",
       "matchedKeywords": [
         "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "f3311ba6f24f2e7be8f997d93d3b15cc326c159a71c8556ee7073d7c1b66169c",
-      "source": "stv-yahoo",
-      "title": "「びっくり、ここまで来た」住人がクマ侵入の状況話す　室内に幅約９センチの足跡も　北海道三笠市(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/546644cb84cbd8dfcef55aed5223ed0391ea4b51?source=rss",
-      "description": "北海道三笠市で９月１６日午前、クマが住宅の窓ガラスを割り、室内に侵入しました。\n\nクマはすでに立ち去っていて、住人の女性が当時の状況を明かしてくれました。\n\n（住人）「いやびっくりしましたよ。ここまで",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T08:16:01.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "ca85780b9e0e02a111bb2f532ff4bff9098676fdb1eb255ffd26c3cee8f4a95a",
-      "source": "akt-yahoo",
-      "title": "クマの目撃・食害件数、前年同期の3倍に　鈴木知事「出没抑制に向けた調査・研究」進める考え示す　秋田(秋田テレビ)",
-      "link": "https://news.yahoo.co.jp/articles/94a60befb27011cb435d1e2bf2bac970915544e2?source=rss",
-      "description": "秋田県内でのクマの目撃情報が後を断ちません。鈴木知事は、クマの出没の抑制に向けて調査・研究を進める考えを示しました。\n\n秋田県の情報マップシステム「クマダス」によりますと、2025年度に県内ではクマの",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T07:47:01.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "c9dfa0d382ac17bd3abef3379d6b2a0cf00e3444aa887716c5cd78f76b4d30b7",
-      "source": "stv-yahoo",
-      "title": "住人が洗濯中に突然…クマが窓ガラス割り住宅侵入　体長1.2メートル…足跡複数　北海道三笠市(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/9bea75fd9cba32abb45d1a8f931ccda72d696d19?source=rss",
-      "description": "北海道三笠市で９月１６日午前、クマが住宅の窓ガラスを割り、室内に侵入しました。\n\nクマはすでに立ち去っていて、警察が付近を警戒しています。\n\n三笠市幾春別川向町の公営住宅で午前１０時４０分ごろ、家の中",
-      "imageUrl": "",
-      "publishedAt": "2025-09-16T07:13:01.000Z",
-      "matchedKeywords": [
-        "クマ"
       ],
       "score": 2,
       "excluded": false
@@ -154,50 +70,6 @@
         "ヒグマ"
       ],
       "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "a59eba7241454b85a84ae25cb56a66f16b223387282a604be5ac5345f3042882",
-      "source": "iwatenpv-yahoo",
-      "title": "迫るクマにどう対処？岩手県警が被害防止研修会　手持ち花火やスプレー体験(岩手日報)",
-      "link": "https://news.yahoo.co.jp/articles/715e98eed6de8ebb98b6b03bc1bfbbab39147801?source=rss",
-      "description": "岩手県警（増田武志本部長）は１１日、滝沢市砂込の県警機動隊施設でクマ被害防止の研修会を開いた。人的被害が相次ぐ中、現場対応に当たる警察官ら約３０人が対処法を学んだ。\n\n　雫石町職員で農林水産省農作物",
-      "imageUrl": "",
-      "publishedAt": "2025-09-12T01:18:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "5f87b05ce060ab0ee0736917a454e72c5c7cbba94830a8a342fcbdf3aa462953",
-      "source": "hokkaido-np",
-      "title": "登山道「走行」、潜むクマのリスク　遭遇の恐れ、人を追う習性　北海道・羅臼岳の襲撃事故で浮き彫り(北海道新聞)",
-      "link": "https://news.yahoo.co.jp/articles/298e9015a96e69289f35946657548a04c972348d?source=rss",
-      "description": "知床連山の最高峰・羅臼岳（1660メートル）で8月14日、下山中の男性がヒグマに襲われ死亡した事故は、登山道を走ることが、ヒグマと不意に接触するリスクとなることを浮かび上がらせた。オホーツク管内では",
-      "imageUrl": "",
-      "publishedAt": "2025-09-11T21:01:16.000Z",
-      "matchedKeywords": [
-        "クマ",
-        "ヒグマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
-    {
-      "id": "f397084685231314008d13737421c965f88098ec0909499981c6eebe84229ebb",
-      "source": "hokkaido-np",
-      "title": "クマ捜索　ドローンで広範囲に　留萌の興北建設、行政と協力　進む人材育成、費用は自社負担　課題は「財源」(北海道新聞)",
-      "link": "https://news.yahoo.co.jp/articles/ca2274e156844c0fdd9877e09a9558c610cc2e4d?source=rss",
-      "description": "【留萌】市内の興北建設が、自社の測量用ドローンを活用しヒグマ捜索への協力を進めている。同社は関連する連携協定を警察や自治体と結んでおり、6月と7月には市内の出没現場に出動して捜索に当たった。道内各地",
-      "imageUrl": "",
-      "publishedAt": "2025-09-11T03:18:02.000Z",
-      "matchedKeywords": [
-        "クマ",
-        "ヒグマ"
-      ],
-      "score": 4,
       "excluded": false
     }
   ]
