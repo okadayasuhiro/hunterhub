@@ -1,6 +1,6 @@
 {
   "source": "nhk",
-  "generatedAt": "2025-09-19T09:29:24.096Z",
+  "generatedAt": "2025-09-19T21:23:30.814Z",
   "items": [
     {
       "id": "d173cf22b81c45d0f232eba210c8247b5b46c46774382709ec636e3ae3ac00aa",
@@ -26,34 +26,6 @@
       "publishedAt": "2025-09-14T05:25:25.000Z",
       "matchedKeywords": [
         "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "85c350acc2e9c14915fb397b99f68d6d1ae9af2e7f93456b1efc8d8f87b2cf0d",
-      "source": "nhk",
-      "title": "福島 介護施設にクマ1頭 窓ガラス割って侵入 けが人なし",
-      "link": "http://www3.nhk.or.jp/news/html/20250913/k10014922051000.html",
-      "description": "13日朝、福島県南会津町の介護施設にクマ1頭が窓ガラスを割って侵入しました。利用者と職員にけがはありませんでしたが、クマは逃げていて警察が注意を呼びかけています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-13T08:47:13.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "f4c0c921c630287c4e178a15e25dbb5c06ba238b4a789d4d8708673463bb834a",
-      "source": "nhk",
-      "title": "宮城 富谷市の住宅街で60代男性がクマに襲われ 頭などにけが",
-      "link": "http://www3.nhk.or.jp/news/html/20250913/k10014921751000.html",
-      "description": "12日夜、宮城県富谷市の住宅街で60代の男性がクマに襲われ、頭などにけがをしました。目撃者の話などからクマはそのまま逃げていったとみられるということで、警察は住民に注意を呼びかけています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-12T23:13:11.000Z",
-      "matchedKeywords": [
-        "クマ"
       ],
       "score": 2,
       "excluded": false

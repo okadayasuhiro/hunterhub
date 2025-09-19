@@ -1,7 +1,37 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-19T09:29:24.096Z",
+  "generatedAt": "2025-09-19T21:23:30.814Z",
   "items": [
+    {
+      "id": "f4c2bee59d37770e9e55f21a46b0bf2104077713cad8d023f232f09b143882d9",
+      "source": "sankei",
+      "title": "青森の住宅街でクマ出没訓練、発砲の流れ確認　改正法施行で「緊急銃猟」可能に　県警や市",
+      "link": "https://www.sankei.com/article/20250919-2N7RXNA6CZJEDEBOXIOU6GNDF4/",
+      "description": "",
+      "imageUrl": "",
+      "publishedAt": "2025-09-19T10:43:15.000Z",
+      "matchedKeywords": [
+        "猟",
+        "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
+    {
+      "id": "5accd7ab6ccf9aca44e386d8a99a6d2a63f9aba5fa48a8a5af98611e5161d258",
+      "source": "stv-yahoo",
+      "title": "洗濯物を取り込んでいると…10メートル先を歩くクマ　前日に１頭捕獲　北海道砂川市で目撃続く(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/2aa70cc150410df3f959779217061d4985226458?source=rss",
+      "description": "北海道砂川市吉野３条南６丁目で９月１９日午前１１時半過ぎ、洗濯物を取り込んでいた住民が１０メートル先を歩くクマ１頭を目撃しました。\n\n警察によりますと、クマは体長１.５メートルほどで、東側の山の方へ立",
+      "imageUrl": "",
+      "publishedAt": "2025-09-19T10:04:00.000Z",
+      "matchedKeywords": [
+        "捕獲",
+        "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
     {
       "id": "b09267d616de8ea9b3d4f7d8ae4732bcfd6e85e8d72a08781e4ade85960b173f",
       "source": "stv-yahoo",
@@ -185,34 +215,6 @@
       "publishedAt": "2025-09-14T05:25:25.000Z",
       "matchedKeywords": [
         "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "85c350acc2e9c14915fb397b99f68d6d1ae9af2e7f93456b1efc8d8f87b2cf0d",
-      "source": "nhk",
-      "title": "福島 介護施設にクマ1頭 窓ガラス割って侵入 けが人なし",
-      "link": "http://www3.nhk.or.jp/news/html/20250913/k10014922051000.html",
-      "description": "13日朝、福島県南会津町の介護施設にクマ1頭が窓ガラスを割って侵入しました。利用者と職員にけがはありませんでしたが、クマは逃げていて警察が注意を呼びかけています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-13T08:47:13.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "f4c0c921c630287c4e178a15e25dbb5c06ba238b4a789d4d8708673463bb834a",
-      "source": "nhk",
-      "title": "宮城 富谷市の住宅街で60代男性がクマに襲われ 頭などにけが",
-      "link": "http://www3.nhk.or.jp/news/html/20250913/k10014921751000.html",
-      "description": "12日夜、宮城県富谷市の住宅街で60代の男性がクマに襲われ、頭などにけがをしました。目撃者の話などからクマはそのまま逃げていったとみられるということで、警察は住民に注意を呼びかけています。",
-      "imageUrl": "",
-      "publishedAt": "2025-09-12T23:13:11.000Z",
-      "matchedKeywords": [
-        "クマ"
       ],
       "score": 2,
       "excluded": false

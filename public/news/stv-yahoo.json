@@ -1,7 +1,22 @@
 {
   "source": "stv-yahoo",
-  "generatedAt": "2025-09-19T09:29:24.096Z",
+  "generatedAt": "2025-09-19T21:23:30.814Z",
   "items": [
+    {
+      "id": "5accd7ab6ccf9aca44e386d8a99a6d2a63f9aba5fa48a8a5af98611e5161d258",
+      "source": "stv-yahoo",
+      "title": "洗濯物を取り込んでいると…10メートル先を歩くクマ　前日に１頭捕獲　北海道砂川市で目撃続く(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/2aa70cc150410df3f959779217061d4985226458?source=rss",
+      "description": "北海道砂川市吉野３条南６丁目で９月１９日午前１１時半過ぎ、洗濯物を取り込んでいた住民が１０メートル先を歩くクマ１頭を目撃しました。\n\n警察によりますと、クマは体長１.５メートルほどで、東側の山の方へ立",
+      "imageUrl": "",
+      "publishedAt": "2025-09-19T10:04:00.000Z",
+      "matchedKeywords": [
+        "捕獲",
+        "クマ"
+      ],
+      "score": 4,
+      "excluded": false
+    },
     {
       "id": "b09267d616de8ea9b3d4f7d8ae4732bcfd6e85e8d72a08781e4ade85960b173f",
       "source": "stv-yahoo",
