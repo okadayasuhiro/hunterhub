@@ -1,20 +1,5 @@
 {
   "source": "sankei",
-  "generatedAt": "2025-09-19T02:21:24.075Z",
-  "items": [
-    {
-      "id": "331d00622a9a024749ebc340604dc5a3fef2becfec07fd6f5c4768dcbfb4307f",
-      "source": "sankei",
-      "title": "ヒグマ目撃情報で札幌の夜景スポット「旭山記念公園」閉鎖　住宅地にも、小中学校臨時休校",
-      "link": "https://www.sankei.com/article/20250918-KPBXYLQWZVJ3PIZJGMJT36JPIU/",
-      "description": "",
-      "imageUrl": "",
-      "publishedAt": "2025-09-18T09:25:46.000Z",
-      "matchedKeywords": [
-        "ヒグマ"
-      ],
-      "score": 2,
-      "excluded": false
-    }
-  ]
+  "generatedAt": "2025-09-19T05:22:43.072Z",
+  "items": []
 }
