@@ -1,7 +1,21 @@
 {
   "source": "stv-yahoo",
-  "generatedAt": "2025-09-18T21:25:00.968Z",
+  "generatedAt": "2025-09-19T02:21:24.075Z",
   "items": [
+    {
+      "id": "b09267d616de8ea9b3d4f7d8ae4732bcfd6e85e8d72a08781e4ade85960b173f",
+      "source": "stv-yahoo",
+      "title": "帰宅して外を見ると…自宅敷地内に親子クマ3頭が 犬が吠えると山の方へ 札幌市中央区円山西町(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/bca6b0a1c340946931965ad858651fd471983da5?source=rss",
+      "description": "2025年9月18日、札幌市中央区の住宅敷地内でクマ3頭が目撃されました。\n\nクマが目撃されたのは、札幌市中央区円山西町2丁目の住宅敷地内です。\n\n18日午後5時半ごろ、帰宅した50代の女性が部屋の中",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T22:53:01.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "43b75d1dfed943b2bec2380baeb75567bc0a3a3138017ebe1fbe48536c89336b",
       "source": "stv-yahoo",

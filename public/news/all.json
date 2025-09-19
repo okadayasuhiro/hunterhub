@@ -1,7 +1,21 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-18T21:25:00.968Z",
+  "generatedAt": "2025-09-19T02:21:24.075Z",
   "items": [
+    {
+      "id": "b09267d616de8ea9b3d4f7d8ae4732bcfd6e85e8d72a08781e4ade85960b173f",
+      "source": "stv-yahoo",
+      "title": "帰宅して外を見ると…自宅敷地内に親子クマ3頭が 犬が吠えると山の方へ 札幌市中央区円山西町(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/bca6b0a1c340946931965ad858651fd471983da5?source=rss",
+      "description": "2025年9月18日、札幌市中央区の住宅敷地内でクマ3頭が目撃されました。\n\nクマが目撃されたのは、札幌市中央区円山西町2丁目の住宅敷地内です。\n\n18日午後5時半ごろ、帰宅した50代の女性が部屋の中",
+      "imageUrl": "",
+      "publishedAt": "2025-09-18T22:53:01.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "43b75d1dfed943b2bec2380baeb75567bc0a3a3138017ebe1fbe48536c89336b",
       "source": "stv-yahoo",
@@ -211,20 +225,6 @@
       "description": "12日夜、宮城県富谷市の住宅街で60代の男性がクマに襲われ、頭などにけがをしました。目撃者の話などからクマはそのまま逃げていったとみられるということで、警察は住民に注意を呼びかけています。",
       "imageUrl": "",
       "publishedAt": "2025-09-12T23:13:11.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "a59eba7241454b85a84ae25cb56a66f16b223387282a604be5ac5345f3042882",
-      "source": "iwatenpv-yahoo",
-      "title": "迫るクマにどう対処？岩手県警が被害防止研修会　手持ち花火やスプレー体験(岩手日報)",
-      "link": "https://news.yahoo.co.jp/articles/715e98eed6de8ebb98b6b03bc1bfbbab39147801?source=rss",
-      "description": "岩手県警（増田武志本部長）は１１日、滝沢市砂込の県警機動隊施設でクマ被害防止の研修会を開いた。人的被害が相次ぐ中、現場対応に当たる警察官ら約３０人が対処法を学んだ。\n\n　雫石町職員で農林水産省農作物",
-      "imageUrl": "",
-      "publishedAt": "2025-09-12T01:18:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],
