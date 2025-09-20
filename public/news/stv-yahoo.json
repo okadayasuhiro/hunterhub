@@ -1,7 +1,35 @@
 {
   "source": "stv-yahoo",
-  "generatedAt": "2025-09-19T21:23:30.814Z",
+  "generatedAt": "2025-09-20T02:15:12.631Z",
   "items": [
+    {
+      "id": "7d4cd0b689f8057c35edbf249cdc93f0246aaeba552dcfda4d29718a50ca0979",
+      "source": "stv-yahoo",
+      "title": "「あ、クマだと思って」住人と鉢合わせ…なぜ住宅に侵入したか　市街地へ出没する可能性も　対策は？(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/f5dd15d9ec7337261d69eada604f468f83ad6b7c?source=rss",
+      "description": "９月１６日、北海道三笠市の住宅にクマが侵入し、住人と鉢合わせする事態になりました。\n\nなぜクマは住宅に侵入したのか、そして対策はあるのでしょうか。\n\n三笠市幾春別の公営住宅で午前１０時４０分ごろ、家の",
+      "imageUrl": "",
+      "publishedAt": "2025-09-19T22:00:00.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
+    {
+      "id": "29516b05a2afc5921ee8619a9aeb4212ccd7f914b184941ca221968a37b7c7cf",
+      "source": "stv-yahoo",
+      "title": "行方不明のハンターが警察署に現れる「捜索されていたので来た」約2か月ぶり無事確認　北海道函館市(STVニュース北海道)",
+      "link": "https://news.yahoo.co.jp/articles/58f501d284763eae6246058848c9dc7fe8d0cd27?source=rss",
+      "description": "北海道函館市の恵山で、2025年7月から行方不明になっていた函館市のハンターの男性（52）が9月9日、自ら函館中央署を訪れ、無事だったことが確認されました。\n\n男性は2025年7月15日午前11時ごろ",
+      "imageUrl": "",
+      "publishedAt": "2025-09-19T21:48:43.000Z",
+      "matchedKeywords": [
+        "ハンター"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "5accd7ab6ccf9aca44e386d8a99a6d2a63f9aba5fa48a8a5af98611e5161d258",
       "source": "stv-yahoo",
@@ -85,63 +113,6 @@
       "description": "札幌市の旭山記念公園で９月１７日夜、クマ１頭が目撃されました。\n\nこの影響で札幌市は公園を一時閉鎖しています。\n\nクマが目撃されたのは、札幌市中央区にある旭山記念公園です。\n\n警察によりますと、１７日",
       "imageUrl": "",
       "publishedAt": "2025-09-18T02:23:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "3bc127c54fdab3922d6d949329d59ac4ff61fadd965d3d979872719ff4cc11fe",
-      "source": "stv-yahoo",
-      "title": "クマの痕跡相次ぐ北海道・月形町 １７日も町道や路肩に複数のクマのフンが点在 警戒強める(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/cc15c52f45776aea3f8aa9eb80972bf5ec50b785?source=rss",
-      "description": "2025年9月17日、北海道月形町でクマのフンの発見が相次ぎました。\n\nまず午後3時まえ、月形町赤川3番地付近の町道上で、付近を警戒中のハンターが複数のフンが点在しているのを発見。\n\nその1時間後にも",
-      "imageUrl": "",
-      "publishedAt": "2025-09-17T22:32:00.000Z",
-      "matchedKeywords": [
-        "ハンター",
-        "クマ"
-      ],
-      "score": 4,
-      "excluded": false
-    },
-    {
-      "id": "b79d58bdc9a943cf0028eeaba547a88013b3f0ed305252c9e78fc30c10b49094",
-      "source": "stv-yahoo",
-      "title": "「台所の窓からクマを目撃した」と警察に通報 クマは川に入りながらゆっくり上流へ 北海道増毛町(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/2a02dac7d0d3b7b7cc8bb7423432f6a49b8e8173?source=rss",
-      "description": "北海道・留萌警察署は2025年9月17日、増毛町阿分でクマの目撃情報があったと発表しました。\n\n17日午後4時前、「住宅の台所の窓から、橋の土手の、のり面にいるクマを目撃した」と警察に通報がありました",
-      "imageUrl": "",
-      "publishedAt": "2025-09-17T22:27:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "0f8634cdf04c07e09a08804485608c800b80595773c6039c515a2327644a593a",
-      "source": "stv-yahoo",
-      "title": "車に乗り込もうとしたら「ガリガリ」と音　確認すると山の方に体長1.5mのクマが…北海道上砂川町(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/9e4d17f93323ca1f2c38b81987ec055ebc8979d6?source=rss",
-      "description": "北海道・滝川警察署は2025年9月17日、上砂川町でクマの目撃があったと発表しました。\n\n現場は、上砂川町中町南5丁目の駐車場です。\n\n警察によりますと、17日午後4時ごろ、目撃者が車に乗り込もうとし",
-      "imageUrl": "",
-      "publishedAt": "2025-09-17T22:23:00.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "2ad49853c54e477144ea7d89f888d068434dbbd9115d54df0b39ddcf34bc23c9",
-      "source": "stv-yahoo",
-      "title": "旭山記念公園を自転車で走行中 体長約２メートルのクマが目の前を横切る 公園を一時閉鎖中(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/a0727dfa05b8a2498a9003304598006f442cc7b3?source=rss",
-      "description": "2025年9月17日、午後10時半ごろ、札幌市中央区にある旭山記念公園で、クマ1頭が目撃されました。\n\n旭山記念公園の第1駐車場と第2駐車場をつなぐ坂道を自転車で下っていた10代の男性が、西から東に横",
-      "imageUrl": "",
-      "publishedAt": "2025-09-17T22:16:01.000Z",
       "matchedKeywords": [
         "クマ"
       ],
