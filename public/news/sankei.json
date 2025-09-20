@@ -1,20 +1,19 @@
 {
   "source": "sankei",
-  "generatedAt": "2025-09-20T02:15:12.631Z",
+  "generatedAt": "2025-09-20T05:21:31.296Z",
   "items": [
     {
-      "id": "f4c2bee59d37770e9e55f21a46b0bf2104077713cad8d023f232f09b143882d9",
+      "id": "98a6bb78ec475e836659378901d82865f7a83b6e9df6b2d610e25615163782a4",
       "source": "sankei",
-      "title": "青森の住宅街でクマ出没訓練、発砲の流れ確認　改正法施行で「緊急銃猟」可能に　県警や市",
-      "link": "https://www.sankei.com/article/20250919-2N7RXNA6CZJEDEBOXIOU6GNDF4/",
+      "title": "クマに襲われ46歳の農業男性けが、岩手・雫石　牛舎に向かう途中で遭遇",
+      "link": "https://www.sankei.com/article/20250920-AEYEVVXECVI2BMDHR27NG6YX2A/",
       "description": "",
       "imageUrl": "",
-      "publishedAt": "2025-09-19T10:43:15.000Z",
+      "publishedAt": "2025-09-20T02:21:05.000Z",
       "matchedKeywords": [
-        "猟",
         "クマ"
       ],
-      "score": 4,
+      "score": 2,
       "excluded": false
     }
   ]

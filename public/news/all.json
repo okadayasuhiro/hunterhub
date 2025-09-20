@@ -1,7 +1,21 @@
 {
   "source": "multi",
-  "generatedAt": "2025-09-20T02:15:12.631Z",
+  "generatedAt": "2025-09-20T05:21:31.296Z",
   "items": [
+    {
+      "id": "98a6bb78ec475e836659378901d82865f7a83b6e9df6b2d610e25615163782a4",
+      "source": "sankei",
+      "title": "クマに襲われ46歳の農業男性けが、岩手・雫石　牛舎に向かう途中で遭遇",
+      "link": "https://www.sankei.com/article/20250920-AEYEVVXECVI2BMDHR27NG6YX2A/",
+      "description": "",
+      "imageUrl": "",
+      "publishedAt": "2025-09-20T02:21:05.000Z",
+      "matchedKeywords": [
+        "クマ"
+      ],
+      "score": 2,
+      "excluded": false
+    },
     {
       "id": "7d4cd0b689f8057c35edbf249cdc93f0246aaeba552dcfda4d29718a50ca0979",
       "source": "stv-yahoo",
@@ -28,21 +42,6 @@
         "ハンター"
       ],
       "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "f4c2bee59d37770e9e55f21a46b0bf2104077713cad8d023f232f09b143882d9",
-      "source": "sankei",
-      "title": "青森の住宅街でクマ出没訓練、発砲の流れ確認　改正法施行で「緊急銃猟」可能に　県警や市",
-      "link": "https://www.sankei.com/article/20250919-2N7RXNA6CZJEDEBOXIOU6GNDF4/",
-      "description": "",
-      "imageUrl": "",
-      "publishedAt": "2025-09-19T10:43:15.000Z",
-      "matchedKeywords": [
-        "猟",
-        "クマ"
-      ],
-      "score": 4,
       "excluded": false
     },
     {
@@ -128,20 +127,6 @@
       "description": "札幌では９月のクマ出没件数が１８日の１件を含めて２４件発生しています。\n\nこれは過去３年の同時期と比較して一番多くなっており、それだけクマ出没が相次いでいます。\n\nこれについて専門家にお話を伺ったとこ",
       "imageUrl": "",
       "publishedAt": "2025-09-18T07:12:01.000Z",
-      "matchedKeywords": [
-        "クマ"
-      ],
-      "score": 2,
-      "excluded": false
-    },
-    {
-      "id": "eb31a60cce98f9e959a0c7ec41f5c24c9a13299e3282f34b38bdf60af3396d6a",
-      "source": "stv-yahoo",
-      "title": "クマ痕跡なしも公園一時閉鎖　走行中の自転車の目の前横切る　10代男性が目撃　札幌市・旭山記念公園(STVニュース北海道)",
-      "link": "https://news.yahoo.co.jp/articles/d10706cfac2dff373d0c873054ee2f0b01dd42d7?source=rss",
-      "description": "札幌市の旭山記念公園で９月１７日夜、クマ１頭が目撃されました。\n\nこの影響で札幌市は公園を一時閉鎖しています。\n\nクマが目撃されたのは、札幌市中央区にある旭山記念公園です。\n\n警察によりますと、１７日",
-      "imageUrl": "",
-      "publishedAt": "2025-09-18T02:23:00.000Z",
       "matchedKeywords": [
         "クマ"
       ],
